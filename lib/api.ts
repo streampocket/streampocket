@@ -4,6 +4,8 @@ type RequestOptions = Omit<RequestInit, 'body'> & {
   body?: unknown
 }
 
+type DownloadOptions = Omit<RequestInit, 'method' | 'body'>
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, headers, ...rest } = options
 
@@ -29,6 +31,27 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 }
 
 export const api = {
+  download: async (path: string, filename: string, options?: DownloadOptions): Promise<void> => {
+    const { headers, ...rest } = options ?? {}
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      ...rest,
+      method: 'GET',
+      headers: { ...(headers as Record<string, string>) },
+      credentials: 'include',
+    })
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: res.statusText }))
+      throw new Error((error as { message?: string }).message ?? '다운로드 실패')
+    }
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  },
+
   get: <T>(path: string, options?: RequestOptions) =>
     request<T>(path, { ...options, method: 'GET' }),
 

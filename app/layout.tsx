@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
+import { Toaster } from 'sonner'
 import { AuthProvider } from '@/providers/AuthProvider'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { UIProvider } from '@/providers/UIProvider'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: { template: '%s | 스트림포켓', default: '스트림포켓' },
@@ -16,10 +14,23 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className={inter.className}>
+      <body>
         <AuthProvider>
           <QueryProvider>
-            <UIProvider>{children}</UIProvider>
+            <UIProvider>
+              {children}
+              <Toaster
+                position="bottom-right"
+                toastOptions={{
+                  style: {
+                    background: '#1e293b',
+                    color: '#f8fafc',
+                    border: 'none',
+                    fontFamily: 'var(--font-sans)',
+                  },
+                }}
+              />
+            </UIProvider>
           </QueryProvider>
         </AuthProvider>
       </body>

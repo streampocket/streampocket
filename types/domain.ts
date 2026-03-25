@@ -1,43 +1,53 @@
-/** 주문 상태 */
-export type OrderStatus =
-  | 'PENDING'
-  | 'CONFIRMED'
-  | 'DISPATCHED'
-  | 'COMPLETED'
-  | 'FAILED'
-  | 'MANUAL_REVIEW'
+/** 주문 처리 상태 (Prisma FulfillmentStatus 기준) */
+export type FulfillmentStatus = 'pending' | 'completed' | 'manual_review' | 'failed'
 
-/** 주문 */
-export type Order = {
+/** 계정 상태 (Prisma AccountStatus 기준) */
+export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled'
+
+/** 상품 상태 (Prisma ProductStatus 기준) */
+export type ProductStatus = 'draft' | 'active' | 'inactive'
+
+/** 이메일 발송 상태 */
+export type EmailLogStatus = 'queued' | 'sent' | 'failed'
+
+/** 스팀 주문 아이템 */
+export type SteamOrderItem = {
   id: string
   productOrderId: string
-  productId: string
-  buyerName: string
+  naverOrderId: string
+  productId: string | null
+  accountId: string | null
+  productName: string
   buyerEmail: string | null
-  status: OrderStatus
-  errorMsg: string | null
+  unitPrice: number
+  fulfillmentStatus: FulfillmentStatus
+  errorMessage: string | null
+  paidAt: string | null
   createdAt: string
   updatedAt: string
 }
 
-/** 상품 */
-export type Product = {
+/** 스팀 상품 */
+export type SteamProduct = {
   id: string
   name: string
-  description: string
-  caution: string
-  event: string | null
+  naverProductId: string
+  status: ProductStatus
   stockCount: number
   createdAt: string
   updatedAt: string
 }
 
-/** 코드 */
-export type Code = {
+/** 스팀 계정 재고 */
+export type SteamAccount = {
   id: string
   productId: string
-  value: string
-  isUsed: boolean
+  username: string
+  password: string
+  email: string
+  emailPassword: string
+  emailSiteUrl: string
+  status: AccountStatus
   createdAt: string
 }
 
@@ -47,4 +57,12 @@ export type DashboardStats = {
   pendingOrders: number
   manualReviewOrders: number
   lowStockProducts: number
+}
+
+/** 이메일 템플릿 */
+export type EmailTemplate = {
+  id: string
+  subject: string
+  bodyTemplate: string
+  updatedAt: string
 }
