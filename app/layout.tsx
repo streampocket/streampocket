@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'sonner'
-import { AuthProvider } from '@/providers/AuthProvider'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { UIProvider } from '@/providers/UIProvider'
 
@@ -15,24 +14,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body>
-        <AuthProvider>
-          <QueryProvider>
-            <UIProvider>
-              {children}
-              <Toaster
-                position="bottom-right"
-                toastOptions={{
-                  style: {
-                    background: '#1e293b',
-                    color: '#f8fafc',
-                    border: 'none',
-                    fontFamily: 'var(--font-sans)',
-                  },
-                }}
-              />
-            </UIProvider>
-          </QueryProvider>
-        </AuthProvider>
+        <QueryProvider>
+          <UIProvider>
+            {children}
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: '#1e293b',
+                  color: '#f8fafc',
+                  border: 'none',
+                  fontFamily: 'var(--font-sans)',
+                },
+              }}
+            />
+          </UIProvider>
+        </QueryProvider>
       </body>
     </html>
   )

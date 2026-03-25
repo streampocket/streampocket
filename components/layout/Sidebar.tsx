@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { clearAuthSession, getAuthAdmin } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
 type NavItem = {
@@ -36,6 +38,15 @@ const NAV_SECTIONS: NavSection[] = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const admin = getAuthAdmin()
+
+  const handleLogout = () => {
+    clearAuthSession()
+    toast.success('로그아웃되었습니다.')
+    router.replace('/login')
+    router.refresh()
+  }
 
   return (
     <aside className="flex h-screen w-60 flex-shrink-0 flex-col bg-sidebar">
@@ -78,14 +89,20 @@ export function Sidebar() {
       <div className="border-t border-gray-800 p-4">
         <div className="mb-2 flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-dark text-sm font-semibold text-white">
-            A
+            {admin?.email.slice(0, 1).toUpperCase() ?? 'A'}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-caption-md truncate text-white">관리자</p>
-            <p className="text-caption-sm truncate text-gray-500">admin@streampocket.com</p>
+            <p className="text-caption-sm truncate text-gray-500">
+              {admin?.email ?? 'admin@streampocket.com'}
+            </p>
           </div>
         </div>
-        <button className="text-caption-md w-full rounded-lg px-3 py-1.5 text-left text-gray-400 transition-colors hover:bg-sidebar-hover hover:text-white">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="text-caption-md w-full rounded-lg px-3 py-1.5 text-left text-gray-400 transition-colors hover:bg-sidebar-hover hover:text-white"
+        >
           로그아웃
         </button>
       </div>

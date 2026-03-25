@@ -1,37 +1,65 @@
 'use client'
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
+import { setAuthSession, isAuthenticated } from '@/lib/auth'
+import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+
+type LoginResponse = {
+  data: {
+    token: string
+    admin: {
+      id: string
+      email: string
+    }
+  }
+}
+
+function resolveNextPath(next: string | null): string {
+  if (!next?.startsWith('/')) return '/dashboard'
+  return next
+}
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isAuthenticated()) return
+
+    const next = resolveNextPath(searchParams.get('next'))
+    router.replace(next)
+  }, [router, searchParams])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    })
+    try {
+      const result = await api.post<LoginResponse>('/auth/login', {
+        email,
+        password,
+      })
 
-    setIsLoading(false)
+      setAuthSession({
+        token: result.data.token,
+        admin: result.data.admin,
+      })
 
-    if (result?.error) {
+      const next = resolveNextPath(searchParams.get('next'))
+      router.push(next)
+      router.refresh()
+    } catch {
       toast.error('이메일 또는 비밀번호가 올바르지 않습니다.')
-      return
+    } finally {
+      setIsLoading(false)
     }
-
-    router.push('/dashboard')
-    router.refresh()
   }
 
   return (
