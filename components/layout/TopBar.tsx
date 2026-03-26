@@ -8,6 +8,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/orders': '주문 관리',
   '/products': '상품 관리',
   '/codes': '계정 관리',
+  '/alimtalk': '알림톡',
   '/settings': '설정',
 }
 

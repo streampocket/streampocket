@@ -10,7 +10,7 @@ export function useDisableAccount() {
     mutationFn: (id: string) => api.patch(`/steam/admin/accounts/${id}/disable`),
     onSuccess: () => {
       toast.success('계정이 비활성화되었습니다.')
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts.list() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts.all() })
     },
     onError: (error: Error) => {
       toast.error(error.message ?? '비활성화에 실패했습니다.')

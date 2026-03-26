@@ -11,7 +11,7 @@ export function useBulkCreateAccounts() {
     mutationFn: (body: BulkCreateBody) => api.post('/steam/admin/accounts/bulk', body),
     onSuccess: () => {
       toast.success('계정이 일괄 등록되었습니다.')
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts.list() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts.all() })
     },
     onError: (error: Error) => {
       toast.error(error.message ?? '일괄 등록에 실패했습니다.')

@@ -48,7 +48,7 @@ export function OrdersTable() {
                 <tr className="border-b border-border bg-gray-50">
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">상품주문번호</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">상품명</th>
-                  <th className="text-label-md px-5 py-3 text-left text-text-secondary">구매자 이메일</th>
+                  <th className="text-label-md px-5 py-3 text-left text-text-secondary">수신전화번호</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">금액</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">상태</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">결제일시</th>
@@ -70,7 +70,7 @@ export function OrdersTable() {
                   </tr>
                 ) : (
                   data?.data.map((order) => {
-                    const status = STATUS_MAP[order.fulfillmentStatus]
+                    const orderStatus = STATUS_MAP[order.fulfillmentStatus]
                     return (
                       <tr
                         key={order.id}
@@ -85,13 +85,13 @@ export function OrdersTable() {
                           {order.productName}
                         </td>
                         <td className="text-caption-md px-5 py-3 text-text-secondary">
-                          {order.buyerEmail ?? <span className="text-danger">미확인</span>}
+                          {order.receiverPhoneNumber ?? <span className="text-danger">미확인</span>}
                         </td>
                         <td className="text-body-md px-5 py-3 text-text-primary">
                           {order.unitPrice.toLocaleString()}원
                         </td>
                         <td className="px-5 py-3">
-                          <Badge variant={status.variant}>{status.label}</Badge>
+                          <Badge variant={orderStatus.variant}>{orderStatus.label}</Badge>
                         </td>
                         <td className="text-caption-md px-5 py-3 text-text-secondary">
                           {order.paidAt ? formatDate(order.paidAt) : '-'}
@@ -114,7 +114,6 @@ export function OrdersTable() {
           </div>
         </CardBody>
 
-        {/* 페이지네이션 */}
         {data && data.totalPages > 1 && (
           <CardFooter>
             <div className="flex w-full items-center justify-center gap-2">
@@ -150,10 +149,7 @@ export function OrdersTable() {
         )}
       </Card>
 
-      <OrderDetailModal
-        orderId={selectedOrderId}
-        onClose={() => setSelectedOrderId(null)}
-      />
+      <OrderDetailModal orderId={selectedOrderId} onClose={() => setSelectedOrderId(null)} />
     </>
   )
 }

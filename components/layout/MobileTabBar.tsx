@@ -9,6 +9,7 @@ const TAB_ITEMS = [
   { label: '주문', href: '/orders', icon: '📋' },
   { label: '상품', href: '/products', icon: '📦' },
   { label: '계정', href: '/codes', icon: '🔑' },
+  { label: '알림톡', href: '/alimtalk', icon: '💬' },
   { label: '설정', href: '/settings', icon: '⚙' },
 ]
 

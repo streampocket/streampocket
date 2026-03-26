@@ -32,7 +32,10 @@ const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: '시스템',
-    items: [{ label: '설정', href: '/settings', icon: '⚙' }],
+    items: [
+      { label: '알림톡', href: '/alimtalk', icon: '💬' },
+      { label: '설정', href: '/settings', icon: '⚙' },
+    ],
   },
 ]
 

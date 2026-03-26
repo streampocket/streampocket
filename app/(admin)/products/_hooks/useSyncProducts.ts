@@ -10,7 +10,7 @@ export function useSyncProducts() {
     mutationFn: () => api.post('/steam/admin/products/sync'),
     onSuccess: () => {
       toast.success('네이버 상품 동기화가 완료되었습니다.')
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.products.list() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.products.all() })
     },
     onError: (error: Error) => {
       toast.error(error.message ?? '동기화에 실패했습니다.')

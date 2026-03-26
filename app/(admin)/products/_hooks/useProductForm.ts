@@ -8,7 +8,7 @@ export function useProductForm() {
   const queryClient = useQueryClient()
 
   const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.products.list() })
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.products.all() })
   }
 
   const create = useMutation({

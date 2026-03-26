@@ -9,8 +9,9 @@ export function useRetryOrder() {
   return useMutation({
     mutationFn: (id: string) => api.post(`/steam/admin/orders/${id}/retry`),
     onSuccess: () => {
-      toast.success('재처리 요청이 완료되었습니다.')
+      toast.success('알림톡 재발송 요청이 완료되었습니다.')
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.orders.list() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.orders.all() })
     },
     onError: (error: Error) => {
       toast.error(error.message ?? '재처리에 실패했습니다.')
