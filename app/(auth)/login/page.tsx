@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { LoginForm } from './_components/LoginForm'
 
@@ -18,7 +19,9 @@ export default function LoginPage() {
           <p className="text-caption-md mt-1 text-text-secondary">관리자 시스템에 로그인하세요</p>
         </div>
 
-        <LoginForm />
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   )
