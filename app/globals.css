@@ -1,33 +1,158 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "pretendard/dist/web/variable/pretendardvariable.css";
+@import "tailwindcss";
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* =========================
+   Theme Tokens
+   ========================= */
+@theme {
+  /* Font */
+  --font-sans:
+    "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+
+  /* Brand */
+  --color-brand: #5c6bc0;
+  --color-brand-dark: #3949ab;
+  --color-brand-light: #e8eaf6;
+
+  /* Sidebar */
+  --color-sidebar: #0f172a;
+  --color-sidebar-hover: #1e293b;
+  --color-sidebar-active: #1e3a5f;
+
+  /* Content Backgrounds */
+  --color-content-bg: #f1f5f9;
+  --color-card-bg: #ffffff;
+
+  /* Text */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+
+  /* Border */
+  --color-border: #e2e8f0;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Gray Scale */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+
+  /* Badge colors */
+  --color-badge-green-bg: #dcfce7;
+  --color-badge-green-text: #15803d;
+  --color-badge-yellow-bg: #fef9c3;
+  --color-badge-yellow-text: #a16207;
+  --color-badge-red-bg: #fee2e2;
+  --color-badge-red-text: #b91c1c;
+  --color-badge-blue-bg: #dbeafe;
+  --color-badge-blue-text: #1d4ed8;
+  --color-badge-gray-bg: #f1f5f9;
+  --color-badge-gray-text: #475569;
+  --color-badge-purple-bg: #ede9fe;
+  --color-badge-purple-text: #6d28d9;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+/* =========================
+   Typography Utilities
+   ========================= */
+
+@utility text-display {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+@utility text-heading-lg {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+@utility text-heading-md {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+@utility text-heading-sm {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+@utility text-body-lg {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+@utility text-body-md {
+  font-size: 13.5px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+@utility text-label-md {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@utility text-caption-md {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+@utility text-caption-sm {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 400;
+}
+
+/* =========================
+   Base Styles
+   ========================= */
+@layer base {
+  html {
+    font-size: 16px;
   }
-}
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  body {
+    font-family: var(--font-sans);
+    @apply text-body-md bg-content-bg text-text-primary;
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  * {
+    box-sizing: border-box;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Sonner Toast 커스터마이징 */
+  [data-sonner-toaster] {
+    font-family: var(--font-sans) !important;
   }
 }
