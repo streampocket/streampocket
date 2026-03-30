@@ -59,8 +59,8 @@ export type SteamProduct = {
 /** 스팀 계정 재고 */
 export type SteamAccount = {
   id: string
-  productId: string
-  productName: string
+  productId: string | null
+  productName: string | null
   username: string
   password: string
   email: string
