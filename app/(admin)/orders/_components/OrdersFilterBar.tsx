@@ -13,29 +13,28 @@ const STATUS_OPTIONS: { value: FulfillmentStatus | ''; label: string }[] = [
   { value: 'failed', label: '실패' },
 ]
 
-/** YYYY-MM-DD → 당일 시작 ISO datetime (KST) */
 function toStartOfDay(date: string): string {
   return `${date}T00:00:00+09:00`
 }
 
-/** YYYY-MM-DD → 당일 끝 ISO datetime (KST) */
 function toEndOfDay(date: string): string {
   return `${date}T23:59:59+09:00`
 }
 
-/** ISO datetime → YYYY-MM-DD (input[type=date] 표시용) */
 function toDateInput(iso: string): string {
   return iso.slice(0, 10)
 }
 
-/** 오늘 날짜 YYYY-MM-DD */
 function getTodayDate(): string {
-  return new Date().toLocaleDateString('ko-KR', {
-    timeZone: 'Asia/Seoul',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).replace(/\. /g, '-').replace('.', '')
+  return new Date()
+    .toLocaleDateString('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .replace(/\. /g, '-')
+    .replace('.', '')
 }
 
 export function OrdersFilterBar() {
@@ -47,7 +46,6 @@ export function OrdersFilterBar() {
   const currentTo = searchParams.get('to') ?? ''
   const currentStatus = searchParams.get('status') ?? ''
 
-  // 첫 진입 시 from/to 없으면 오늘 날짜로 초기화
   useEffect(() => {
     if (!currentFrom && !currentTo) {
       const today = getTodayDate()
@@ -56,7 +54,7 @@ export function OrdersFilterBar() {
       params.set('to', toEndOfDay(today))
       router.replace(`${pathname}?${params.toString()}`)
     }
-  }, []) // 마운트 시 1회만 실행
+  }, [currentFrom, currentTo, pathname, router, searchParams])
 
   const updateParams = useCallback(
     (updates: Record<string, string>) => {
@@ -80,7 +78,6 @@ export function OrdersFilterBar() {
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card-bg p-4">
-      {/* 상태 필터 */}
       <div className="flex items-center gap-1.5">
         {STATUS_OPTIONS.map((opt) => (
           <button
@@ -97,7 +94,6 @@ export function OrdersFilterBar() {
         ))}
       </div>
 
-      {/* 날짜 범위 */}
       <div className="flex items-center gap-2">
         <input
           type="date"
@@ -111,14 +107,11 @@ export function OrdersFilterBar() {
         <input
           type="date"
           value={currentTo ? toDateInput(currentTo) : ''}
-          onChange={(e) =>
-            updateParams({ to: e.target.value ? toEndOfDay(e.target.value) : '' })
-          }
+          onChange={(e) => updateParams({ to: e.target.value ? toEndOfDay(e.target.value) : '' })}
           className="text-body-md rounded-lg border border-border px-3 py-1.5 text-text-primary outline-none focus:border-brand"
         />
       </div>
 
-      {/* 초기화 */}
       {(currentStatus || currentFrom || currentTo) && (
         <Button variant="secondary" size="sm" onClick={handleReset}>
           초기화

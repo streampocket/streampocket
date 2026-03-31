@@ -77,7 +77,11 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
         title="상품 삭제"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setIsConfirming(false)} disabled={deleteProduct.isPending}>
+            <Button
+              variant="secondary"
+              onClick={() => setIsConfirming(false)}
+              disabled={deleteProduct.isPending}
+            >
               취소
             </Button>
             <Button
@@ -92,12 +96,12 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
       >
         <div className="space-y-3">
           <p className="text-body-md text-text-primary">
-            <span className="font-semibold">"{product.name}"</span>을 삭제하시겠습니까?
+            <span className="font-semibold">&quot;{product.name}&quot;</span> 상품을 삭제하시겠습니까?
           </p>
           <p className="text-caption-md text-text-muted">이 작업은 되돌릴 수 없습니다.</p>
           {product.stockCount > 0 && (
             <p className="text-caption-md text-warning">
-              연결된 계정 {product.stockCount}개의 상품 연결이 해제됩니다.
+              연결된 계정 {product.stockCount}개의 상품 연결도 함께 해제됩니다.
             </p>
           )}
         </div>
@@ -114,7 +118,12 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
         <div className="flex w-full items-center justify-between">
           <div>
             {isEdit && (
-              <Button variant="danger" size="sm" onClick={() => setIsConfirming(true)} disabled={isLoading}>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => setIsConfirming(true)}
+                disabled={isLoading}
+              >
                 삭제
               </Button>
             )}
@@ -124,7 +133,7 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
               취소
             </Button>
             <Button form="product-form" type="submit" loading={isLoading}>
-              {isEdit ? '저장' : '등록'}
+              {isEdit ? '수정' : '등록'}
             </Button>
           </div>
         </div>
@@ -133,7 +142,7 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
       <form id="product-form" onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-caption-md mb-1.5 block font-semibold text-text-secondary">
-            상품명 <span className="text-danger">*</span>
+            상품명<span className="text-danger">*</span>
           </label>
           <input
             className={inputClass}
