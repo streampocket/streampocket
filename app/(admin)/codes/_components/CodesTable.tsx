@@ -71,6 +71,9 @@ export function CodesTable() {
                       >
                         <td className="text-caption-md px-5 py-3 text-text-secondary">
                           {account.productName}
+                          {account.productId === null && (
+                            <span className="ml-1 text-text-muted">(삭제됨)</span>
+                          )}
                         </td>
                         <td className="font-mono text-caption-md px-5 py-3 text-text-primary">
                           {account.username}
