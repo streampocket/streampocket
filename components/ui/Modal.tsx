@@ -1,44 +1,58 @@
-'use client'
+"use client";
 
-import { useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
-import { cn } from '@/lib/utils'
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { cn } from "@/lib/utils";
 
 type ModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  title: string
-  children: React.ReactNode
-  footer?: React.ReactNode
-  className?: string
-}
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  className?: string;
+};
 
-export function Modal({ isOpen, onClose, title, children, footer, className }: ModalProps) {
-  const mouseDownOnOverlay = useRef(false)
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  footer,
+  className,
+}: ModalProps) {
+  const mouseDownOnOverlay = useRef(false);
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(2px)' }}
-      onMouseDown={(e) => { mouseDownOnOverlay.current = e.target === e.currentTarget }}
-      onClick={() => { if (mouseDownOnOverlay.current) onClose() }}
+      style={{
+        backgroundColor: "rgba(15, 23, 42, 0.5)",
+        backdropFilter: "blur(2px)",
+      }}
+      onMouseDown={(e) => {
+        mouseDownOnOverlay.current = e.target === e.currentTarget;
+      }}
+      onClick={() => {
+        if (mouseDownOnOverlay.current) onClose();
+      }}
     >
       <div
         className={cn(
-          'w-full max-w-[520px] rounded-xl bg-card-bg',
-          'shadow-[0_4px_6px_-1px_rgba(0,0,0,.1),0_2px_4px_-1px_rgba(0,0,0,.06)]',
-          'flex max-h-[90vh] flex-col',
+          "w-full max-w-130 rounded-xl bg-card-bg",
+          "shadow-[0_4px_6px_-1px_rgba(0,0,0,.1),0_2px_4px_-1px_rgba(0,0,0,.06)]",
+          "flex max-h-[90vh] flex-col",
           className,
         )}
         onClick={(e) => e.stopPropagation()}
@@ -66,5 +80,5 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
       </div>
     </div>,
     document.body,
-  )
+  );
 }
