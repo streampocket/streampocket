@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 
@@ -14,6 +14,8 @@ type ModalProps = {
 }
 
 export function Modal({ isOpen, onClose, title, children, footer, className }: ModalProps) {
+  const mouseDownOnOverlay = useRef(false)
+
   useEffect(() => {
     if (!isOpen) return
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,7 +31,8 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(2px)' }}
-      onClick={onClose}
+      onMouseDown={(e) => { mouseDownOnOverlay.current = e.target === e.currentTarget }}
+      onClick={() => { if (mouseDownOnOverlay.current) onClose() }}
     >
       <div
         className={cn(
