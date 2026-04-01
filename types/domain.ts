@@ -93,7 +93,8 @@ export type AlimtalkSettings = {
     apiKeyConfigured: boolean
     userId: string | null
     senderKey: string | null
-    templateCode: string | null
+    templateCodeNA: string | null
+    templateCodeAA: string | null
     sender: string | null
     providerConnected: boolean
     providerMessage: string

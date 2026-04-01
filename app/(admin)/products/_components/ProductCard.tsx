@@ -18,6 +18,7 @@ const STATUS_MAP: Record<ProductStatus, { label: string; variant: BadgeVariant }
 
 export function ProductCard({ product, onEdit }: ProductCardProps) {
   const status = STATUS_MAP[product.status]
+  const isAA = / AA$/i.test(product.name.trim())
 
   const stockVariant: BadgeVariant =
     product.stockCount <= STOCK_THRESHOLD_CRITICAL
@@ -37,7 +38,11 @@ export function ProductCard({ product, onEdit }: ProductCardProps) {
         <div className="mb-4 space-y-1.5">
           <div className="flex items-center justify-between">
             <span className="text-caption-md text-text-muted">재고</span>
-            <Badge variant={stockVariant}>{product.stockCount}개</Badge>
+            {isAA ? (
+              <Badge variant="gray">해당없음</Badge>
+            ) : (
+              <Badge variant={stockVariant}>{product.stockCount}개</Badge>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <span className="text-caption-md text-text-muted">네이버 상품 ID</span>
