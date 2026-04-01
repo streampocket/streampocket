@@ -88,7 +88,8 @@ export function AlimtalkSettingsForm() {
           <InfoRow label="API Key 설정" value={runtime?.apiKeyConfigured ? '설정됨' : '미설정'} />
           <InfoRow label="User ID" value={runtime?.userId ?? '-'} />
           <InfoRow label="발신 프로필 키" value={runtime?.senderKey ?? '-'} />
-          <InfoRow label="기본 템플릿 코드" value={runtime?.templateCode ?? '-'} />
+          <InfoRow label="템플릿 코드 (NA)" value={runtime?.templateCodeNA ?? '-'} />
+          <InfoRow label="템플릿 코드 (AA)" value={runtime?.templateCodeAA ?? '-'} />
           <InfoRow label="발신번호" value={runtime?.sender ?? '-'} />
           <InfoRow
             label="선택 템플릿"
@@ -107,7 +108,9 @@ export function AlimtalkSettingsForm() {
             <p className="text-caption-md text-text-muted">조회된 템플릿이 없습니다.</p>
           ) : (
             templates.map((template, index) => {
-              const isActive = template.templateCode === runtime?.templateCode
+              const isActive =
+                template.templateCode === runtime?.templateCodeNA ||
+                template.templateCode === runtime?.templateCodeAA
 
               return (
                 <div

@@ -46,6 +46,7 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   const { data: productsData } = useProducts({ status: 'active' })
   const { mutate: bulkCreate, isPending } = useBulkCreateAccounts()
 
+  const naProducts = productsData?.data.filter((p) => !/ AA$/i.test(p.name.trim())) ?? []
   const accounts = parseAccountLines(raw)
 
   const handleSubmit = () => {
@@ -87,7 +88,7 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
             )}
           >
             <option value="">상품을 선택하세요</option>
-            {productsData?.data.map((product) => (
+            {naProducts.map((product) => (
               <option key={product.id} value={product.id}>
                 {product.name}
               </option>
