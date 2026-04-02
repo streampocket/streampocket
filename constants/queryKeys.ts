@@ -19,4 +19,8 @@ export const QUERY_KEYS = {
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
   },
+  reviewCodes: {
+    all: () => ['reviewCodes'] as const,
+    list: (params?: Record<string, unknown>) => ['reviewCodes', params] as const,
+  },
 } as const
