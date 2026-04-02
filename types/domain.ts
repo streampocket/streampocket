@@ -108,3 +108,18 @@ export type AlimtalkTestResult = {
   providerMessageId: string | null
   providerMessage: string
 }
+
+/** 리뷰 코드 상태 */
+export type ReviewCodeStatus = 'unused' | 'used'
+
+/** 리뷰 게임 코드 */
+export type ReviewCode = {
+  id: string
+  gameName: string
+  code: string
+  status: ReviewCodeStatus
+  usedBy: string | null
+  usedAt: string | null
+  createdAt: string
+  updatedAt: string
+}

@@ -28,6 +28,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: '주문 관리', href: '/orders', icon: '📋' },
       { label: '상품 관리', href: '/products', icon: '📦' },
       { label: '계정 관리', href: '/codes', icon: '🔑' },
+      { label: '리뷰 게임 관리', href: '/review-codes', icon: '🎮' },
     ],
   },
   {
