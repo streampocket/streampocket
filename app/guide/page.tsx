@@ -29,56 +29,16 @@ export default function GuidePage() {
           </p>
         </section>
 
-        {/* 2. 빠른 확인 체크리스트 */}
-        <section className="bg-blue-50 border border-blue-200 rounded-xl p-5 space-y-4">
-          <h2 className="text-lg font-semibold text-blue-800">
-            빠른 확인 체크리스트
-          </h2>
-          <ul className="space-y-2 text-blue-700 text-sm">
-            <li>✓ 중국 계정 여부 먼저 확인</li>
-            <li>✓ 중국 계정 외 스팀가드 해제 필수</li>
-            <li>✓ 등록 완료 전 재설정 금지</li>
-          </ul>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="bg-white rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white text-xs font-bold shrink-0">
-                  1
-                </span>
-                <span className="font-medium text-gray-800">
-                  계정 상태 확인
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">
-                현재 상점 국가가 중국인지 먼저 확인합니다.
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white text-xs font-bold shrink-0">
-                  2
-                </span>
-                <span className="font-medium text-gray-800">스팀가드 해제</span>
-              </div>
-              <p className="text-sm text-gray-600">
-                중국 계정이 아니라면 해제 후 상태를 유지해야 합니다.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700">
-              상점 국가가 이미 중국이면 스팀가드 해제나 계정 정보 전달이 필요
-              없습니다.
-            </div>
-            <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700">
-              이메일 인증 해제는 버튼만 누르면 끝이 아니라 등록 이메일함에서
-              Confirm까지 완료해야 합니다.
-            </div>
-            <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700">
-              완료 연락을 받으면 즉시 비밀번호 변경 및 스팀가드 재활성화를
-              권장합니다.
-            </div>
-          </div>
+        {/* 2. 국가 변경 제한 정책 안내 */}
+        <section className="bg-red-50 border border-red-200 rounded-xl p-5">
+          <p className="text-sm text-red-800">
+            🚫 스팀(Steam) 정책상 국가 변경은 3개월에 한 번으로 제한되어
+            있습니다. 최근 3개월 이내에 국가를 변경한 이력이 있다면 다른 계정
+            사용을 부탁드립니다.
+            <span className="block mt-1 text-xs text-red-600">
+              (상점 국가: 중국 예외)
+            </span>
+          </p>
         </section>
 
         {/* 3. 중국 계정 경고 */}
