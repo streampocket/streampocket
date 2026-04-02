@@ -32,7 +32,7 @@ export function ReviewCodeFormModal({ reviewCode, onClose }: ReviewCodeFormModal
 
   useEffect(() => {
     if (reviewCode) {
-      setForm({ gameName: reviewCode.gameName, code: reviewCode.code })
+      setForm({ gameName: reviewCode.gameName ?? '', code: reviewCode.code })
     } else {
       setForm({ gameName: '', code: '' })
     }
@@ -79,7 +79,7 @@ export function ReviewCodeFormModal({ reviewCode, onClose }: ReviewCodeFormModal
       >
         <div className="space-y-3">
           <p className="text-body-md text-text-primary">
-            <span className="font-semibold">&quot;{reviewCode.gameName}&quot;</span> 코드를
+            <span className="font-semibold">&quot;{reviewCode.gameName ?? '(게임명 없음)'}&quot;</span> 코드를
             삭제하시겠습니까?
           </p>
           <p className="text-caption-md text-text-muted">이 작업은 되돌릴 수 없습니다.</p>
@@ -121,14 +121,13 @@ export function ReviewCodeFormModal({ reviewCode, onClose }: ReviewCodeFormModal
       <form id="review-code-form" onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-caption-md mb-1.5 block font-semibold text-text-secondary">
-            게임명 <span className="text-danger">*</span>
+            게임명
           </label>
           <input
             className={inputClass}
             placeholder="예) Stardew Valley"
-            value={form.gameName}
+            value={form.gameName ?? ''}
             onChange={(e) => setField('gameName', e.target.value)}
-            required
           />
         </div>
         <div>

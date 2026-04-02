@@ -12,7 +12,7 @@ export type ReviewCodeListParams = {
 export type ReviewCodeListResponse = PaginatedResponse<ReviewCode>
 
 export type ReviewCodeFormData = {
-  gameName: string
+  gameName?: string
   code: string
 }
 
