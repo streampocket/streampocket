@@ -115,7 +115,7 @@ export type ReviewCodeStatus = 'unused' | 'used'
 /** 리뷰 게임 코드 */
 export type ReviewCode = {
   id: string
-  gameName: string
+  gameName: string | null
   code: string
   status: ReviewCodeStatus
   usedBy: string | null
