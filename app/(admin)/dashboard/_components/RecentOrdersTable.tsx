@@ -16,6 +16,7 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   completed: { label: '완료', variant: 'green' },
   manual_review: { label: '수동처리', variant: 'red' },
   failed: { label: '실패', variant: 'gray' },
+  returned: { label: '반품', variant: 'purple' },
 }
 
 export function RecentOrdersTable() {

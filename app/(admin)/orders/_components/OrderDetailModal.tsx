@@ -25,6 +25,7 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   completed: { label: '처리 완료', variant: 'green' },
   manual_review: { label: '수동 처리 필요', variant: 'red' },
   failed: { label: '처리 실패', variant: 'gray' },
+  returned: { label: '반품', variant: 'purple' },
 }
 
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
@@ -111,6 +112,14 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                 {formatDate(order.updatedAt)}
               </dd>
             </div>
+            {order.returnedAt && (
+              <div>
+                <dt className="text-caption-md text-text-muted">반품일시</dt>
+                <dd className="mt-0.5 text-caption-md text-text-secondary">
+                  {formatDate(order.returnedAt)}
+                </dd>
+              </div>
+            )}
           </dl>
 
           {order.errorMessage && (

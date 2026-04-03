@@ -11,6 +11,7 @@ const STATUS_OPTIONS: { value: FulfillmentStatus | ''; label: string }[] = [
   { value: 'completed', label: '완료' },
   { value: 'manual_review', label: '수동처리' },
   { value: 'failed', label: '실패' },
+  { value: 'returned', label: '반품' },
 ]
 
 function toStartOfDay(date: string): string {
@@ -25,16 +26,17 @@ function toDateInput(iso: string): string {
   return iso.slice(0, 10)
 }
 
-function getTodayDate(): string {
-  return new Date()
-    .toLocaleDateString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    })
-    .replace(/\. /g, '-')
-    .replace('.', '')
+function getMonthRange(): { from: string; to: string } {
+  const now = new Date()
+  const koNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+  const year = koNow.getFullYear()
+  const month = koNow.getMonth()
+
+  const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`
+  const lastDate = new Date(year, month + 1, 0).getDate()
+  const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDate).padStart(2, '0')}`
+
+  return { from: firstDay, to: lastDay }
 }
 
 export function OrdersFilterBar() {
@@ -48,10 +50,10 @@ export function OrdersFilterBar() {
 
   useEffect(() => {
     if (!currentFrom && !currentTo) {
-      const today = getTodayDate()
+      const { from, to } = getMonthRange()
       const params = new URLSearchParams(searchParams.toString())
-      params.set('from', toStartOfDay(today))
-      params.set('to', toEndOfDay(today))
+      params.set('from', toStartOfDay(from))
+      params.set('to', toEndOfDay(to))
       router.replace(`${pathname}?${params.toString()}`)
     }
   }, [currentFrom, currentTo, pathname, router, searchParams])

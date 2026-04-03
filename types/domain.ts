@@ -1,5 +1,5 @@
 /** 주문 처리 상태 (Prisma FulfillmentStatus 기준) */
-export type FulfillmentStatus = 'pending' | 'completed' | 'manual_review' | 'failed'
+export type FulfillmentStatus = 'pending' | 'completed' | 'manual_review' | 'failed' | 'returned'
 
 /** 계정 상태 (Prisma AccountStatus 기준) */
 export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled'
@@ -40,6 +40,7 @@ export type SteamOrderItem = {
   fulfillmentStatus: FulfillmentStatus
   errorMessage: string | null
   paidAt: string | null
+  returnedAt: string | null
   createdAt: string
   updatedAt: string
   deliveryLogs?: DeliveryLog[]
