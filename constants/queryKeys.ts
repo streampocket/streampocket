@@ -14,7 +14,11 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['accounts', params] as const,
   },
   dashboard: {
-    stats: () => ['dashboard', 'stats'] as const,
+    stats: (period?: string) => ['dashboard', 'stats', period] as const,
+  },
+  settings: {
+    commission: () => ['settings', 'commission'] as const,
+    adjustment: (yearMonth: string) => ['settings', 'adjustment', yearMonth] as const,
   },
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
