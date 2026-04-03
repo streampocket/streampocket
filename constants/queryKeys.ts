@@ -18,7 +18,7 @@ export const QUERY_KEYS = {
   },
   settings: {
     commission: () => ['settings', 'commission'] as const,
-    adjustment: (yearMonth: string) => ['settings', 'adjustment', yearMonth] as const,
+    alimtalkCost: () => ['settings', 'alimtalk-cost'] as const,
   },
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
@@ -26,5 +26,10 @@ export const QUERY_KEYS = {
   reviewCodes: {
     all: () => ['reviewCodes'] as const,
     list: (params?: Record<string, unknown>) => ['reviewCodes', params] as const,
+  },
+  expenses: {
+    all: () => ['expenses'] as const,
+    list: (params?: Record<string, unknown>) => ['expenses', params] as const,
+    summary: (params?: Record<string, unknown>) => ['expenses', 'summary', params] as const,
   },
 } as const

@@ -73,19 +73,39 @@ export type SteamAccount = {
   createdAt: string
 }
 
-/** 매출 수치 3종 */
-export type RevenueValues = {
-  payment: number
-  commission: number
-  net: number
+/** 비용 카테고리 */
+export type ExpenseCategory = 'game_purchase' | 'country_change' | 'review_game' | 'other'
+
+/** 비용 항목 */
+export type Expense = {
+  id: string
+  date: string
+  category: ExpenseCategory
+  amount: number
+  memo: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+/** 매출 비용 내역 */
+export type RevenueCosts = {
+  naverCommission: number
+  alimtalk: number
+  gamePurchase: number
+  countryChange: number
+  reviewGame: number
+  other: number
 }
 
 /** 매출 통계 */
 export type RevenueData = {
-  auto: RevenueValues
-  adjustment: RevenueValues
-  total: RevenueValues
+  totalRevenue: number
+  costs: RevenueCosts
+  totalCosts: number
+  netProfit: number
   commissionRate: number
+  alimtalkUnitCost: number
+  alimtalkCount: number
 }
 
 /** 대시보드 통계 */
@@ -95,15 +115,6 @@ export type DashboardStats = {
   manualReviewOrders: number
   lowStockProducts: number
   revenue: RevenueData
-}
-
-/** 월별 보정액 */
-export type MonthlyAdjustment = {
-  yearMonth: string
-  paymentAdjustment: number
-  commissionAdjustment: number
-  netRevenueAdjustment: number
-  memo: string | null
 }
 
 export type AlimtalkTemplate = {

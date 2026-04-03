@@ -1,3 +1,5 @@
+'use client'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { QUERY_KEYS } from '@/constants/queryKeys'
@@ -21,6 +23,7 @@ export function useUpdateCommissionRate() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings', 'commission'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['expenses'] })
     },
   })
 }
