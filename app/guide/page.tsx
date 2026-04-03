@@ -38,6 +38,11 @@ export default function GuidePage() {
             <span className="block mt-1 text-xs text-red-600">
               (상점 국가: 중국 예외)
             </span>
+            <span className="block mt-2 text-sm text-red-700">
+              AA 상품은 스팀게임을 선물로 보내드리는 상품입니다. 선물해주는
+              계정의 국가가 중국이기 때문에, 상점 국가를 중국으로 변경해야
+              하니, 아래 가이드를 참고해주세요.
+            </span>
           </p>
         </section>
 
@@ -173,7 +178,7 @@ export default function GuidePage() {
 
 7. 국가 변경 정책(3개월 제한) 및 등록 이후 환불 불가 동의 :
 
-8. 캡쳐 이미지(중국 계정만) :`}
+8. 캡쳐 이미지 :`}
             </pre>
           </div>
         </section>
