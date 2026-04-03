@@ -17,7 +17,6 @@ export const QUERY_KEYS = {
     stats: (period?: string) => ['dashboard', 'stats', period] as const,
   },
   settings: {
-    commission: () => ['settings', 'commission'] as const,
     alimtalkCost: () => ['settings', 'alimtalk-cost'] as const,
   },
   alimtalk: {

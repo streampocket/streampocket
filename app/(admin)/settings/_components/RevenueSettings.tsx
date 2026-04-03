@@ -3,32 +3,14 @@
 import { useState, useCallback } from 'react'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { useCommissionRate, useUpdateCommissionRate } from '@/hooks/useCommissionRate'
 import { useAlimtalkCost, useUpdateAlimtalkCost } from '@/hooks/useAlimtalkCost'
 
 export function RevenueSettings() {
-  const { data: commissionRate, isLoading: loadingRate } = useCommissionRate()
   const { data: alimtalkCost, isLoading: loadingCost } = useAlimtalkCost()
-  const updateRate = useUpdateCommissionRate()
   const updateCost = useUpdateAlimtalkCost()
 
-  const [editingRate, setEditingRate] = useState(false)
-  const [rateInput, setRateInput] = useState('')
   const [editingCost, setEditingCost] = useState(false)
   const [costInput, setCostInput] = useState('')
-
-  const handleEditRate = useCallback(() => {
-    setRateInput(String(commissionRate ?? 0))
-    setEditingRate(true)
-  }, [commissionRate])
-
-  const handleSaveRate = useCallback(() => {
-    const value = parseFloat(rateInput)
-    if (isNaN(value) || value < 0 || value > 100) return
-    updateRate.mutate(value, {
-      onSuccess: () => setEditingRate(false),
-    })
-  }, [rateInput, updateRate])
 
   const handleEditCost = useCallback(() => {
     setCostInput(String(alimtalkCost ?? 6.5))
@@ -50,52 +32,10 @@ export function RevenueSettings() {
       </CardHeader>
       <CardBody>
         <div className="space-y-4">
-          {/* 수수료율 */}
-          <div className="flex items-center justify-between rounded-lg border border-border p-4">
-            <div>
-              <p className="text-body-md font-medium text-text-primary">네이버 수수료율</p>
-              <p className="text-caption-md text-text-muted">
-                구매자 결제 금액에서 네이버가 차감하는 비율
-              </p>
-            </div>
-            {editingRate ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={rateInput}
-                  onChange={(e) => setRateInput(e.target.value)}
-                  className="w-24 rounded-lg border border-border bg-card-bg px-3 py-1.5 text-body-sm text-text-primary focus:border-brand focus:outline-none"
-                />
-                <span className="text-body-sm text-text-muted">%</span>
-                <Button size="sm" onClick={handleSaveRate} loading={updateRate.isPending}>
-                  저장
-                </Button>
-                <Button variant="secondary" size="sm" onClick={() => setEditingRate(false)}>
-                  취소
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span className="text-body-md font-semibold text-text-primary">
-                  {loadingRate ? '-' : `${commissionRate}%`}
-                </span>
-                <Button variant="secondary" size="sm" onClick={handleEditRate}>
-                  수정
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {/* 알림톡 단가 */}
           <div className="flex items-center justify-between rounded-lg border border-border p-4">
             <div>
               <p className="text-body-md font-medium text-text-primary">알림톡 단가</p>
-              <p className="text-caption-md text-text-muted">
-                건당 알림톡 발송 비용
-              </p>
+              <p className="text-caption-md text-text-muted">건당 알림톡 발송 비용</p>
             </div>
             {editingCost ? (
               <div className="flex items-center gap-2">
@@ -126,6 +66,10 @@ export function RevenueSettings() {
               </div>
             )}
           </div>
+
+          <p className="text-caption-sm text-text-muted">
+            네이버 수수료는 구매확정 시 네이버가 자동 계산하여 정산금에 반영됩니다.
+          </p>
         </div>
       </CardBody>
     </Card>

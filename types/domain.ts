@@ -37,6 +37,8 @@ export type SteamOrderItem = {
   receiverPhoneNumber: string | null
   receiverName: string | null
   unitPrice: number
+  settlementAmount: number | null
+  decisionDate: string | null
   fulfillmentStatus: FulfillmentStatus
   errorMessage: string | null
   paidAt: string | null
@@ -100,10 +102,11 @@ export type RevenueCosts = {
 /** 매출 통계 */
 export type RevenueData = {
   totalRevenue: number
+  totalSettlement: number
   costs: RevenueCosts
   totalCosts: number
   netProfit: number
-  commissionRate: number
+  pendingSettlement: number
   alimtalkUnitCost: number
   alimtalkCount: number
 }

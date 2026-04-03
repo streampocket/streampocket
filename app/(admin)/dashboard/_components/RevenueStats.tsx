@@ -50,12 +50,12 @@ export function RevenueStats() {
       <CardBody>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatCard
-            label="총 매출"
+            label="총 판매금"
             value={isLoading ? '-' : formatCurrency(revenue?.totalRevenue ?? 0)}
           />
           <StatCard
-            label="총 비용"
-            value={isLoading ? '-' : formatCurrency(revenue?.totalCosts ?? 0)}
+            label="정산금"
+            value={isLoading ? '-' : formatCurrency(revenue?.totalSettlement ?? 0)}
           />
           <StatCard
             label="순수익"
@@ -66,6 +66,12 @@ export function RevenueStats() {
             value={isLoading ? '-' : formatCurrency(Math.round((revenue?.netProfit ?? 0) / 2))}
           />
         </div>
+
+        {!isLoading && (revenue?.pendingSettlement ?? 0) > 0 && (
+          <p className="mt-2 text-caption-md text-text-muted">
+            구매확정 대기: {formatCurrency(revenue?.pendingSettlement ?? 0)}
+          </p>
+        )}
 
         <div className="mt-3 flex justify-end">
           <Link

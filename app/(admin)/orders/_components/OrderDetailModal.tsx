@@ -120,9 +120,23 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               </dd>
             </div>
             <div>
+              <dt className="text-caption-md text-text-muted">정산금</dt>
+              <dd className="mt-0.5 text-caption-md text-text-primary">
+                {order.settlementAmount != null
+                  ? `${order.settlementAmount.toLocaleString()}원`
+                  : '-'}
+              </dd>
+            </div>
+            <div>
               <dt className="text-caption-md text-text-muted">결제일시</dt>
               <dd className="mt-0.5 text-caption-md text-text-secondary">
                 {order.paidAt ? formatDate(order.paidAt) : '-'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-caption-md text-text-muted">구매확정일</dt>
+              <dd className="mt-0.5 text-caption-md text-text-secondary">
+                {order.decisionDate ? formatDate(order.decisionDate) : '대기중'}
               </dd>
             </div>
             <div>

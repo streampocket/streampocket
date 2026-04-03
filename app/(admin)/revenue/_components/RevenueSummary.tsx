@@ -25,12 +25,12 @@ export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
       <CardBody>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <StatCard
-            label="총 매출"
+            label="총 판매금"
             value={loading ? '-' : fmt(data.totalRevenue)}
           />
           <StatCard
-            label="총 비용"
-            value={loading ? '-' : fmt(data.totalCosts)}
+            label="정산금"
+            value={loading ? '-' : fmt(data.totalSettlement)}
           />
           <StatCard
             label="순수익"
@@ -38,7 +38,11 @@ export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
           />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <StatCard
+            label="총 비용"
+            value={loading ? '-' : fmt(data.totalCosts)}
+          />
           <StatCard
             label="인당 비용"
             value={loading ? '-' : fmt(Math.round(data.totalCosts / 2))}
@@ -49,16 +53,24 @@ export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
           />
         </div>
 
+        {!loading && data.pendingSettlement > 0 && (
+          <p className="mt-3 text-caption-md text-text-muted">
+            구매확정 대기: {fmt(data.pendingSettlement)}
+          </p>
+        )}
+
         {!loading && (
           <div className="mt-4 rounded-lg border border-border p-4">
             <h3 className="mb-3 text-body-md font-semibold text-text-primary">비용 상세</h3>
             <div className="space-y-2 text-body-sm text-text-secondary">
               <div className="flex justify-between">
-                <span>네이버 수수료 ({data.commissionRate}%)</span>
+                <span>네이버 수수료</span>
                 <span>{fmt(data.costs.naverCommission)}</span>
               </div>
               <div className="flex justify-between">
-                <span>알림톡 ({data.alimtalkCount}건 × {data.alimtalkUnitCost}원)</span>
+                <span>
+                  알림톡 ({data.alimtalkCount}건 × {data.alimtalkUnitCost}원)
+                </span>
                 <span>{fmt(data.costs.alimtalk)}</span>
               </div>
               <div className="flex justify-between">
