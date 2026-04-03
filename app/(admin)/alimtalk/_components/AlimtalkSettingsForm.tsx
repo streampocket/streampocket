@@ -90,6 +90,7 @@ export function AlimtalkSettingsForm() {
           <InfoRow label="발신 프로필 키" value={runtime?.senderKey ?? '-'} />
           <InfoRow label="템플릿 코드 (NA)" value={runtime?.templateCodeNA ?? '-'} />
           <InfoRow label="템플릿 코드 (AA)" value={runtime?.templateCodeAA ?? '-'} />
+          <InfoRow label="템플릿 코드 (NA 2차이메일)" value={runtime?.templateCodeNASecondary ?? '-'} />
           <InfoRow label="발신번호" value={runtime?.sender ?? '-'} />
           <InfoRow
             label="선택 템플릿"
@@ -110,7 +111,8 @@ export function AlimtalkSettingsForm() {
             templates.map((template, index) => {
               const isActive =
                 template.templateCode === runtime?.templateCodeNA ||
-                template.templateCode === runtime?.templateCodeAA
+                template.templateCode === runtime?.templateCodeAA ||
+                template.templateCode === runtime?.templateCodeNASecondary
 
               return (
                 <div

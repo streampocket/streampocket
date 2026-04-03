@@ -22,6 +22,8 @@ type AccountFormState = {
   email: string
   emailPassword: string
   emailSiteUrl: string
+  secondaryEmail: string
+  secondaryEmailPassword: string
 }
 
 const STATUS_MAP: Record<AccountStatus, { label: string; variant: BadgeVariant }> = {
@@ -44,6 +46,8 @@ function toFormState(account: SteamAccount): AccountFormState {
     email: account.email,
     emailPassword: account.emailPassword,
     emailSiteUrl: account.emailSiteUrl,
+    secondaryEmail: account.secondaryEmail ?? '',
+    secondaryEmailPassword: account.secondaryEmailPassword ?? '',
   }
 }
 
@@ -58,6 +62,8 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
     email: '',
     emailPassword: '',
     emailSiteUrl: '',
+    secondaryEmail: '',
+    secondaryEmailPassword: '',
   })
 
   useEffect(() => {
@@ -69,6 +75,8 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
         email: '',
         emailPassword: '',
         emailSiteUrl: '',
+        secondaryEmail: '',
+        secondaryEmailPassword: '',
       })
       return
     }
@@ -103,7 +111,11 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
 
     updateAccount({
       id: account.id,
-      data: form,
+      data: {
+        ...form,
+        secondaryEmail: form.secondaryEmail || null,
+        secondaryEmailPassword: form.secondaryEmailPassword || null,
+      },
     })
   }
 
@@ -224,6 +236,30 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
                 required
               />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1.5 block text-caption-md font-semibold text-text-secondary">
+                  2차 이메일 <span className="text-text-muted">(선택)</span>
+                </label>
+                <input
+                  className={inputClass}
+                  value={form.secondaryEmail}
+                  onChange={(event) => setField('secondaryEmail', event.target.value)}
+                  placeholder="없으면 비워두세요"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-caption-md font-semibold text-text-secondary">
+                  2차 이메일 비밀번호 <span className="text-text-muted">(선택)</span>
+                </label>
+                <input
+                  className={inputClass}
+                  value={form.secondaryEmailPassword}
+                  onChange={(event) => setField('secondaryEmailPassword', event.target.value)}
+                  placeholder="없으면 비워두세요"
+                />
+              </div>
+            </div>
             <div>
               <p className="text-caption-md text-text-muted">등록일</p>
               <p className="mt-0.5 text-caption-md text-text-secondary">
@@ -261,6 +297,22 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
               <dt className="text-caption-md text-text-muted">이메일 사이트 URL</dt>
               <dd className="mt-0.5 text-caption-md text-text-secondary">{account.emailSiteUrl}</dd>
             </div>
+            {account.secondaryEmail && (
+              <>
+                <div>
+                  <dt className="text-caption-md text-text-muted">2차 이메일</dt>
+                  <dd className="mt-0.5 font-mono text-caption-md text-text-secondary">
+                    {account.secondaryEmail}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-caption-md text-text-muted">2차 이메일 비밀번호</dt>
+                  <dd className="mt-0.5 font-mono text-caption-md text-text-secondary">
+                    {account.secondaryEmailPassword}
+                  </dd>
+                </div>
+              </>
+            )}
             <div>
               <dt className="text-caption-md text-text-muted">등록일</dt>
               <dd className="mt-0.5 text-caption-md text-text-secondary">

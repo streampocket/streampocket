@@ -10,6 +10,8 @@ type UpdateAccountInput = {
     email: string
     emailPassword: string
     emailSiteUrl: string
+    secondaryEmail?: string | null
+    secondaryEmailPassword?: string | null
   }
 }
 

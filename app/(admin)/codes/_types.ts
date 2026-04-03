@@ -13,5 +13,7 @@ export type BulkCreateBody = {
     email: string
     emailPassword: string
     emailSiteUrl: string
+    secondaryEmail?: string
+    secondaryEmailPassword?: string
   }>
 }
