@@ -8,6 +8,7 @@ import { formatDate } from '@/lib/utils'
 import type { DeliveryLogStatus, FulfillmentStatus } from '@/types/domain'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
+import { useManualReturn } from '../_hooks/useManualReturn'
 
 type OrderDetailModalProps = {
   orderId: string | null
@@ -31,10 +32,15 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
+  const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const canRetry =
     order?.fulfillmentStatus === 'manual_review' || order?.fulfillmentStatus === 'failed'
+  const canReturn =
+    order?.fulfillmentStatus === 'completed' ||
+    order?.fulfillmentStatus === 'manual_review' ||
+    order?.fulfillmentStatus === 'failed'
 
   return (
     <Modal
@@ -46,6 +52,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
           <Button variant="secondary" onClick={onClose}>
             닫기
           </Button>
+          {canReturn && (
+            <Button
+              variant="danger"
+              loading={isReturning}
+              onClick={() => {
+                if (order && window.confirm('이 주문을 반품 처리하시겠습니까?')) {
+                  manualReturn(order.id)
+                }
+              }}
+            >
+              반품 처리
+            </Button>
+          )}
           {canRetry && (
             <Button
               variant="primary"
