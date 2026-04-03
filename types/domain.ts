@@ -73,12 +73,37 @@ export type SteamAccount = {
   createdAt: string
 }
 
+/** 매출 수치 3종 */
+export type RevenueValues = {
+  payment: number
+  commission: number
+  net: number
+}
+
+/** 매출 통계 */
+export type RevenueData = {
+  auto: RevenueValues
+  adjustment: RevenueValues
+  total: RevenueValues
+  commissionRate: number
+}
+
 /** 대시보드 통계 */
 export type DashboardStats = {
   todayOrders: number
   pendingOrders: number
   manualReviewOrders: number
   lowStockProducts: number
+  revenue: RevenueData
+}
+
+/** 월별 보정액 */
+export type MonthlyAdjustment = {
+  yearMonth: string
+  paymentAdjustment: number
+  commissionAdjustment: number
+  netRevenueAdjustment: number
+  memo: string | null
 }
 
 export type AlimtalkTemplate = {
