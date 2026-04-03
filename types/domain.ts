@@ -66,6 +66,8 @@ export type SteamAccount = {
   email: string
   emailPassword: string
   emailSiteUrl: string
+  secondaryEmail: string | null
+  secondaryEmailPassword: string | null
   status: AccountStatus
   createdAt: string
 }
@@ -95,6 +97,7 @@ export type AlimtalkSettings = {
     senderKey: string | null
     templateCodeNA: string | null
     templateCodeAA: string | null
+    templateCodeNASecondary: string | null
     sender: string | null
     providerConnected: boolean
     providerMessage: string

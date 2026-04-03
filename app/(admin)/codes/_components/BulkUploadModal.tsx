@@ -17,20 +17,26 @@ function parseAccountLines(raw: string): Array<{
   email: string
   emailPassword: string
   emailSiteUrl: string
+  secondaryEmail?: string
+  secondaryEmailPassword?: string
 }> {
   return raw
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const [username = '', password = '', email = '', emailPassword = '', emailSiteUrl = ''] =
-        line.split(':')
+      const parts = line.split(':')
+      const [username = '', password = '', email = '', emailPassword = '', emailSiteUrl = ''] = parts
+      const secondaryEmail = parts[5]?.trim() || undefined
+      const secondaryEmailPassword = parts[6]?.trim() || undefined
       return {
         username: username.trim(),
         password: password.trim(),
         email: email.trim(),
         emailPassword: emailPassword.trim(),
         emailSiteUrl: emailSiteUrl.trim(),
+        ...(secondaryEmail ? { secondaryEmail } : {}),
+        ...(secondaryEmailPassword ? { secondaryEmailPassword } : {}),
       }
     })
     .filter(
@@ -104,7 +110,7 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
             value={raw}
             onChange={(e) => setRaw(e.target.value)}
             rows={8}
-            placeholder={'아이디:비번:이메일:이메일비번:이메일홈피 형식으로 입력\n예) user123:pass456:user@gmail.com:mailpass:https://gmail.com\n한 줄에 한 계정'}
+            placeholder={'아이디:비번:이메일:이메일비번:이메일홈피[:2차이메일:2차이메일비번]\n예) user123:pass456:user@gmail.com:mailpass:https://gmail.com\n예) user123:pass456:user@gmail.com:mailpass:https://gmail.com:sec@mail.com:secpass\n한 줄에 한 계정'}
             className={cn(
               'w-full resize-none rounded-lg border border-border bg-white px-3 py-2',
               'font-mono text-caption-md text-text-primary placeholder:text-text-muted',
@@ -121,8 +127,8 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
           <p className="text-caption-md font-semibold text-brand-dark">입력 형식 안내</p>
           <p className="text-caption-sm mt-1 text-text-secondary">
             각 줄에{' '}
-            <code className="font-mono">아이디:비번:이메일:이메일비번:이메일홈피</code>{' '}
-            형식으로 입력하세요. 콜론(:)을 구분자로 사용하며 5개 항목 모두 필수입니다.
+            <code className="font-mono">아이디:비번:이메일:이메일비번:이메일홈피[:2차이메일:2차이메일비번]</code>{' '}
+            형식으로 입력하세요. 콜론(:)을 구분자로 사용하며 앞 5개 항목은 필수, 2차 이메일과 비밀번호는 선택입니다.
           </p>
         </div>
       </div>
