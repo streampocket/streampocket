@@ -24,6 +24,7 @@ type AccountFormState = {
   emailSiteUrl: string
   secondaryEmail: string
   secondaryEmailPassword: string
+  secondaryEmailSiteUrl: string
 }
 
 const STATUS_MAP: Record<AccountStatus, { label: string; variant: BadgeVariant }> = {
@@ -31,6 +32,7 @@ const STATUS_MAP: Record<AccountStatus, { label: string; variant: BadgeVariant }
   reserved: { label: '예약됨', variant: 'yellow' },
   sent: { label: '발송 완료', variant: 'blue' },
   disabled: { label: '비활성화', variant: 'gray' },
+  manual: { label: '수동', variant: 'purple' },
 }
 
 const inputClass = cn(
@@ -48,6 +50,7 @@ function toFormState(account: SteamAccount): AccountFormState {
     emailSiteUrl: account.emailSiteUrl,
     secondaryEmail: account.secondaryEmail ?? '',
     secondaryEmailPassword: account.secondaryEmailPassword ?? '',
+    secondaryEmailSiteUrl: account.secondaryEmailSiteUrl ?? '',
   }
 }
 
@@ -64,6 +67,7 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
     emailSiteUrl: '',
     secondaryEmail: '',
     secondaryEmailPassword: '',
+    secondaryEmailSiteUrl: '',
   })
 
   useEffect(() => {
@@ -77,6 +81,7 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
         emailSiteUrl: '',
         secondaryEmail: '',
         secondaryEmailPassword: '',
+        secondaryEmailSiteUrl: '',
       })
       return
     }
@@ -115,6 +120,7 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
         ...form,
         secondaryEmail: form.secondaryEmail || null,
         secondaryEmailPassword: form.secondaryEmailPassword || null,
+        secondaryEmailSiteUrl: form.secondaryEmailSiteUrl || null,
       },
     })
   }
@@ -261,6 +267,17 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
               </div>
             </div>
             <div>
+              <label className="mb-1.5 block text-caption-md font-semibold text-text-secondary">
+                2차 이메일 플랫폼 <span className="text-text-muted">(선택)</span>
+              </label>
+              <input
+                className={inputClass}
+                value={form.secondaryEmailSiteUrl}
+                onChange={(event) => setField('secondaryEmailSiteUrl', event.target.value)}
+                placeholder="없으면 비워두세요"
+              />
+            </div>
+            <div>
               <p className="text-caption-md text-text-muted">등록일</p>
               <p className="mt-0.5 text-caption-md text-text-secondary">
                 {formatDate(account.createdAt)}
@@ -311,6 +328,14 @@ export function AccountDetailModal({ account, onClose }: AccountDetailModalProps
                     {account.secondaryEmailPassword}
                   </dd>
                 </div>
+                {account.secondaryEmailSiteUrl && (
+                  <div className="col-span-2">
+                    <dt className="text-caption-md text-text-muted">2차 이메일 플랫폼</dt>
+                    <dd className="mt-0.5 text-caption-md text-text-secondary">
+                      {account.secondaryEmailSiteUrl}
+                    </dd>
+                  </div>
+                )}
               </>
             )}
             <div>
