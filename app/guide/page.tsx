@@ -88,9 +88,6 @@ export default function GuidePage() {
           <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
             📥 카카오톡 등록 접수 양식
           </h4>
-          <p className="text-sm text-yellow-700">
-            스팀가드 해제 완료 후 아래 양식을 그대로 보내주세요
-          </p>
           <div className="relative">
             <div className="absolute right-3 top-3">
               <CopyFormButton
