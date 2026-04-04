@@ -64,7 +64,9 @@ export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
             <h3 className="mb-3 text-body-md font-semibold text-text-primary">비용 상세</h3>
             <div className="space-y-2 text-body-sm text-text-secondary">
               <div className="flex justify-between">
-                <span>네이버 수수료</span>
+                <span>
+                  네이버 수수료 ({data.totalRevenue > 0 ? ((data.costs.naverCommission / data.totalRevenue) * 100).toFixed(1) : '0.0'}%)
+                </span>
                 <span>{fmt(data.costs.naverCommission)}</span>
               </div>
               <div className="flex justify-between">

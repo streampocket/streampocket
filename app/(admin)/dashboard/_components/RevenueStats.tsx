@@ -20,7 +20,7 @@ function formatCurrency(value: number): string {
 }
 
 export function RevenueStats() {
-  const [period, setPeriod] = useState<Period>('month')
+  const [period, setPeriod] = useState<Period>('all')
   const { data, isLoading } = useDashboardStats(period)
 
   const revenue = data?.revenue
@@ -48,7 +48,7 @@ export function RevenueStats() {
         </div>
       </CardHeader>
       <CardBody>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <StatCard
             label="총 판매금"
             value={isLoading ? '-' : formatCurrency(revenue?.totalRevenue ?? 0)}
@@ -60,6 +60,17 @@ export function RevenueStats() {
           <StatCard
             label="순수익"
             value={isLoading ? '-' : formatCurrency(revenue?.netProfit ?? 0)}
+          />
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <StatCard
+            label="총 비용"
+            value={isLoading ? '-' : formatCurrency(revenue?.totalCosts ?? 0)}
+          />
+          <StatCard
+            label="인당 비용"
+            value={isLoading ? '-' : formatCurrency(Math.round((revenue?.totalCosts ?? 0) / 2))}
           />
           <StatCard
             label="인당 수익"
