@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-const FORM_TEXT = `1. 스팀 등록 ID :
+const DEFAULT_FORM_TEXT = `1. 스팀 등록 ID :
 
 2. 스팀 등록 PW :
 
@@ -14,13 +14,17 @@ const FORM_TEXT = `1. 스팀 등록 ID :
 
 6. 구매자 성함 :
 
-7. 국가 변경 정책(3개월 제한) 및 등록 이후 환불 불가 동의 :`
+7. 국가 변경 및 등록 이후 환불 불가 동의 :`
 
-export function CopyFormButton() {
+type CopyFormButtonProps = {
+  text?: string
+}
+
+export function CopyFormButton({ text }: CopyFormButtonProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(FORM_TEXT)
+    await navigator.clipboard.writeText(text ?? DEFAULT_FORM_TEXT)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }

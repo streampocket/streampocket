@@ -40,8 +40,8 @@ export default function GuidePage() {
             </span>
             <span className="block mt-2 text-sm text-red-700">
               AA 상품은 스팀게임을 선물로 보내드리는 상품입니다. 선물해주는
-              계정의 국가가 중국이기 때문에, 상점 국가를 중국으로 변경해야
-              하니, 아래 가이드를 참고해주세요.
+              계정의 국가가 중국이기 때문에, 상점 국가를 중국으로 변경해야 하니,
+              아래 가이드를 참고해주세요.
             </span>
           </p>
         </section>
@@ -85,28 +85,110 @@ export default function GuidePage() {
             height={400}
             className="rounded-lg w-full md:max-w-md"
           />
+          <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+            📥 카카오톡 등록 접수 양식
+          </h4>
+          <p className="text-sm text-yellow-700">
+            스팀가드 해제 완료 후 아래 양식을 그대로 보내주세요
+          </p>
+          <div className="relative">
+            <div className="absolute right-3 top-3">
+              <CopyFormButton
+                text={`1. 구매하신 게임 :\n\n2. 구매 날짜 :\n\n3. 구매자 성함 :\n\n4. 국가 변경 및 등록 이후 환불 불가 동의 :\n\n5. 캡쳐 이미지 :`}
+              />
+            </div>
+            <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 pt-10 text-sm font-mono whitespace-pre overflow-x-auto leading-relaxed">
+              {`1. 구매하신 게임 :
+
+2. 구매 날짜 :
+
+3. 구매자 성함 :
+
+4. 국가 변경 및 등록 이후 환불 불가 동의 :
+
+5. 캡쳐 이미지 :`}
+            </pre>
+          </div>
         </section>
 
-        {/* 4. 스팀가드 해제 방법 */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            🔐 스팀가드 해제 방법
+        {/* 4. 중국 계정 사용자 아닌경우 */}
+        <section className="space-y-8">
+          <h2 className="text-lg font-semibold text-gray-800">
+            중국 계정 사용자 아닌경우
           </h2>
-          <p className="text-sm text-gray-600">
-            중국 계정 외 사용자라면 아래 순서대로 진행해 주세요. 원활한 게임
-            등록을 위해 반드시 스팀가드를 해제한 상태로 대기해 주셔야 합니다.
-          </p>
-          <div className="bg-gray-50 border rounded-xl p-5 space-y-2">
-            <p className="font-medium text-gray-800">
-              모바일 인증기(OTP) 사용자
+
+          {/* (1) OTP 사용자 */}
+          <div className="bg-green-50 rounded-xl border border-green-200 p-5 space-y-4">
+            <h3 className="text-lg font-semibold text-green-800">
+              (1) 모바일 앱 인증기(OTP)를 사용하신다면?
+            </h3>
+            <p className="text-sm text-gray-700">
+              스팀가드 해제없이 아래 링크 클릭 후 사진에 나온대로 접속하신다음
+              양식을 카카오톡으로 접수!
             </p>
-            <p className="text-sm text-gray-600">
-              스마트폰 스팀(Steam) 앱에 접속하여 [인증기 삭제]를 진행해 주세요.
-              인증기를 삭제하면 자동으로 이메일 인증 방식으로 전환됩니다.
-            </p>
+            <Link
+              href="https://store.steampowered.com/twofactor/manage_action"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-brand underline text-sm"
+            >
+              👉 여기 클릭 (Steam Guard 관리)
+            </Link>
+            <div className="space-y-3">
+              <Image
+                src="/images/guide/스팀가드관리.png"
+                alt="Steam Guard 관리 페이지에서 백업 코드 받기 클릭"
+                width={600}
+                height={400}
+                className="rounded-lg w-full md:max-w-md"
+              />
+              <Image
+                src="/images/guide/예비코드입력.png"
+                alt="Steam Guard 예비 코드 - SMS 인증 코드 입력"
+                width={600}
+                height={400}
+                className="rounded-lg w-full md:max-w-md"
+              />
+              <Image
+                src="/images/guide/예비코드결과.png"
+                alt="Steam Guard 예비 코드 - 생성된 백업 코드 확인"
+                width={600}
+                height={400}
+                className="rounded-lg w-full md:max-w-md"
+              />
+            </div>
+            <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+              📥 카카오톡 등록 접수 양식
+            </h4>
+            <div className="relative">
+              <div className="absolute right-3 top-3">
+                <CopyFormButton
+                  text={`1. 스팀 등록 ID :\n\n2. 스팀 등록 PW :\n\n3. 구매하신 게임 :\n\n4. 구매 날짜 :\n\n5. 구매자 성함 :\n\n6. 1회용 Steam Guard 코드 3개(위 마지막 사진의 빨간색 네모박스 코드) :\n\n7. 국가 변경 정책(3개월 제한) 및 등록 이후 환불 불가 동의 :`}
+                />
+              </div>
+              <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 pt-10 text-sm font-mono whitespace-pre overflow-x-auto leading-relaxed">
+                {`1. 스팀 등록 ID :
+
+2. 스팀 등록 PW :
+
+3. 구매하신 게임 :
+
+4. 구매 날짜 :
+
+5. 구매자 성함 :
+
+6. 1회용 Steam Guard 코드 3개 (위 마지막 사진의 빨간색 네모박스 코드) :
+
+7. 국가 변경 및 등록 이후 환불 불가 동의:`}
+              </pre>
+            </div>
           </div>
-          <div className="space-y-3">
-            <p className="font-medium text-gray-800">이메일 인증 사용자</p>
+
+          {/* (2) 이메일 인증 사용자 */}
+          <div className="bg-purple-50 rounded-xl border border-purple-200 p-5 space-y-3">
+            <h3 className="text-lg font-semibold text-purple-800">
+              (2) 이메일 인증 사용자라면?
+            </h3>
             <ol className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-gray-700">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white text-xs font-bold shrink-0 mt-0.5">
@@ -144,27 +226,18 @@ export default function GuidePage() {
                 가족 모드 비활성화: 설정되어 있다면 반드시 꺼주세요.
               </li>
             </ol>
-          </div>
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-sm text-orange-800">
-            게임 등록이 완전히 완료될 때까지 스팀가드 해제 상태를 반드시 유지해
-            주세요. 중간에 다시 켜질 경우 등록이 중단됩니다.
-          </div>
-        </section>
-
-        {/* 5. 카카오톡 등록 접수 양식 */}
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            📥 카카오톡 등록 접수 양식
-          </h2>
-          <p className="text-sm text-gray-600">
-            스팀가드 해제 완료 후 아래 양식을 그대로 보내주세요
-          </p>
-          <div className="relative">
-            <div className="absolute right-3 top-3">
-              <CopyFormButton />
-            </div>
-            <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 pt-10 text-sm font-mono whitespace-pre overflow-x-auto leading-relaxed">
-              {`1. 스팀 등록 ID :
+            <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2 mt-4">
+              📥 카카오톡 등록 접수 양식
+            </h4>
+            <p className="text-sm text-gray-600">
+              스팀가드 해제 완료 후 아래 양식을 그대로 보내주세요
+            </p>
+            <div className="relative">
+              <div className="absolute right-3 top-3">
+                <CopyFormButton />
+              </div>
+              <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 pt-10 text-sm font-mono whitespace-pre overflow-x-auto leading-relaxed">
+                {`1. 스팀 등록 ID :
 
 2. 스팀 등록 PW :
 
@@ -176,14 +249,18 @@ export default function GuidePage() {
 
 6. 구매자 성함 :
 
-7. 국가 변경 정책(3개월 제한) 및 등록 이후 환불 불가 동의 :
-
-8. 캡쳐 이미지 :`}
-            </pre>
+7. 국가 변경 및 등록 이후 환불 불가 동의 :`}
+              </pre>
+            </div>
           </div>
         </section>
 
-        {/* 6. 등록 진행 안내 */}
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-sm text-orange-800">
+          게임 등록이 완전히 완료될 때까지 스팀가드 해제 상태를 반드시 유지해
+          주세요. 중간에 다시 켜질 경우 등록이 중단됩니다.
+        </div>
+
+        {/* 5. 등록 진행 안내 */}
         <section className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             ✅ 등록 진행 안내
