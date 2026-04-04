@@ -16,6 +16,7 @@ const STATUS_MAP: Record<AccountStatus, { label: string; variant: BadgeVariant }
   reserved: { label: '선점됨', variant: 'yellow' },
   sent: { label: '발송 완료', variant: 'blue' },
   disabled: { label: '비활성화', variant: 'gray' },
+  manual: { label: '수동', variant: 'purple' },
 }
 
 export function CodesTable() {

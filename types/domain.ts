@@ -2,7 +2,7 @@
 export type FulfillmentStatus = 'pending' | 'completed' | 'manual_review' | 'failed' | 'returned'
 
 /** 계정 상태 (Prisma AccountStatus 기준) */
-export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled'
+export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled' | 'manual'
 
 /** 상품 상태 (Prisma ProductStatus 기준) */
 export type ProductStatus = 'draft' | 'active' | 'inactive'
@@ -69,6 +69,7 @@ export type SteamAccount = {
   emailSiteUrl: string
   secondaryEmail: string | null
   secondaryEmailPassword: string | null
+  secondaryEmailSiteUrl: string | null
   status: AccountStatus
   createdAt: string
 }

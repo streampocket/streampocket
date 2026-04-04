@@ -11,6 +11,7 @@ const STATUS_OPTIONS: { value: AccountStatus | ''; label: string }[] = [
   { value: 'reserved', label: '선점됨' },
   { value: 'sent', label: '발송 완료' },
   { value: 'disabled', label: '비활성화' },
+  { value: 'manual', label: '수동' },
 ]
 
 export function CodesFilterBar() {
