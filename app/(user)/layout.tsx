@@ -1,3 +1,4 @@
+import { LANDING_NAV_ITEMS } from '@/app/(landing)/_data'
 import { UserAuthGuard } from '@/components/auth/UserAuthGuard'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 
@@ -9,7 +10,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
   return (
     <UserAuthGuard>
       <div className="min-h-screen bg-gray-50">
-        <PublicHeader />
+        <PublicHeader navItems={LANDING_NAV_ITEMS} />
 
         <main className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-8">
           {children}

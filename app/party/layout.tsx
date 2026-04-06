@@ -1,0 +1,18 @@
+import { LANDING_NAV_ITEMS } from '@/app/(landing)/_data'
+import { PublicHeader } from '@/components/layout/PublicHeader'
+
+type PartyLayoutProps = {
+  children: React.ReactNode
+}
+
+export default function PartyLayout({ children }: PartyLayoutProps) {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <PublicHeader navItems={LANDING_NAV_ITEMS} />
+
+      <main className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-8">
+        {children}
+      </main>
+    </div>
+  )
+}

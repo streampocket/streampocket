@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { clearUserAuthSession } from '@/lib/userAuth'
 import { USER_LOGIN_PATH } from '@/constants/app'
-import { useUserProfile } from '../_hooks/useUserProfile'
+import { useUserProfile } from '@/hooks/useUserProfile'
 
 const PROVIDER_LABELS: Record<string, string> = {
   local: '이메일',

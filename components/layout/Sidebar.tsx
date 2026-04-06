@@ -33,6 +33,10 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: 'OTTALL',
+    items: [{ label: '파트너 관리', href: '/ottall/partners', icon: '🤝' }],
+  },
+  {
     title: '시스템',
     items: [
       { label: '알림톡', href: '/alimtalk', icon: '💬' },
@@ -56,12 +60,12 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-60 flex-shrink-0 flex-col bg-sidebar">
       {/* 로고 */}
-      <div className="flex h-14 items-center gap-2.5 px-6">
+      <Link href="/" className="flex h-14 items-center gap-2.5 px-6">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
           SP
         </div>
         <span className="text-heading-sm text-white">스트림포켓</span>
-      </div>
+      </Link>
 
       {/* 네비게이션 */}
       <nav className="flex-1 overflow-y-auto px-3 py-2">

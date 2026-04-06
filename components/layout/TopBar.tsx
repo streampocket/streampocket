@@ -10,6 +10,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/codes': '계정 관리',
   '/alimtalk': '알림톡',
   '/settings': '설정',
+  '/ottall/partners': '파트너 관리',
 }
 
 type TopBarProps = {
