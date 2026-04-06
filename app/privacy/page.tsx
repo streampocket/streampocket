@@ -31,11 +31,10 @@ export default function PrivacyPage() {
             </h2>
             <ul className="flex flex-col gap-1.5 list-disc pl-5">
               <li>
-                필수항목: 성명(닉네임), 휴대전화번호, 카카오 연동 고유 식별값(CI/DI), 서비스
+                필수항목: 성명(닉네임), 휴대전화번호, 서비스
                 이용 기록, 접속 로그, 쿠키, 접속 IP 정보, 결제기록(주문번호, 결제금액,
                 결제수단)
               </li>
-              <li>선택항목: 이메일 주소</li>
             </ul>
             <p className="mt-3">
               수집 방법: 홈페이지 회원가입, 서비스 이용, 생성정보 수집 툴을 통한 수집
