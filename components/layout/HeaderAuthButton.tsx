@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { isUserAuthenticated, clearUserAuthSession } from '@/lib/userAuth'
-import { USER_LOGIN_PATH, USER_MYPAGE_PATH } from '@/constants/app'
+import { USER_LOGIN_PATH, USER_MYPAGE_PATH, API_BASE_URL } from '@/constants/app'
 
 export function HeaderAuthButton() {
   const router = useRouter()
@@ -29,7 +29,15 @@ export function HeaderAuthButton() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE_URL}/own/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+    } catch {
+      // 로그아웃 API 실패해도 클라이언트 세션은 삭제
+    }
     clearUserAuthSession()
     setLoggedIn(false)
     setOpen(false)
