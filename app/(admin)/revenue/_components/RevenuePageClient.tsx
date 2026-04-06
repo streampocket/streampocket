@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { RevenueSummary } from './RevenueSummary'
 import { ExpenseTable } from './ExpenseTable'
+import { ManualRevenueTable } from './ManualRevenueTable'
 
 function getCurrentYearMonth(): string {
   const now = new Date()
@@ -16,6 +17,7 @@ export function RevenuePageClient() {
     <div className="space-y-6">
       <RevenueSummary yearMonth={yearMonth} />
       <ExpenseTable yearMonth={yearMonth} onYearMonthChange={setYearMonth} />
+      <ManualRevenueTable yearMonth={yearMonth} />
     </div>
   )
 }
