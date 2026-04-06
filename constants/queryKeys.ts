@@ -36,4 +36,22 @@ export const QUERY_KEYS = {
   userAuth: {
     me: () => ['userAuth', 'me'] as const,
   },
+  ownCategories: {
+    all: () => ['ownCategories'] as const,
+    list: () => ['ownCategories', 'list'] as const,
+  },
+  ownProducts: {
+    all: () => ['ownProducts'] as const,
+    list: (params?: Record<string, unknown>) => ['ownProducts', 'list', params] as const,
+    my: () => ['ownProducts', 'my'] as const,
+    detail: (id: string) => ['ownProducts', id] as const,
+  },
+  partner: {
+    me: () => ['partner', 'me'] as const,
+  },
+  adminPartners: {
+    all: () => ['adminPartners'] as const,
+    list: (params?: Record<string, unknown>) => ['adminPartners', 'list', params] as const,
+    detail: (id: string) => ['adminPartners', id] as const,
+  },
 } as const

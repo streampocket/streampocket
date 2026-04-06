@@ -11,6 +11,7 @@ const TAB_ITEMS = [
   { label: '계정', href: '/codes', icon: '🔑' },
   { label: '리뷰게임', href: '/review-codes', icon: '🎮' },
   { label: '알림톡', href: '/alimtalk', icon: '💬' },
+  { label: '파트너', href: '/ottall/partners', icon: '🤝' },
   { label: '설정', href: '/settings', icon: '⚙' },
 ]
 

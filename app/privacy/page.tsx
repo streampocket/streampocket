@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { LANDING_NAV_ITEMS } from '@/app/(landing)/_data'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { PublicFooter } from '@/components/layout/PublicFooter'
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-white">
-      <PublicHeader navItems={[]} />
+      <PublicHeader navItems={LANDING_NAV_ITEMS} />
 
       <section className="mx-auto max-w-[800px] px-5 py-12 sm:px-8">
         <h1 className="mb-8 text-2xl font-bold text-text-primary">개인정보 처리방침</h1>

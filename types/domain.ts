@@ -161,6 +161,65 @@ export type AlimtalkTestResult = {
   providerMessage: string
 }
 
+// ───────────────────────── OTT 상품 (OTTALL) ─────────────────────────
+
+/** OTT 상품 상태 */
+export type OwnProductStatus = 'recruiting' | 'closed' | 'expired'
+
+/** OTT 카테고리 */
+export type OwnCategory = {
+  id: string
+  name: string
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
+/** OTT 상품 */
+export type OwnProduct = {
+  id: string
+  name: string
+  categoryId: string
+  category: OwnCategory
+  durationDays: number
+  price: number
+  totalSlots: number
+  filledSlots: number
+  imagePath: string | null
+  notes: string | null
+  status: OwnProductStatus
+  userId: string
+  user: { id: string; name: string }
+  createdAt: string
+  updatedAt: string
+}
+
+/** 상품 목록 조회 파라미터 */
+export type ProductListParams = {
+  categoryId?: string
+  status?: OwnProductStatus
+}
+
+// ───────────────────────── 파트너 (OTTALL) ─────────────────────────
+
+/** 파트너 상태 */
+export type PartnerStatus = 'pending' | 'approved' | 'rejected'
+
+/** 파트너 */
+export type Partner = {
+  id: string
+  userId: string
+  name: string
+  phone: string
+  bankName: string
+  bankAccount: string
+  status: PartnerStatus
+  rejectedAt: string | null
+  rejectionNote: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 /** 리뷰 코드 상태 */
 export type ReviewCodeStatus = 'unused' | 'used'
 

@@ -15,7 +15,7 @@ export const LANDING_SECTION_IDS = {
 } as const // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
 
 export const LANDING_NAV_ITEMS: LandingNavItem[] = [
-  { href: `#${LANDING_SECTION_IDS.products}`, label: '전체 상품' },
+  { href: '/party', label: '전체 상품' },
   { href: `#${LANDING_SECTION_IDS.steps}`, label: '이용 방법' },
 ]
 
