@@ -33,4 +33,7 @@ export const QUERY_KEYS = {
     all: () => ['manualRevenues'] as const,
     list: (params?: Record<string, unknown>) => ['manualRevenues', params] as const,
   },
+  userAuth: {
+    me: () => ['userAuth', 'me'] as const,
+  },
 } as const
