@@ -16,9 +16,7 @@ export const QUERY_KEYS = {
   dashboard: {
     stats: (period?: string) => ['dashboard', 'stats', period] as const,
   },
-  settings: {
-    alimtalkCost: () => ['settings', 'alimtalk-cost'] as const,
-  },
+  settings: {},
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
   },
@@ -30,5 +28,9 @@ export const QUERY_KEYS = {
     all: () => ['expenses'] as const,
     list: (params?: Record<string, unknown>) => ['expenses', params] as const,
     summary: (params?: Record<string, unknown>) => ['expenses', 'summary', params] as const,
+  },
+  manualRevenues: {
+    all: () => ['manualRevenues'] as const,
+    list: (params?: Record<string, unknown>) => ['manualRevenues', params] as const,
   },
 } as const

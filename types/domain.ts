@@ -93,7 +93,6 @@ export type Expense = {
 /** 매출 비용 내역 */
 export type RevenueCosts = {
   naverCommission: number
-  alimtalk: number
   gamePurchase: number
   countryChange: number
   reviewGame: number
@@ -108,8 +107,17 @@ export type RevenueData = {
   totalCosts: number
   netProfit: number
   pendingSettlement: number
-  alimtalkUnitCost: number
   alimtalkCount: number
+}
+
+/** 수동 매출 */
+export type ManualRevenue = {
+  id: string
+  date: string
+  amount: number
+  memo: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 /** 대시보드 통계 */

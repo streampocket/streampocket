@@ -18,3 +18,16 @@ export type ExpenseFormData = {
 export type ExpenseSummaryParams = {
   yearMonth?: string
 }
+
+export type ManualRevenueListParams = {
+  yearMonth?: string
+  dateOrder?: 'asc' | 'desc'
+  page?: number
+  pageSize?: number
+}
+
+export type ManualRevenueFormData = {
+  date: string
+  amount: number
+  memo?: string
+}

@@ -70,12 +70,6 @@ export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
                 <span>{fmt(data.costs.naverCommission)}</span>
               </div>
               <div className="flex justify-between">
-                <span>
-                  알림톡 ({data.alimtalkCount}건 × {data.alimtalkUnitCost}원)
-                </span>
-                <span>{fmt(data.costs.alimtalk)}</span>
-              </div>
-              <div className="flex justify-between">
                 <span>게임 구매비</span>
                 <span>{fmt(data.costs.gamePurchase)}</span>
               </div>
@@ -91,6 +85,9 @@ export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
                 <span>기타</span>
                 <span>{fmt(data.costs.other)}</span>
               </div>
+            </div>
+            <div className="mt-3 border-t border-border pt-3 text-caption-md text-text-muted">
+              알림톡 발송: {data.alimtalkCount}건
             </div>
           </div>
         )}
