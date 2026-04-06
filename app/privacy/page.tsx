@@ -31,7 +31,7 @@ export default function PrivacyPage() {
             </h2>
             <ul className="flex flex-col gap-1.5 list-disc pl-5">
               <li>
-                필수항목: 성명(닉네임), 휴대전화번호, 서비스
+                필수항목: 성명(닉네임), 휴대전화번호, 이메일 주소, 서비스
                 이용 기록, 접속 로그, 쿠키, 접속 IP 정보, 결제기록(주문번호, 결제금액,
                 결제수단)
               </li>
