@@ -32,22 +32,22 @@ export default function GuidePage() {
         {/* 2. 국가 변경 제한 정책 안내 */}
         <section className="bg-red-50 border border-red-200 rounded-xl p-5">
           <p className="text-sm text-red-800">
-            🚫 스팀(Steam) 정책상 국가 변경은 3개월에 한 번으로 제한되어
-            있습니다. 최근 3개월 이내에 국가를 변경한 이력이 있다면 다른 계정
-            사용을 부탁드립니다.
+            AA 상품은 스팀게임을 선물로 보내드리는 상품입니다. 선물해주는
+            계정의 국가가 중국이기 때문에, 상점 국가를 중국으로 변경해야 하니,
+            아래 가이드를 참고해주세요.
+            <span className="block mt-2 text-sm text-red-700">
+              🚫 스팀(Steam) 정책상 국가 변경은 3개월에 한 번으로 제한되어
+              있습니다. 최근 3개월 이내에 국가를 변경한 이력이 있다면 다른 계정
+              사용을 부탁드립니다.
+            </span>
             <span className="block mt-1 text-xs text-red-600">
               (상점 국가: 중국 예외)
-            </span>
-            <span className="block mt-2 text-sm text-red-700">
-              AA 상품은 스팀게임을 선물로 보내드리는 상품입니다. 선물해주는
-              계정의 국가가 중국이기 때문에, 상점 국가를 중국으로 변경해야 하니,
-              아래 가이드를 참고해주세요.
             </span>
           </p>
         </section>
 
         {/* 3. 중국 계정 경고 */}
-        <section className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
+        {/* <section className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
           <h2 className="text-lg font-semibold text-yellow-800">
             ⚠️ 중요: 중국 계정 사용자의 경우
           </h2>
@@ -106,18 +106,24 @@ export default function GuidePage() {
 5. 캡쳐 이미지 :`}
             </pre>
           </div>
-        </section>
+        </section> */}
 
         {/* 4. 중국 계정 사용자 아닌경우 */}
         <section className="space-y-8">
           <h2 className="text-lg font-semibold text-gray-800">
-            중국 계정 사용자 아닌경우
+            <a href="#section-mobile" className="text-green-700 underline hover:text-green-900">
+              모바일 스팀가드 사용자는 1번 항목으로!
+            </a>
+            <br />
+            <a href="#section-email" className="text-purple-700 underline hover:text-purple-900">
+              이메일 스팀가드 사용자는 2번 항목으로!
+            </a>
           </h2>
 
           {/* (1) OTP 사용자 */}
-          <div className="bg-green-50 rounded-xl border border-green-200 p-5 space-y-4">
+          <div id="section-mobile" className="bg-green-50 rounded-xl border border-green-200 p-5 space-y-4 scroll-mt-4">
             <h3 className="text-lg font-semibold text-green-800">
-              (1) 모바일 앱 인증기(OTP)를 사용하신다면?
+              (1) 모바일 앱 스팀가드를 사용하신다면?
             </h3>
             <p className="text-sm text-gray-700">
               스팀가드 해제없이 아래 링크 클릭 후 사진에 나온대로 접속하신다음
@@ -160,7 +166,7 @@ export default function GuidePage() {
             <div className="relative">
               <div className="absolute right-3 top-3">
                 <CopyFormButton
-                  text={`1. 스팀 등록 ID :\n\n2. 스팀 등록 PW :\n\n3. 구매하신 게임 :\n\n4. 구매 날짜 :\n\n5. 구매자 성함 :\n\n6. 1회용 Steam Guard 코드 3개(위 마지막 사진의 빨간색 네모박스 코드) :\n\n7. 국가 변경 정책(3개월 제한) 및 등록 이후 환불 불가 동의 :`}
+                  text={`1. 스팀 등록 ID :\n\n2. 스팀 등록 PW :\n\n3. 구매하신 게임 :\n\n4. 구매자 성함 :\n\n5. 1회용 Steam Guard 코드 3개(위 마지막 사진의 빨간색 네모박스 코드) :\n\n6. 국가 변경 및 등록 이후 환불 불가 동의 :`}
                 />
               </div>
               <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 pt-10 text-sm font-mono whitespace-pre overflow-x-auto leading-relaxed">
@@ -170,21 +176,20 @@ export default function GuidePage() {
 
 3. 구매하신 게임 :
 
-4. 구매 날짜 :
+4. 구매자 성함 :
 
-5. 구매자 성함 :
+5. 1회용 Steam Guard 코드 3개 (위 마지막 사진의 빨간색 네모박스 코드) :
 
-6. 1회용 Steam Guard 코드 3개 (위 마지막 사진의 빨간색 네모박스 코드) :
-
-7. 국가 변경 및 등록 이후 환불 불가 동의:`}
+6. 국가 변경 및 등록 이후 환불 불가 동의:`}
               </pre>
             </div>
           </div>
 
           {/* (2) 이메일 인증 사용자 */}
-          <div className="bg-purple-50 rounded-xl border border-purple-200 p-5 space-y-3">
+          <div id="section-email" className="bg-purple-50 rounded-xl border border-purple-200 p-5 space-y-3 scroll-mt-4">
             <h3 className="text-lg font-semibold text-purple-800">
-              (2) 이메일 인증 사용자라면?
+              (2) 이메일 스팀가드 사용자라면? (<a href="#section-mobile" className="text-green-700 underline hover:text-green-900">모바일 앱 스팀가드 사용자는 1번
+              항목으로 올라가주세요</a>)
             </h3>
             <ol className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-gray-700">
@@ -208,6 +213,15 @@ export default function GuidePage() {
                   2
                 </span>
                 [Steam Guard 끄기] 버튼을 클릭합니다.
+              </li>
+              <li>
+                <Image
+                  src="/images/guide/이메일스팀가드해제.png"
+                  alt="이메일 스팀가드 해제 화면"
+                  width={600}
+                  height={400}
+                  className="rounded-lg w-full md:max-w-md"
+                />
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-700">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white text-xs font-bold shrink-0 mt-0.5">
@@ -242,11 +256,9 @@ export default function GuidePage() {
 
 4. 구매하신 게임 :
 
-5. 구매 날짜 :
+5. 구매자 성함 :
 
-6. 구매자 성함 :
-
-7. 국가 변경 및 등록 이후 환불 불가 동의 :`}
+6. 국가 변경 및 등록 이후 환불 불가 동의 :`}
               </pre>
             </div>
           </div>
