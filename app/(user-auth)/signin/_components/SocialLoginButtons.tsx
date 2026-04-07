@@ -16,7 +16,7 @@ export function SocialLoginButtons() {
       <button
         type="button"
         onClick={handleKakaoLogin}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#FEE500] font-semibold text-[#191919] transition-opacity hover:opacity-90"
+        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#FEE500] font-semibold text-[#191919] transition-opacity hover:opacity-90"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
           <path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.8 5.108 4.516 6.467-.148.538-.952 3.461-.985 3.674 0 0-.02.166.088.23.108.063.235.013.235.013.31-.044 3.588-2.345 4.157-2.745.647.092 1.313.14 1.989.14 5.523 0 10-3.463 10-7.779C22 6.463 17.523 3 12 3" />
@@ -27,7 +27,7 @@ export function SocialLoginButtons() {
       <button
         type="button"
         onClick={handleGoogleLogin}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white font-semibold text-gray-700 transition-colors hover:bg-gray-50"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5">
           <path
