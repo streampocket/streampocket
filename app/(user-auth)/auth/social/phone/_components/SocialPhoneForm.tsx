@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { USER_LOGIN_PATH } from '@/constants/app'
 import { PhoneVerificationStep } from '../../../../signup/_components/PhoneVerificationStep'
+import { TermsAgreement } from '../../../../signup/_components/TermsAgreement'
 import { useCompleteSocialSignup } from '../_hooks/useCompleteSocialSignup'
 
 export function SocialPhoneForm() {
@@ -15,6 +16,8 @@ export function SocialPhoneForm() {
   const [phone, setPhone] = useState('')
   const [verificationId, setVerificationId] = useState<string | null>(null)
   const [tempToken, setTempToken] = useState<string | null>(null)
+  const [serviceAgreed, setServiceAgreed] = useState(false)
+  const [privacyAgreed, setPrivacyAgreed] = useState(false)
 
   useEffect(() => {
     const token = searchParams.get('tempToken')
@@ -33,6 +36,7 @@ export function SocialPhoneForm() {
       tempToken,
       phone: phone.replace(/-/g, ''),
       verificationId,
+      termsAgreed: true,
     })
   }
 
@@ -56,7 +60,7 @@ export function SocialPhoneForm() {
         서비스 이용을 위해 전화번호 인증이 필요합니다.
       </p>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <PhoneVerificationStep
           phone={phone}
           onPhoneChange={setPhone}
@@ -64,10 +68,20 @@ export function SocialPhoneForm() {
         />
       </div>
 
+      {/* 약관 동의 */}
+      <div className="mb-6">
+        <TermsAgreement
+          serviceAgreed={serviceAgreed}
+          privacyAgreed={privacyAgreed}
+          onServiceChange={setServiceAgreed}
+          onPrivacyChange={setPrivacyAgreed}
+        />
+      </div>
+
       <Button
         type="submit"
         loading={isLoading}
-        disabled={!verificationId}
+        disabled={!verificationId || !serviceAgreed || !privacyAgreed}
         className="h-11 w-full text-base"
       >
         가입 완료
