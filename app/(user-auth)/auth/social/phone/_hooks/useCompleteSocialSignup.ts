@@ -21,6 +21,7 @@ type CompleteInput = {
   tempToken: string
   phone: string
   verificationId: string
+  termsAgreed: true
 }
 
 export function useCompleteSocialSignup() {

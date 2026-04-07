@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { USER_LOGIN_PATH, USER_MYPAGE_PATH } from '@/constants/app'
 import { useSignup } from '../_hooks/useSignup'
 import { PhoneVerificationStep } from './PhoneVerificationStep'
+import { TermsAgreement } from './TermsAgreement'
 
 function validatePassword(password: string) {
   const hasLetter = /[a-zA-Z]/.test(password)
@@ -34,6 +35,8 @@ export function SignupForm() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [phone, setPhone] = useState('')
   const [verificationId, setVerificationId] = useState<string | null>(null)
+  const [serviceAgreed, setServiceAgreed] = useState(false)
+  const [privacyAgreed, setPrivacyAgreed] = useState(false)
 
   useEffect(() => {
     if (isUserAuthenticated()) {
@@ -49,7 +52,9 @@ export function SignupForm() {
     pwValidation.minLength &&
     pwValidation.combination &&
     passwordsMatch &&
-    verificationId !== null
+    verificationId !== null &&
+    serviceAgreed &&
+    privacyAgreed
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -61,6 +66,7 @@ export function SignupForm() {
       password,
       phone: phone.replace(/-/g, ''),
       verificationId,
+      termsAgreed: true,
     })
   }
 
@@ -192,11 +198,21 @@ export function SignupForm() {
         </div>
 
         {/* 전화번호 인증 */}
-        <div className="mb-6">
+        <div className="mb-4">
           <PhoneVerificationStep
             phone={phone}
             onPhoneChange={setPhone}
             onVerified={setVerificationId}
+          />
+        </div>
+
+        {/* 약관 동의 */}
+        <div className="mb-6">
+          <TermsAgreement
+            serviceAgreed={serviceAgreed}
+            privacyAgreed={privacyAgreed}
+            onServiceChange={setServiceAgreed}
+            onPrivacyChange={setPrivacyAgreed}
           />
         </div>
 

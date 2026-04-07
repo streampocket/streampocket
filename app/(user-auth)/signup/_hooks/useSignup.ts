@@ -13,6 +13,7 @@ type SignupInput = {
   password: string
   phone: string
   verificationId: string
+  termsAgreed: true
 }
 
 type SignupResponse = {
