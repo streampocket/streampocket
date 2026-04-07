@@ -10,11 +10,9 @@ const DEFAULT_FORM_TEXT = `1. 스팀 등록 ID :
 
 4. 구매하신 게임 :
 
-5. 구매 날짜 :
+5. 구매자 성함 :
 
-6. 구매자 성함 :
-
-7. 국가 변경 및 등록 이후 환불 불가 동의 :`
+6. 국가 변경 및 등록 이후 환불 불가 동의 :`
 
 type CopyFormButtonProps = {
   text?: string
