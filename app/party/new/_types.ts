@@ -5,4 +5,6 @@ export type OwnProductFormData = {
   totalSlots: string
   imagePath: string | null
   notes: string
+  accountId: string
+  accountPassword: string
 }

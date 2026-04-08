@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { useMyPartner } from '../_hooks/useMyPartner'
+import { useMyPartner } from '@/hooks/useMyPartner'
 import { PartnerApplyModal } from './PartnerApplyModal'
 
 type PartnerStatusGuardProps = {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardBody } from '@/components/ui/Card'
@@ -10,9 +10,13 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { useOwnProductDetail } from '../_hooks/useOwnProductDetail'
 import { useDeleteOwnProduct } from '../_hooks/useDeleteOwnProduct'
+import { useApplyParty } from '../_hooks/useApplyParty'
+import { useCheckApplied } from '../_hooks/useCheckApplied'
+import { PaymentModal } from './PaymentModal'
 import { getUserInfo } from '@/lib/userAuth'
-import { PARTY_DEFAULT_RULES } from '@/constants/app'
+import { PARTY_DEFAULT_RULES, USER_LOGIN_PATH } from '@/constants/app'
 import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import { cn } from '@/lib/utils'
 import type { OwnProductStatus } from '@/types/domain'
 import type { BadgeVariant } from '@/components/ui/Badge'
@@ -26,14 +30,19 @@ const STATUS_MAP: Record<OwnProductStatus, { label: string; variant: BadgeVarian
 export function OwnProductDetail() {
   const params = useParams()
   const router = useRouter()
+  const pathname = usePathname()
   const id = params.id as string
   const { data: product, isLoading } = useOwnProductDetail(id)
   const deleteMutation = useDeleteOwnProduct()
+  const applyMutation = useApplyParty(id)
+  const { data: applicationCheck } = useCheckApplied(id)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [agreedToRules, setAgreedToRules] = useState(false)
 
   const userInfo = getUserInfo()
   const isOwner = userInfo?.id === product?.userId
+  const isFull = product ? product.filledSlots >= product.totalSlots : false
 
   if (isLoading) {
     return <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
@@ -139,7 +148,7 @@ export function OwnProductDetail() {
           <CardBody>
             <h2 className="text-heading-md mb-3 text-text-primary">파티 규칙</h2>
             <div className="prose prose-sm max-w-none text-text-secondary prose-headings:text-text-primary prose-strong:text-text-primary">
-              <ReactMarkdown>{product.notes}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkBreaks]}>{product.notes}</ReactMarkdown>
             </div>
           </CardBody>
         </Card>
@@ -155,20 +164,72 @@ export function OwnProductDetail() {
       {/* 참여 신청 */}
       {product.status === 'recruiting' && !isOwner && (
         <div className="space-y-3">
-          <label className="flex cursor-pointer items-start gap-2">
-            <input
-              type="checkbox"
-              checked={agreedToRules}
-              onChange={(e) => setAgreedToRules(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-brand focus:ring-brand"
-            />
-            <span className="text-body-md text-text-secondary">
-              파티 규칙을 확인했으며, 파티 규칙에 동의합니다
-            </span>
-          </label>
-          <Button variant="primary" className="w-full" disabled={!agreedToRules}>
-            참여 신청하기 (준비 중)
-          </Button>
+          {applicationCheck?.applied && applicationCheck.paymentStatus === 'paid' ? (
+            <div className="flex flex-col items-center gap-2 rounded-lg bg-green-50 p-4">
+              <Badge variant="green">참여 완료</Badge>
+              <p className="text-body-md text-text-secondary">
+                파티 참여가 확정되었습니다.
+              </p>
+              <a
+                href="https://pf.kakao.com/_MkxalX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center gap-1 rounded-lg bg-[#FEE500] px-4 py-2 text-body-md font-medium text-[#191919] transition-opacity hover:opacity-80"
+              >
+                카카오톡 문의하기
+              </a>
+            </div>
+          ) : applicationCheck?.applied ? (
+            <div className="flex flex-col items-center gap-2 rounded-lg bg-yellow-50 p-4">
+              <Badge variant="yellow">결제 대기중</Badge>
+              <p className="text-body-md text-text-secondary">
+                입금 확인 후 참여가 확정됩니다. 문의사항은 카카오톡으로 연락주세요.
+              </p>
+              <a
+                href="https://pf.kakao.com/_MkxalX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center gap-1 rounded-lg bg-[#FEE500] px-4 py-2 text-body-md font-medium text-[#191919] transition-opacity hover:opacity-80"
+              >
+                카카오톡 문의하기
+              </a>
+            </div>
+          ) : isFull ? (
+            <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 p-4">
+              <Badge variant="gray">모집 완료</Badge>
+              <p className="text-body-md text-text-secondary">
+                이 파티는 모집이 완료되었습니다.
+              </p>
+            </div>
+          ) : (
+            <>
+              <label className="flex cursor-pointer items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={agreedToRules}
+                  onChange={(e) => setAgreedToRules(e.target.checked)}
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-brand focus:ring-brand"
+                />
+                <span className="text-body-md text-text-secondary">
+                  파티 규칙을 확인했으며, 파티 규칙에 동의합니다
+                </span>
+              </label>
+              <Button
+                variant="primary"
+                className="w-full"
+                disabled={!agreedToRules}
+                onClick={() => {
+                  if (!userInfo) {
+                    router.push(`${USER_LOGIN_PATH}?next=${encodeURIComponent(pathname)}`)
+                    return
+                  }
+                  setShowPaymentModal(true)
+                }}
+              >
+                참여 신청하기
+              </Button>
+            </>
+          )}
         </div>
       )}
 
@@ -188,6 +249,21 @@ export function OwnProductDetail() {
             </Button>
           )}
         </div>
+      )}
+
+      {/* 결제 모달 */}
+      {product && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          product={product}
+          onSubmit={() => {
+            applyMutation.mutate(undefined, {
+              onSuccess: () => setShowPaymentModal(false),
+            })
+          }}
+          isSubmitting={applyMutation.isPending}
+        />
       )}
 
       {/* 삭제 확인 모달 */}

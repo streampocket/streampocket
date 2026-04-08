@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { USER_BRAND_NAME } from '@/constants/app'
-import { UserProfile } from './_components/UserProfile'
+import { MyPageTabs } from './_components/MyPageTabs'
 
 export const metadata: Metadata = {
   title: `마이페이지 | ${USER_BRAND_NAME}`,
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function MyPage() {
-  return <UserProfile />
+  return <MyPageTabs />
 }

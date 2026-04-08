@@ -81,13 +81,6 @@ export function HeaderAuthButton() {
             onClick={() => setOpen(false)}
             className="block px-4 py-2.5 text-sm text-text-primary transition-colors hover:bg-gray-50"
           >
-            내 정보
-          </Link>
-          <Link
-            href={USER_MYPAGE_PATH}
-            onClick={() => setOpen(false)}
-            className="block px-4 py-2.5 text-sm text-text-primary transition-colors hover:bg-gray-50"
-          >
             마이페이지
           </Link>
           <button

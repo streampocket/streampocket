@@ -13,6 +13,8 @@ type UpdateOwnProductPayload = {
   totalSlots?: number
   imagePath?: string | null
   notes?: string | null
+  accountId?: string | null
+  accountPassword?: string | null
 }
 
 type UpdateResponse = {

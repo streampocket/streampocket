@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import { cn } from '@/lib/utils'
 
 type MarkdownEditorProps = {
@@ -171,7 +172,7 @@ export function MarkdownEditor({ value, onChange, placeholder, rows = 4 }: Markd
           )}
         >
           {value.trim() ? (
-            <ReactMarkdown>{value}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{value}</ReactMarkdown>
           ) : (
             <p className="text-text-muted">작성한 내용이 여기에 표시됩니다.</p>
           )}

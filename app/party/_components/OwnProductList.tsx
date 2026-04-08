@@ -7,11 +7,21 @@ import { OwnProductCard } from './OwnProductCard'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
 import { cn } from '@/lib/utils'
+import type { OwnProductStatus } from '@/types/domain'
+
+type StatusFilter = OwnProductStatus | 'all'
+
+const STATUS_TABS: { value: StatusFilter; label: string }[] = [
+  { value: 'recruiting', label: '모집중' },
+  { value: 'all', label: '전체' },
+]
 
 export function OwnProductList() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('recruiting')
   const { data: products, isLoading: productsLoading } = useOwnProducts({
     categoryId: selectedCategoryId,
+    status: statusFilter === 'all' ? undefined : statusFilter,
   })
   const { data: categories } = useOwnCategories()
 
@@ -23,6 +33,25 @@ export function OwnProductList() {
         <Link href="/party/new">
           <Button variant="primary" size="sm">+ 파티 등록하기</Button>
         </Link>
+      </div>
+
+      {/* 상태 필터 */}
+      <div className="flex gap-2">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => setStatusFilter(tab.value)}
+            className={cn(
+              'rounded-full px-4 py-1.5 text-body-md font-medium transition-colors',
+              statusFilter === tab.value
+                ? 'bg-brand text-white'
+                : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* 카테고리 필터 */}

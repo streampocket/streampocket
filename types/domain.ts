@@ -175,7 +175,7 @@ export type OwnCategory = {
   updatedAt: string
 }
 
-/** OTT 상품 */
+/** OTT 파티 */
 export type OwnProduct = {
   id: string
   name: string
@@ -187,6 +187,7 @@ export type OwnProduct = {
   filledSlots: number
   imagePath: string | null
   notes: string | null
+  hasCredentials: boolean
   status: OwnProductStatus
   userId: string
   user: { id: string; name: string }
@@ -218,6 +219,75 @@ export type Partner = {
   rejectionNote: string | null
   createdAt: string
   updatedAt: string
+}
+
+// ───────────────────────── 파티 신청 (OTTALL) ─────────────────────────
+
+/** 파티 신청 상태 */
+export type PartyApplicationStatus = 'pending' | 'confirmed' | 'cancelled' | 'expired'
+
+/** 파티 신청 */
+export type PartyApplication = {
+  id: string
+  productId: string
+  userId: string
+  price: number
+  fee: number
+  totalAmount: number
+  status: PartyApplicationStatus
+  startedAt: string | null
+  expiresAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+// ───────────────────────── 결제 (OTTALL) ─────────────────────────
+
+/** 결제 상태 */
+export type PaymentStatus = 'pending' | 'paid' | 'cancelled'
+
+/** 결제 수단 */
+export type PaymentMethod = 'manual' | 'pg'
+
+/** 결제 */
+export type Payment = {
+  id: string
+  applicationId: string
+  amount: number
+  method: PaymentMethod
+  status: PaymentStatus
+  pgTransactionId: string | null
+  pgProvider: string | null
+  paidAt: string | null
+  adminNote: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+/** 결제 상세 (application 포함) */
+export type PaymentWithDetails = Payment & {
+  application: PartyApplication & {
+    product: OwnProduct
+    user: { id: string; name: string; email: string; phone: string }
+  }
+}
+
+/** 파티 상세 (참여자 포함) */
+export type AdminPartyDetail = Omit<OwnProduct, 'user'> & {
+  user: {
+    id: string
+    name: string
+    phone: string
+    partner: {
+      phone: string
+      bankName: string
+      bankAccount: string
+    } | null
+  }
+  applications: (PartyApplication & {
+    user: { id: string; name: string; email: string; phone: string }
+    payments: Payment[]
+  })[]
 }
 
 /** 리뷰 코드 상태 */
