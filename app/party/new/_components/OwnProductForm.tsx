@@ -44,7 +44,7 @@ export function OwnProductForm() {
 
     if (isNaN(durationDays) || durationDays <= 0) return
     if (isNaN(price) || price <= 0) return
-    if (isNaN(totalSlots) || totalSlots < 2) return
+    if (isNaN(totalSlots) || totalSlots < 1) return
 
     createMutation.mutate(
       {
@@ -66,25 +66,25 @@ export function OwnProductForm() {
   return (
     <Card className="mx-auto max-w-2xl">
       <CardHeader>
-        <h1 className="text-heading-lg text-text-primary">상품 등록</h1>
+        <h1 className="text-heading-lg text-text-primary">파티 등록</h1>
       </CardHeader>
       <CardBody>
         <form id="own-product-form" onSubmit={handleSubmit} className="space-y-5">
-          {/* 상품 선택 (이미지 + 이름) */}
+          {/* 파티 선택 (이미지 + 이름) */}
           <div>
             <label className="text-body-md mb-1.5 block font-medium text-text-primary">
-              상품 선택 <span className="text-danger">*</span>
+              파티 선택 <span className="text-danger">*</span>
             </label>
             <ImageSelector
               value={form.imagePath}
               onChange={handleImageSelect}
             />
             {!form.imagePath && (
-              <p className="text-caption-sm mt-2 text-text-muted">상품을 선택해주세요.</p>
+              <p className="text-caption-sm mt-2 text-text-muted">파티를 선택해주세요.</p>
             )}
             {form.imagePath && (
               <p className="text-caption-sm mt-2 text-brand-dark font-medium">
-                선택된 상품: {form.name}
+                선택된 파티: {form.name}
               </p>
             )}
           </div>
@@ -139,17 +139,17 @@ export function OwnProductForm() {
                 onChange={(e) => setField('totalSlots', e.target.value)}
                 placeholder="4"
                 required
-                min={2}
+                min={1}
                 className="text-body-md w-full max-w-[200px] rounded-lg border border-gray-300 px-3 py-2 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
-              <span className="text-body-md shrink-0 text-text-secondary">명 (최소 2명)</span>
+              <span className="text-body-md shrink-0 text-text-secondary">명 (최소 1명)</span>
             </div>
           </div>
 
-          {/* 상품 주의사항 */}
+          {/* 파티 규칙 */}
           <div>
             <label className="text-body-md mb-1.5 block font-medium text-text-primary">
-              상품 주의사항
+              파티 규칙
             </label>
             <MarkdownEditor
               value={form.notes}
@@ -165,7 +165,7 @@ export function OwnProductForm() {
             loading={createMutation.isPending}
             className="w-full"
           >
-            상품 등록
+            파티 등록
           </Button>
         </form>
       </CardBody>

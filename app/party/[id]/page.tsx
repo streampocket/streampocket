@@ -3,8 +3,8 @@ import { USER_BRAND_NAME } from '@/constants/app'
 import { OwnProductDetail } from './_components/OwnProductDetail'
 
 export const metadata: Metadata = {
-  title: `상품 상세 | ${USER_BRAND_NAME}`,
-  description: '파티 모집 상품의 상세 정보를 확인하세요.',
+  title: `파티 상세 | ${USER_BRAND_NAME}`,
+  description: '파티의 상세 정보를 확인하세요.',
 }
 
 export default function ProductDetailPage() {

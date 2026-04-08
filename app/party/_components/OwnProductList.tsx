@@ -19,9 +19,9 @@ export function OwnProductList() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <h1 className="text-heading-lg text-text-primary">파티 모집 상품</h1>
+        <h1 className="text-heading-lg text-text-primary">파티 모집</h1>
         <Link href="/party/new">
-          <Button variant="primary" size="sm">+ 상품 등록하기</Button>
+          <Button variant="primary" size="sm">+ 파티 등록하기</Button>
         </Link>
       </div>
 
@@ -56,9 +56,9 @@ export function OwnProductList() {
         ))}
       </div>
 
-      {/* 상품 그리드 */}
+      {/* 파티 그리드 */}
       {productsLoading ? (
-        <div className="py-20 text-center text-text-muted">상품을 불러오는 중...</div>
+        <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
       ) : products && products.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
@@ -67,7 +67,7 @@ export function OwnProductList() {
         </div>
       ) : (
         <div className="py-20 text-center text-text-muted">
-          등록된 상품이 없습니다.
+          등록된 파티가 없습니다.
         </div>
       )}
     </div>

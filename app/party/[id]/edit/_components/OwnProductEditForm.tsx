@@ -61,7 +61,7 @@ export function OwnProductEditForm() {
 
     if (isNaN(durationDays) || durationDays <= 0) return
     if (isNaN(price) || price <= 0) return
-    if (isNaN(totalSlots) || totalSlots < 2) return
+    if (isNaN(totalSlots) || totalSlots < 1) return
 
     updateMutation.mutate(
       {
@@ -81,24 +81,24 @@ export function OwnProductEditForm() {
   }
 
   if (isLoading) {
-    return <div className="py-20 text-center text-text-muted">상품을 불러오는 중...</div>
+    return <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
   }
 
   if (!product) {
-    return <div className="py-20 text-center text-text-muted">상품을 찾을 수 없습니다.</div>
+    return <div className="py-20 text-center text-text-muted">파티를 찾을 수 없습니다.</div>
   }
 
   return (
     <Card className="mx-auto max-w-2xl">
       <CardHeader>
-        <h1 className="text-heading-lg text-text-primary">상품 수정</h1>
+        <h1 className="text-heading-lg text-text-primary">파티 수정</h1>
       </CardHeader>
       <CardBody>
         <form id="own-product-edit-form" onSubmit={handleSubmit} className="space-y-5">
-          {/* 상품 선택 (이미지 + 이름) */}
+          {/* 파티 선택 (이미지 + 이름) */}
           <div>
             <label className="text-body-md mb-1.5 block font-medium text-text-primary">
-              상품 선택 <span className="text-danger">*</span>
+              파티 선택 <span className="text-danger">*</span>
             </label>
             <ImageSelector
               value={form.imagePath}
@@ -106,7 +106,7 @@ export function OwnProductEditForm() {
             />
             {form.imagePath && (
               <p className="text-caption-sm mt-2 text-brand-dark font-medium">
-                선택된 상품: {form.name}
+                선택된 파티: {form.name}
               </p>
             )}
           </div>
@@ -158,17 +158,17 @@ export function OwnProductEditForm() {
                 value={form.totalSlots}
                 onChange={(e) => setField('totalSlots', e.target.value)}
                 required
-                min={2}
+                min={1}
                 className="text-body-md w-full max-w-[200px] rounded-lg border border-gray-300 px-3 py-2 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
-              <span className="text-body-md shrink-0 text-text-secondary">명 (최소 2명)</span>
+              <span className="text-body-md shrink-0 text-text-secondary">명 (최소 1명)</span>
             </div>
           </div>
 
-          {/* 상품 주의사항 */}
+          {/* 파티 규칙 */}
           <div>
             <label className="text-body-md mb-1.5 block font-medium text-text-primary">
-              상품 주의사항
+              파티 규칙
             </label>
             <MarkdownEditor
               value={form.notes}

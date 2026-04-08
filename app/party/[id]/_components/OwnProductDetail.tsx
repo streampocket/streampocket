@@ -9,9 +9,9 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { useOwnProductDetail } from '../_hooks/useOwnProductDetail'
-import { useCloseOwnProduct } from '../_hooks/useCloseOwnProduct'
 import { useDeleteOwnProduct } from '../_hooks/useDeleteOwnProduct'
 import { getUserInfo } from '@/lib/userAuth'
+import { PARTY_DEFAULT_RULES } from '@/constants/app'
 import ReactMarkdown from 'react-markdown'
 import { cn } from '@/lib/utils'
 import type { OwnProductStatus } from '@/types/domain'
@@ -28,29 +28,25 @@ export function OwnProductDetail() {
   const router = useRouter()
   const id = params.id as string
   const { data: product, isLoading } = useOwnProductDetail(id)
-  const closeMutation = useCloseOwnProduct()
   const deleteMutation = useDeleteOwnProduct()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [agreedToRules, setAgreedToRules] = useState(false)
 
   const userInfo = getUserInfo()
   const isOwner = userInfo?.id === product?.userId
 
   if (isLoading) {
-    return <div className="py-20 text-center text-text-muted">상품을 불러오는 중...</div>
+    return <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
   }
 
   if (!product) {
-    return <div className="py-20 text-center text-text-muted">상품을 찾을 수 없습니다.</div>
+    return <div className="py-20 text-center text-text-muted">파티를 찾을 수 없습니다.</div>
   }
 
   const status = STATUS_MAP[product.status]
   const progress = product.totalSlots > 0
     ? Math.round((product.filledSlots / product.totalSlots) * 100)
     : 0
-
-  const handleClose = () => {
-    closeMutation.mutate(id)
-  }
 
   const handleDelete = () => {
     deleteMutation.mutate(id, {
@@ -68,7 +64,7 @@ export function OwnProductDetail() {
         &larr; 목록으로
       </Link>
 
-      {/* 상품 기본 정보 */}
+      {/* 파티 기본 정보 */}
       <Card>
         <CardBody className="space-y-4">
           <div className="flex items-start gap-4">
@@ -137,11 +133,11 @@ export function OwnProductDetail() {
         </CardBody>
       </Card>
 
-      {/* 주의사항 */}
+      {/* 파티 규칙 */}
       {product.notes && (
         <Card>
           <CardBody>
-            <h2 className="text-heading-md mb-3 text-text-primary">상품 주의사항</h2>
+            <h2 className="text-heading-md mb-3 text-text-primary">파티 규칙</h2>
             <div className="prose prose-sm max-w-none text-text-secondary prose-headings:text-text-primary prose-strong:text-text-primary">
               <ReactMarkdown>{product.notes}</ReactMarkdown>
             </div>
@@ -149,11 +145,31 @@ export function OwnProductDetail() {
         </Card>
       )}
 
-      {/* 참여 신청 (추후) */}
+      {/* 기본 규칙 (플랫폼 공통) */}
+      <ul className="list-disc space-y-1 pl-5 text-body-sm text-text-muted">
+        {PARTY_DEFAULT_RULES.map((rule) => (
+          <li key={rule}>{rule}</li>
+        ))}
+      </ul>
+
+      {/* 참여 신청 */}
       {product.status === 'recruiting' && !isOwner && (
-        <Button variant="primary" className="w-full" disabled>
-          참여 신청하기 (준비 중)
-        </Button>
+        <div className="space-y-3">
+          <label className="flex cursor-pointer items-start gap-2">
+            <input
+              type="checkbox"
+              checked={agreedToRules}
+              onChange={(e) => setAgreedToRules(e.target.checked)}
+              className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-brand focus:ring-brand"
+            />
+            <span className="text-body-md text-text-secondary">
+              파티 규칙을 확인했으며, 파티 규칙에 동의합니다
+            </span>
+          </label>
+          <Button variant="primary" className="w-full" disabled={!agreedToRules}>
+            참여 신청하기 (준비 중)
+          </Button>
+        </div>
       )}
 
       {/* 등록자 본인 액션 */}
@@ -163,23 +179,13 @@ export function OwnProductDetail() {
             <Button variant="secondary" className="w-full">수정</Button>
           </Link>
           {product.status === 'recruiting' && (
-            <>
-              <Button
-                variant="secondary"
-                className="flex-1"
-                loading={closeMutation.isPending}
-                onClick={handleClose}
-              >
-                모집 닫기
-              </Button>
-              <Button
-                variant="danger"
-                className="flex-1"
-                onClick={() => setShowDeleteModal(true)}
-              >
-                삭제
-              </Button>
-            </>
+            <Button
+              variant="danger"
+              className="flex-1"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              삭제
+            </Button>
           )}
         </div>
       )}
@@ -188,7 +194,7 @@ export function OwnProductDetail() {
       <Modal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="상품 삭제"
+        title="파티 삭제"
         footer={
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>취소</Button>
@@ -197,7 +203,7 @@ export function OwnProductDetail() {
         }
       >
         <p className="text-body-md text-text-secondary">
-          이 상품을 삭제하시겠습니까? 삭제된 상품은 복구할 수 없습니다.
+          이 파티를 삭제하시겠습니까? 삭제된 파티는 복구할 수 없습니다.
         </p>
       </Modal>
     </div>

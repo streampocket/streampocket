@@ -36,9 +36,9 @@ export function MyProductList() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <h1 className="text-heading-lg text-text-primary">내 상품 관리</h1>
+        <h1 className="text-heading-lg text-text-primary">내 파티 관리</h1>
         <Link href="/party/new">
-          <Button variant="primary" size="sm">+ 상품 등록하기</Button>
+          <Button variant="primary" size="sm">+ 파티 등록하기</Button>
         </Link>
       </div>
 
@@ -61,9 +61,9 @@ export function MyProductList() {
         ))}
       </div>
 
-      {/* 상품 리스트 */}
+      {/* 파티 리스트 */}
       {isLoading ? (
-        <div className="py-20 text-center text-text-muted">상품을 불러오는 중...</div>
+        <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
       ) : filteredProducts && filteredProducts.length > 0 ? (
         <div className="space-y-3">
           {filteredProducts.map((product) => {
@@ -120,7 +120,7 @@ export function MyProductList() {
         </div>
       ) : (
         <div className="py-20 text-center text-text-muted">
-          등록한 상품이 없습니다.
+          등록한 파티가 없습니다.
         </div>
       )}
     </div>

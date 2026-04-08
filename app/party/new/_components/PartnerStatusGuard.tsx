@@ -30,7 +30,7 @@ export function PartnerStatusGuard({ children }: PartnerStatusGuardProps) {
           <CardBody className="space-y-4 py-10">
             <p className="text-heading-md text-text-primary">파트너 등록이 필요합니다</p>
             <p className="text-body-md text-text-secondary">
-              상품을 등록하려면 먼저 파트너 신청을 해주세요.
+              파티를 등록하려면 먼저 파트너 신청을 해주세요.
             </p>
             <Button variant="primary" onClick={() => setShowModal(true)}>
               파트너 신청하기
@@ -51,7 +51,7 @@ export function PartnerStatusGuard({ children }: PartnerStatusGuardProps) {
           <p className="text-body-md text-text-secondary">
             파트너 신청이 관리자에게 전달되었습니다.
             <br />
-            승인 후 상품 등록이 가능합니다.
+            승인 후 파티 등록이 가능합니다.
           </p>
         </CardBody>
       </Card>
@@ -106,6 +106,6 @@ export function PartnerStatusGuard({ children }: PartnerStatusGuardProps) {
     )
   }
 
-  // approved — 상품 등록 폼 표시
+  // approved — 파티 등록 폼 표시
   return <>{children}</>
 }

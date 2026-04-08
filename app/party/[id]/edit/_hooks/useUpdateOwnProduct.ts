@@ -26,12 +26,12 @@ export function useUpdateOwnProduct(id: string) {
     mutationFn: (data: UpdateOwnProductPayload) =>
       userApi.patch<UpdateResponse>(`/own/products/${id}`, data),
     onSuccess: () => {
-      toast.success('상품이 수정되었습니다.')
+      toast.success('파티가 수정되었습니다.')
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.all() })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.detail(id) })
     },
     onError: (error: Error) => {
-      toast.error(error.message ?? '상품 수정에 실패했습니다.')
+      toast.error(error.message ?? '파티 수정에 실패했습니다.')
     },
   })
 }
