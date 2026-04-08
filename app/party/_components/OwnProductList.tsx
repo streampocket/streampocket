@@ -7,11 +7,21 @@ import { OwnProductCard } from './OwnProductCard'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
 import { cn } from '@/lib/utils'
+import type { OwnProductStatus } from '@/types/domain'
+
+type StatusFilter = OwnProductStatus | 'all'
+
+const STATUS_TABS: { value: StatusFilter; label: string }[] = [
+  { value: 'recruiting', label: '모집중' },
+  { value: 'all', label: '전체' },
+]
 
 export function OwnProductList() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('recruiting')
   const { data: products, isLoading: productsLoading } = useOwnProducts({
     categoryId: selectedCategoryId,
+    status: statusFilter === 'all' ? undefined : statusFilter,
   })
   const { data: categories } = useOwnCategories()
 
@@ -19,10 +29,29 @@ export function OwnProductList() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <h1 className="text-heading-lg text-text-primary">파티 모집 상품</h1>
+        <h1 className="text-heading-lg text-text-primary">파티 모집</h1>
         <Link href="/party/new">
-          <Button variant="primary" size="sm">+ 상품 등록하기</Button>
+          <Button variant="primary" size="sm">+ 파티 등록하기</Button>
         </Link>
+      </div>
+
+      {/* 상태 필터 */}
+      <div className="flex gap-2">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => setStatusFilter(tab.value)}
+            className={cn(
+              'rounded-full px-4 py-1.5 text-body-md font-medium transition-colors',
+              statusFilter === tab.value
+                ? 'bg-brand text-white'
+                : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* 카테고리 필터 */}
@@ -56,9 +85,9 @@ export function OwnProductList() {
         ))}
       </div>
 
-      {/* 상품 그리드 */}
+      {/* 파티 그리드 */}
       {productsLoading ? (
-        <div className="py-20 text-center text-text-muted">상품을 불러오는 중...</div>
+        <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
       ) : products && products.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
@@ -67,7 +96,7 @@ export function OwnProductList() {
         </div>
       ) : (
         <div className="py-20 text-center text-text-muted">
-          등록된 상품이 없습니다.
+          등록된 파티가 없습니다.
         </div>
       )}
     </div>

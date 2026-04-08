@@ -34,7 +34,11 @@ const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'OTTALL',
-    items: [{ label: '파트너 관리', href: '/ottall/partners', icon: '🤝' }],
+    items: [
+      { label: '파트너 관리', href: '/ottall/partners', icon: '🤝' },
+      { label: '파티 관리', href: '/ottall/parties', icon: '🎉' },
+      { label: '결제 관리', href: '/ottall/payments', icon: '💳' },
+    ],
   },
   {
     title: '시스템',

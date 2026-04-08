@@ -13,6 +13,8 @@ type CreateOwnProductPayload = {
   totalSlots: number
   imagePath?: string | null
   notes?: string | null
+  accountId?: string | null
+  accountPassword?: string | null
 }
 
 type CreateResponse = {
@@ -26,11 +28,11 @@ export function useCreateOwnProduct() {
     mutationFn: (data: CreateOwnProductPayload) =>
       userApi.post<CreateResponse>('/own/products', data),
     onSuccess: () => {
-      toast.success('상품이 등록되었습니다.')
+      toast.success('파티가 등록되었습니다.')
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.all() })
     },
     onError: (error: Error) => {
-      toast.error(error.message ?? '상품 등록에 실패했습니다.')
+      toast.error(error.message ?? '파티 등록에 실패했습니다.')
     },
   })
 }
