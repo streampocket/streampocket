@@ -88,7 +88,16 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
             <InfoRow label="파티명" value={party.name} />
             <InfoRow label="카테고리" value={party.category.name} />
             <InfoRow label="가격" value={`${formatPrice(party.price)}원`} />
+            {party.dailyDiscount > 0 && (
+              <InfoRow label="하루할인" value={`${formatPrice(party.dailyDiscount)}원/일`} />
+            )}
+            {party.currentPrice < party.price && (
+              <InfoRow label="현재가격" value={`${formatPrice(party.currentPrice)}원`} />
+            )}
             <InfoRow label="기간" value={`${party.durationDays}일`} />
+            {party.startedAt && (
+              <InfoRow label="남은기간" value={`${party.remainingDays}일`} />
+            )}
             <InfoRow label="모집" value={`${party.filledSlots}/${party.totalSlots}명`} />
             <div className="flex items-center gap-3">
               <span className="text-body-md w-20 shrink-0 text-text-muted">상태</span>

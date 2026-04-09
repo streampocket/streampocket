@@ -13,7 +13,7 @@ export function StepsSection({ steps, sectionId }: StepsSectionProps) {
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold text-text-primary">이용 방법</h2>
           <p className="mt-2 text-sm font-medium text-text-secondary">
-            설명은 줄이고 흐름만 보이게 구성했습니다
+            간단한 4단계로 OTT 파티에 참여할 수 있습니다
           </p>
         </div>
 

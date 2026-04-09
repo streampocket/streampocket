@@ -96,7 +96,7 @@ export function MyProductList() {
                           {product.name}
                         </h3>
                         <div className="mt-1 flex items-center gap-2 text-body-md text-text-secondary">
-                          <span>인당 {product.price.toLocaleString()}원</span>
+                          <span>{product.price.toLocaleString()}원</span>
                           <span>&middot;</span>
                           <span>{product.durationDays}일</span>
                           <span>&middot;</span>

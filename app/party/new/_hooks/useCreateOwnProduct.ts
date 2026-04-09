@@ -10,6 +10,7 @@ type CreateOwnProductPayload = {
   name: string
   durationDays: number
   price: number
+  dailyDiscount?: number
   totalSlots: number
   imagePath?: string | null
   notes?: string | null

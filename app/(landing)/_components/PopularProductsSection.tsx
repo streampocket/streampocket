@@ -18,13 +18,13 @@ export function PopularProductsSection({
       <div className="mx-auto w-full max-w-[1440px] px-5 py-8 sm:px-8 lg:px-10">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-text-primary">지금 많이 보는 상품</h2>
+            <h2 className="text-2xl font-bold text-text-primary">지금 많이 보는 파티</h2>
           </div>
           <Link
             href="/party"
             className="text-sm font-bold text-brand transition-colors hover:text-brand-dark"
           >
-            전체 상품 보기 →
+            전체 파티 보기 →
           </Link>
         </div>
 

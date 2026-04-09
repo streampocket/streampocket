@@ -12,9 +12,6 @@ export function PublicHeader({ navItems = [] }: PublicHeaderProps) {
     <header className="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur">
       <div className="mx-auto flex min-h-[72px] w-full max-w-[1440px] items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white">
-            OT
-          </span>
           <span className="text-base font-bold text-text-primary sm:text-lg">{USER_BRAND_NAME}</span>
         </Link>
 

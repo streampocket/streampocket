@@ -9,7 +9,10 @@ function parseJwtPayload(token: string): { id: string; email: string; name?: str
   try {
     const parts = token.split('.')
     if (parts.length !== 3 || !parts[1]) return null
-    const payload = JSON.parse(atob(parts[1]))
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+    const binary = atob(base64)
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0))
+    const payload = JSON.parse(new TextDecoder().decode(bytes))
     if (typeof payload.id === 'string' && typeof payload.email === 'string') {
       return {
         id: payload.id,

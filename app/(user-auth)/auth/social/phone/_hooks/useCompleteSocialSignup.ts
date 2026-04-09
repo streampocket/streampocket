@@ -13,6 +13,7 @@ type CompleteResponse = {
     user: {
       id: string
       email: string
+      name: string
     }
   }
 }
@@ -39,7 +40,7 @@ export function useCompleteSocialSignup() {
         user: {
           id: result.data.user.id,
           email: result.data.user.email,
-          name: result.data.user.email,
+          name: result.data.user.name,
         },
       })
 
