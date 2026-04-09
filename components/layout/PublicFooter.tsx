@@ -20,6 +20,7 @@ export function PublicFooter() {
           </p>
           <p>본사: 경기도 양주시 부흥로 1936, 다온프라자 405호-R100호</p>
           <p>사업자 번호: 279-25-02096</p>
+          <p>개인정보관리책임자: 송동건 (steampocket0@gmail.com)</p>
         </div>
 
         <nav className="flex flex-col gap-2 sm:items-end">

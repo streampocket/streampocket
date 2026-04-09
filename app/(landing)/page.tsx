@@ -19,15 +19,15 @@ import { fetchLatestVideos } from '@/app/(landing)/_lib/fetchYoutubeRss'
 import type { OwnProduct } from '@/types/domain'
 
 export const metadata: Metadata = {
-  title: `${USER_BRAND_NAME} | 쇼츠 드라마 OTT 공유 플랫폼`,
+  title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
   description:
-    'OTTALL(오티티올)에서 드라마박스, 웨이브, 비글루 등 쇼츠 드라마 OTT를 저렴하게 공유하세요.',
-  keywords: ['ottall', '오티티올', '쇼츠 드라마', 'OTT 공유', '드라마박스', '웨이브', '비글루'],
+    'OTTALL(오티티올)에서 드라마박스, 웨이브, 비글루 등 OTT를 파티로 나눠 저렴하게 이용하세요.',
+  keywords: ['ottall', '오티티올', 'OTT 공동구독', 'OTT 파티 매칭', '드라마박스', '웨이브', '비글루'],
   robots: { index: true, follow: true },
   openGraph: {
-    title: `${USER_BRAND_NAME} | 쇼츠 드라마 OTT 공유 플랫폼`,
+    title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
     description:
-      'OTTALL(오티티올)에서 드라마박스, 웨이브, 비글루 등 쇼츠 드라마 OTT를 저렴하게 공유하세요.',
+      'OTTALL(오티티올)에서 드라마박스, 웨이브, 비글루 등 OTT를 파티로 나눠 저렴하게 이용하세요.',
     url: 'https://ottall.com',
     siteName: USER_BRAND_NAME,
     type: 'website',
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${USER_BRAND_NAME} | 쇼츠 드라마 OTT 공유 플랫폼`,
+    title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
     description:
-      'OTTALL(오티티올)에서 드라마박스, 웨이브, 비글루 등 쇼츠 드라마 OTT를 저렴하게 공유하세요.',
+      'OTTALL(오티티올)에서 드라마박스, 웨이브, 비글루 등 OTT를 파티로 나눠 저렴하게 이용하세요.',
   },
 }
 
@@ -62,7 +62,7 @@ const jsonLd = {
       '@type': 'Organization',
       name: 'OTTALL',
       url: 'https://ottall.com',
-      description: '쇼츠 드라마 OTT 공유 플랫폼',
+      description: 'OTT 공동구독 파티 매칭 플랫폼',
     },
     {
       '@type': 'WebSite',
