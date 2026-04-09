@@ -1,17 +1,6 @@
-export type LandingBadgeTone = 'blue' | 'yellow' | 'purple' | 'green'
-
 export type LandingNavItem = {
   href: string
   label: string
-}
-
-export type LandingProduct = {
-  id: string
-  name: string
-  statusLabel: string
-  statusTone: LandingBadgeTone
-  priceLabel: string
-  accentClassName: string
 }
 
 export type LandingStep = {
@@ -21,10 +10,10 @@ export type LandingStep = {
 }
 
 export type LandingVideo = {
-  id: string
+  channelName: string
+  videoId: string
   title: string
-  description: string
-  thumbnailLabel: string
+  thumbnailUrl: string
 }
 
 export type LandingTrustItem = {
