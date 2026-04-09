@@ -4,10 +4,18 @@ import { Toaster } from 'sonner'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { UIProvider } from '@/providers/UIProvider'
 
+const SITE_URL = 'https://ottall.com'
+
 export const metadata: Metadata = {
-  title: { template: '%s | 스트림포켓', default: '스트림포켓' },
-  description: '스트림포켓 관리자 시스템',
-  robots: { index: false, follow: false },
+  title: { template: '%s | OTTALL', default: 'OTTALL' },
+  description: 'OTTALL(오티티올) - 쇼츠 드라마 OTT 공유 플랫폼',
+  metadataBase: new URL(SITE_URL),
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? '',
+    other: {
+      'naver-site-verification': [process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? ''],
+    },
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

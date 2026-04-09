@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Card, CardBody } from '@/components/ui/Card'
 import type { LandingVideo } from '@/app/(landing)/_types'
 
@@ -7,6 +8,8 @@ type VideoSectionProps = {
 }
 
 export function VideoSection({ videos, sectionId }: VideoSectionProps) {
+  if (videos.length === 0) return null
+
   return (
     <section id={sectionId} className="scroll-mt-24 bg-white">
       <div className="mx-auto w-full max-w-[1440px] px-5 py-8 sm:px-8 lg:px-10">
@@ -19,13 +22,32 @@ export function VideoSection({ videos, sectionId }: VideoSectionProps) {
 
         <div className="mt-6 grid gap-3 lg:grid-cols-3">
           {videos.map((video) => (
-            <Card key={video.id} className="rounded-2xl shadow-none">
-              <div className="mx-4 mt-4 h-[150px] rounded-[14px] bg-[#F3F4F6]" />
-              <CardBody className="space-y-2 p-4">
-                <p className="text-sm font-bold text-text-primary">{video.title}</p>
-                <p className="text-xs font-medium text-text-secondary">{video.description}</p>
-              </CardBody>
-            </Card>
+            <a
+              key={video.videoId}
+              href={`https://www.youtube.com/watch?v=${video.videoId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Card className="flex h-full flex-col rounded-2xl shadow-none transition-shadow hover:shadow-md">
+                <div className="relative mx-4 mt-4 aspect-video overflow-hidden rounded-[14px]">
+                  <Image
+                    src={video.thumbnailUrl}
+                    alt={video.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
+                <CardBody className="flex flex-1 flex-col p-4">
+                  <p className="line-clamp-2 min-h-[2.5rem] text-sm font-bold text-text-primary">
+                    {video.title}
+                  </p>
+                  <p className="mt-2 text-xs font-medium text-text-secondary">
+                    {video.channelName}
+                  </p>
+                </CardBody>
+              </Card>
+            </a>
           ))}
         </div>
       </div>

@@ -1,10 +1,8 @@
 import type {
   LandingFaq,
   LandingNavItem,
-  LandingProduct,
   LandingStep,
   LandingTrustItem,
-  LandingVideo,
 } from '@/app/(landing)/_types'
 
 export const LANDING_SECTION_IDS = {
@@ -15,44 +13,10 @@ export const LANDING_SECTION_IDS = {
 } as const // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
 
 export const LANDING_NAV_ITEMS: LandingNavItem[] = [
-  { href: '/party', label: '전체 상품' },
+  { href: '/party', label: '전체 파티' },
   { href: `#${LANDING_SECTION_IDS.steps}`, label: '이용 방법' },
 ]
 
-export const LANDING_PRODUCTS: LandingProduct[] = [
-  {
-    id: 'dramawave',
-    name: 'DramaWave',
-    statusLabel: '1 / 2 모집중',
-    statusTone: 'blue',
-    priceLabel: '7일 10,000원',
-    accentClassName: 'bg-violet-600',
-  },
-  {
-    id: 'dramabox',
-    name: 'DramaBox',
-    statusLabel: '2 / 3 모집중',
-    statusTone: 'yellow',
-    priceLabel: '7일 7,500원',
-    accentClassName: 'bg-rose-500',
-  },
-  {
-    id: 'vigloo',
-    name: 'Vigloo',
-    statusLabel: '2인 공유',
-    statusTone: 'green',
-    priceLabel: '30일 9,000원',
-    accentClassName: 'bg-teal-700',
-  },
-  {
-    id: 'netshort',
-    name: 'Netshort',
-    statusLabel: '프라이빗',
-    statusTone: 'purple',
-    priceLabel: '7일 8,000원',
-    accentClassName: 'bg-pink-500',
-  },
-]
 
 export const LANDING_STEPS: LandingStep[] = [
   {
@@ -77,26 +41,6 @@ export const LANDING_STEPS: LandingStep[] = [
   },
 ]
 
-export const LANDING_VIDEOS: LandingVideo[] = [
-  {
-    id: 'dramabox-video',
-    title: 'DramaBox 인기 영상',
-    description: '유튜브 썸네일 / 플레이어 자리',
-    thumbnailLabel: 'DramaBox',
-  },
-  {
-    id: 'dramawave-video',
-    title: 'DramaWave 인기 영상',
-    description: '유튜브 썸네일 / 플레이어 자리',
-    thumbnailLabel: 'DramaWave',
-  },
-  {
-    id: 'vigloo-video',
-    title: 'Vigloo 인기 영상',
-    description: '유튜브 썸네일 / 플레이어 자리',
-    thumbnailLabel: 'Vigloo',
-  },
-]
 
 export const LANDING_TRUST_ITEMS: LandingTrustItem[] = [
   {
