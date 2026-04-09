@@ -3,17 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { isUserAuthenticated, clearUserAuthSession } from '@/lib/userAuth'
-import { USER_LOGIN_PATH, USER_MYPAGE_PATH, API_BASE_URL } from '@/constants/app'
+import { isUserAuthenticated, clearUserAuthSession, getUserInfo } from '@/lib/userAuth'
+import { USER_LOGIN_PATH, USER_MYPAGE_PATH, API_BASE_URL, KAKAO_OPEN_CHAT_URL } from '@/constants/app'
 
 export function HeaderAuthButton() {
   const router = useRouter()
   const [loggedIn, setLoggedIn] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setLoggedIn(isUserAuthenticated())
+    const info = getUserInfo()
+    if (info) setUserName(info.name)
   }, [])
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export function HeaderAuthButton() {
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-brand px-4 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
       >
-        내 정보
+        {userName ?? '내 정보'}
         <svg
           className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}
           fill="none"
@@ -83,6 +86,15 @@ export function HeaderAuthButton() {
           >
             마이페이지
           </Link>
+          <a
+            href={KAKAO_OPEN_CHAT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+            className="block px-4 py-2.5 text-sm text-text-primary transition-colors hover:bg-gray-50"
+          >
+            문의하기
+          </a>
           <button
             type="button"
             onClick={handleLogout}
