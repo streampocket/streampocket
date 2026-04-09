@@ -21,8 +21,10 @@ export function PaymentModal({
   onSubmit,
   isSubmitting,
 }: PaymentModalProps) {
-  const fee = Math.round(product.price * FEE_RATE)
-  const totalAmount = product.price + fee
+  const displayPrice = product.currentPrice ?? product.price
+  const fee = Math.round(displayPrice * FEE_RATE)
+  const totalAmount = displayPrice + fee
+  const isDiscounted = displayPrice < product.price
 
   return (
     <Modal
@@ -48,12 +50,21 @@ export function PaymentModal({
             <span className="text-body-md font-medium text-text-primary">{product.name}</span>
           </div>
           <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-body-md text-text-secondary">사용기간</span>
-            <span className="text-body-md font-medium text-text-primary">{product.durationDays}일</span>
+            <span className="text-body-md text-text-secondary">
+              {product.startedAt ? '남은 기간' : '사용기간'}
+            </span>
+            <span className="text-body-md font-medium text-text-primary">
+              {product.startedAt ? `${product.remainingDays}일` : `${product.durationDays}일`}
+            </span>
           </div>
           <div className="flex items-center justify-between px-4 py-3">
             <span className="text-body-md text-text-secondary">가격</span>
-            <span className="text-body-md font-medium text-text-primary">{product.price.toLocaleString()}원</span>
+            <span className="text-body-md font-medium text-text-primary">
+              {isDiscounted && (
+                <span className="mr-1 text-text-muted line-through">{product.price.toLocaleString()}원</span>
+              )}
+              {displayPrice.toLocaleString()}원
+            </span>
           </div>
           <div className="flex items-center justify-between px-4 py-3">
             <span className="text-body-md text-text-secondary">수수료(10%)</span>

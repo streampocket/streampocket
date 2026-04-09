@@ -17,6 +17,7 @@ export function OwnProductForm() {
     name: '',
     durationDays: '',
     price: '',
+    dailyDiscount: '',
     totalSlots: '',
     imagePath: null,
     notes: '',
@@ -43,10 +44,12 @@ export function OwnProductForm() {
 
     const durationDays = parseInt(form.durationDays, 10)
     const price = parseInt(form.price, 10)
+    const dailyDiscount = form.dailyDiscount ? parseInt(form.dailyDiscount, 10) : 0
     const totalSlots = parseInt(form.totalSlots, 10)
 
     if (isNaN(durationDays) || durationDays <= 0) return
     if (isNaN(price) || price <= 0) return
+    if (isNaN(dailyDiscount) || dailyDiscount < 0) return
     if (isNaN(totalSlots) || totalSlots < 1) return
 
     createMutation.mutate(
@@ -54,6 +57,7 @@ export function OwnProductForm() {
         name: form.name,
         durationDays,
         price,
+        dailyDiscount,
         totalSlots,
         imagePath: form.imagePath || null,
         notes: form.notes.trim() || null,
@@ -115,7 +119,7 @@ export function OwnProductForm() {
             </div>
             <div>
               <label className="text-body-md mb-1.5 block font-medium text-text-primary">
-                인당 가격 <span className="text-danger">*</span>
+                가격 <span className="text-danger">*</span>
               </label>
               <div className="flex items-center gap-2">
                 <input
@@ -130,6 +134,27 @@ export function OwnProductForm() {
                 <span className="text-body-md shrink-0 text-text-secondary">원</span>
               </div>
             </div>
+          </div>
+
+          {/* 하루 할인 금액 */}
+          <div>
+            <label className="text-body-md mb-1.5 block font-medium text-text-primary">
+              하루 할인 금액
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={form.dailyDiscount}
+                onChange={(e) => setField('dailyDiscount', e.target.value)}
+                placeholder="0"
+                min={0}
+                className="text-body-md w-full max-w-[200px] rounded-lg border border-gray-300 px-3 py-2 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+              />
+              <span className="text-body-md shrink-0 text-text-secondary">원/일</span>
+            </div>
+            <p className="text-caption-sm mt-1 text-text-muted">
+              파티 시작 후 매일 이 금액만큼 가격이 감소합니다 (0이면 할인 없음)
+            </p>
           </div>
 
           {/* 모집 총인원 */}

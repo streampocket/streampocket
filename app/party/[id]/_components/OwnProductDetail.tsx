@@ -42,7 +42,9 @@ export function OwnProductDetail() {
 
   const userInfo = getUserInfo()
   const isOwner = userInfo?.id === product?.userId
-  const isFull = product ? product.filledSlots >= product.totalSlots : false
+  const isClosed = product
+    ? product.filledSlots >= product.totalSlots || (product.startedAt !== null && product.remainingDays <= 1)
+    : false
 
   if (isLoading) {
     return <div className="py-20 text-center text-text-muted">파티를 불러오는 중...</div>
@@ -104,16 +106,47 @@ export function OwnProductDetail() {
           {/* 가격/기간/인원 */}
           <div className="grid grid-cols-3 gap-3 rounded-lg bg-gray-50 p-4">
             <div className="text-center">
-              <p className="text-caption-sm text-text-muted">인당 가격</p>
-              <p className="text-body-lg font-semibold text-text-primary">인당 {product.price.toLocaleString()}원</p>
+              <p className="text-caption-sm text-text-muted">가격</p>
+              {product.currentPrice != null && product.currentPrice < product.price ? (
+                <div>
+                  <p className="text-caption-sm text-text-muted line-through">{product.price.toLocaleString()}원</p>
+                  <p className="text-body-lg font-semibold text-brand">{product.currentPrice.toLocaleString()}원</p>
+                </div>
+              ) : (
+                <p className="text-body-lg font-semibold text-text-primary">{product.price.toLocaleString()}원</p>
+              )}
             </div>
             <div className="text-center">
-              <p className="text-caption-sm text-text-muted">사용기간</p>
-              <p className="text-body-lg font-semibold text-text-primary">{product.durationDays}일</p>
+              <p className="text-caption-sm text-text-muted">
+                {product.startedAt ? '남은 기간' : '사용기간'}
+              </p>
+              <p className="text-body-lg font-semibold text-text-primary">
+                {product.startedAt ? `${product.remainingDays}일` : `${product.durationDays}일`}
+              </p>
             </div>
             <div className="text-center">
               <p className="text-caption-sm text-text-muted">모집인원</p>
               <p className="text-body-lg font-semibold text-text-primary">{product.filledSlots}/{product.totalSlots}명</p>
+            </div>
+          </div>
+
+          {/* 시작일/종료일 */}
+          <div className="grid grid-cols-2 gap-3 rounded-lg bg-gray-50 p-4">
+            <div className="text-center">
+              <p className="text-caption-sm text-text-muted">시작일</p>
+              <p className="text-body-md font-semibold text-text-primary">
+                {product.startedAt
+                  ? new Date(product.startedAt).toLocaleDateString('ko-KR')
+                  : '첫 파티원 참여 후 시작'}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-caption-sm text-text-muted">종료일</p>
+              <p className="text-body-md font-semibold text-text-primary">
+                {product.partyExpiresAt
+                  ? new Date(product.partyExpiresAt).toLocaleDateString('ko-KR')
+                  : `첫 파티원 참여일로부터 ${product.durationDays}일`}
+              </p>
             </div>
           </div>
 
@@ -160,6 +193,13 @@ export function OwnProductDetail() {
           <li key={rule}>{rule}</li>
         ))}
       </ul>
+      <p className="text-body-sm text-text-muted">
+        자세한 환불 정책은{' '}
+        <Link href="/terms" className="font-medium text-brand underline hover:text-brand-dark">
+          이용약관
+        </Link>
+        을 확인해 주세요.
+      </p>
 
       {/* 참여 신청 */}
       {product.status === 'recruiting' && !isOwner && (
@@ -194,11 +234,13 @@ export function OwnProductDetail() {
                 카카오톡 문의하기
               </a>
             </div>
-          ) : isFull ? (
+          ) : isClosed ? (
             <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 p-4">
-              <Badge variant="gray">모집 완료</Badge>
+              <Badge variant="gray">모집 마감</Badge>
               <p className="text-body-md text-text-secondary">
-                이 파티는 모집이 완료되었습니다.
+                {product.filledSlots >= product.totalSlots
+                  ? '이 파티는 모집이 완료되었습니다.'
+                  : '이 파티는 남은 기간이 1일 이하로 참여가 불가합니다.'}
               </p>
             </div>
           ) : (

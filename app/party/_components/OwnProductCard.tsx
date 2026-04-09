@@ -64,8 +64,17 @@ export function OwnProductCard({ product }: OwnProductCardProps) {
           </h3>
 
           <div className="flex items-center gap-3 text-body-md text-text-secondary">
-            <span>인당 {product.price.toLocaleString()}원</span>
-            <span>{product.durationDays}일</span>
+            <span>
+              {product.currentPrice != null && product.currentPrice < product.price ? (
+                <>
+                  <span className="mr-1 text-text-muted line-through">{product.price.toLocaleString()}원</span>
+                  <span className="font-semibold text-brand">{product.currentPrice.toLocaleString()}원</span>
+                </>
+              ) : (
+                <>{product.price.toLocaleString()}원</>
+              )}
+            </span>
+            <span>{product.startedAt ? `${product.remainingDays ?? 0}일 남음` : `${product.durationDays}일`}</span>
           </div>
 
           {/* 모집 프로그레스 */}

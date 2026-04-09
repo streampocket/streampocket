@@ -183,14 +183,19 @@ export type OwnProduct = {
   category: OwnCategory
   durationDays: number
   price: number
+  dailyDiscount: number
   totalSlots: number
   filledSlots: number
   imagePath: string | null
   notes: string | null
   hasCredentials: boolean
   status: OwnProductStatus
+  startedAt: string | null
   userId: string
   user: { id: string; name: string }
+  currentPrice: number
+  partyExpiresAt: string | null
+  remainingDays: number
   createdAt: string
   updatedAt: string
 }

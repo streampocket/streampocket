@@ -89,7 +89,14 @@ export function PartyTable({
                       {party.user.name}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {formatPrice(party.price)}원
+                      {party.currentPrice != null && party.currentPrice < party.price ? (
+                        <span>
+                          <span className="text-text-muted line-through">{formatPrice(party.price)}</span>{' '}
+                          <span className="font-medium text-brand">{formatPrice(party.currentPrice)}원</span>
+                        </span>
+                      ) : (
+                        <span>{formatPrice(party.price)}원</span>
+                      )}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       <span className="font-medium text-text-primary">{party.filledSlots}</span>
@@ -136,7 +143,9 @@ export function PartyTable({
                   {party.category.name} · {party.user.name}
                 </p>
                 <p className="text-caption-md mt-1 text-text-secondary">
-                  {formatPrice(party.price)}원 · {party.filledSlots}/{party.totalSlots}명
+                  {party.currentPrice != null && party.currentPrice < party.price
+                    ? `${formatPrice(party.currentPrice)}원(원가 ${formatPrice(party.price)}원)`
+                    : `${formatPrice(party.price)}원`} · {party.filledSlots}/{party.totalSlots}명
                 </p>
                 <p className="text-caption-sm mt-1 text-text-muted">
                   {formatDate(party.createdAt)}
