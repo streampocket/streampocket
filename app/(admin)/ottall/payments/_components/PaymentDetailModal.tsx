@@ -9,6 +9,7 @@ import type { PaymentStatus, PaymentMethod } from '@/types/domain'
 import { useAdminPaymentDetail } from '../_hooks/useAdminPaymentDetail'
 import { useApprovePayment } from '../_hooks/useApprovePayment'
 import { useRejectPayment } from '../_hooks/useRejectPayment'
+import { useDeletePayment } from '../_hooks/useDeletePayment'
 
 type PaymentDetailModalProps = {
   paymentId: string | null
@@ -44,9 +45,11 @@ export function PaymentDetailModal({ paymentId, onClose }: PaymentDetailModalPro
   const { data: payment, isLoading } = useAdminPaymentDetail(paymentId)
   const approveMutation = useApprovePayment()
   const rejectMutation = useRejectPayment()
+  const deleteMutation = useDeletePayment()
   const [rejectNote, setRejectNote] = useState('')
   const [showRejectForm, setShowRejectForm] = useState(false)
   const [confirmApprove, setConfirmApprove] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const handleApprove = () => {
     if (!paymentId) return
@@ -79,14 +82,69 @@ export function PaymentDetailModal({ paymentId, onClose }: PaymentDetailModalPro
     )
   }
 
+  const handleDelete = () => {
+    if (!paymentId) return
+    if (!confirmDelete) {
+      setConfirmDelete(true)
+      return
+    }
+    deleteMutation.mutate(
+      { id: paymentId },
+      {
+        onSuccess: () => {
+          setConfirmDelete(false)
+          onClose()
+        },
+      },
+    )
+  }
+
   const handleClose = () => {
     onClose()
     setShowRejectForm(false)
     setRejectNote('')
     setConfirmApprove(false)
+    setConfirmDelete(false)
   }
 
   const isPending = payment?.status === 'pending'
+  const isManual = payment?.method === 'manual'
+
+  const deleteSection = isManual ? (
+    <div className="flex w-full flex-col gap-2 border-t border-border pt-3">
+      {confirmDelete ? (
+        <div className="flex flex-col gap-2">
+          {payment?.status === 'paid' && (
+            <p className="text-caption-md text-warning">
+              승인된 결제를 삭제하면 파티 슬롯이 복원됩니다.
+            </p>
+          )}
+          <div className="flex items-center gap-2">
+            <p className="text-caption-md text-text-secondary">정말 삭제하시겠습니까?</p>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setConfirmDelete(false)}
+            >
+              취소
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              loading={deleteMutation.isPending}
+              onClick={handleDelete}
+            >
+              삭제 확인
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <Button variant="danger" size="sm" onClick={handleDelete}>
+          삭제
+        </Button>
+      )}
+    </div>
+  ) : null
 
   return (
     <Modal
@@ -94,66 +152,69 @@ export function PaymentDetailModal({ paymentId, onClose }: PaymentDetailModalPro
       onClose={handleClose}
       title="결제 상세"
       footer={
-        isPending ? (
-          <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
-            {showRejectForm ? (
-              <div className="flex w-full flex-col gap-2">
-                <textarea
-                  placeholder="거절 사유 (선택)"
-                  value={rejectNote}
-                  onChange={(e) => setRejectNote(e.target.value)}
-                  rows={2}
-                  className="text-body-md w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
-                />
-                <div className="flex gap-2 self-end">
+        <div className="flex w-full flex-col gap-3">
+          {isPending && (
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+              {showRejectForm ? (
+                <div className="flex w-full flex-col gap-2">
+                  <textarea
+                    placeholder="거절 사유 (선택)"
+                    value={rejectNote}
+                    onChange={(e) => setRejectNote(e.target.value)}
+                    rows={2}
+                    className="text-body-md w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                  />
+                  <div className="flex gap-2 self-end">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setShowRejectForm(false)}
+                    >
+                      취소
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      loading={rejectMutation.isPending}
+                      onClick={handleReject}
+                    >
+                      거절 확인
+                    </Button>
+                  </div>
+                </div>
+              ) : confirmApprove ? (
+                <div className="flex items-center gap-2">
+                  <p className="text-caption-md text-text-secondary">결제를 승인하시겠습니까?</p>
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => setShowRejectForm(false)}
+                    onClick={() => setConfirmApprove(false)}
                   >
                     취소
                   </Button>
                   <Button
-                    variant="danger"
+                    variant="primary"
                     size="sm"
-                    loading={rejectMutation.isPending}
-                    onClick={handleReject}
+                    loading={approveMutation.isPending}
+                    onClick={handleApprove}
                   >
-                    거절 확인
+                    승인 확인
                   </Button>
                 </div>
-              </div>
-            ) : confirmApprove ? (
-              <div className="flex items-center gap-2">
-                <p className="text-caption-md text-text-secondary">결제를 승인하시겠습니까?</p>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setConfirmApprove(false)}
-                >
-                  취소
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  loading={approveMutation.isPending}
-                  onClick={handleApprove}
-                >
-                  승인 확인
-                </Button>
-              </div>
-            ) : (
-              <>
-                <Button variant="primary" onClick={handleApprove}>
-                  승인
-                </Button>
-                <Button variant="danger" onClick={() => setShowRejectForm(true)}>
-                  거절
-                </Button>
-              </>
-            )}
-          </div>
-        ) : undefined
+              ) : (
+                <>
+                  <Button variant="primary" onClick={handleApprove}>
+                    승인
+                  </Button>
+                  <Button variant="danger" onClick={() => setShowRejectForm(true)}>
+                    거절
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
+          {deleteSection}
+        </div>
       }
     >
       {isLoading || !payment ? (

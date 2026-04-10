@@ -13,7 +13,7 @@ export function HeroSection() {
 
           <div className="space-y-4">
             <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-[-0.03em] text-text-primary sm:text-5xl">
-              믿을 수 있는 OTT 파티 매칭, OTTALL
+              믿을 수 있는 숏폼드라마 OTT 파티 매칭, OTTALL
             </h1>
             <p className="max-w-2xl text-base leading-7 text-text-secondary sm:text-lg">
               모집 중인 파티를 확인하고 바로 참여하세요. 매칭부터 정산까지

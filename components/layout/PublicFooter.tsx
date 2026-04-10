@@ -36,6 +36,12 @@ export function PublicFooter() {
           >
             개인정보 처리방침
           </Link>
+          <Link
+            href="/terms/partner"
+            className="font-medium text-text-secondary transition-colors hover:text-text-primary"
+          >
+            파트너(판매자) 이용약관
+          </Link>
         </nav>
       </div>
     </footer>
