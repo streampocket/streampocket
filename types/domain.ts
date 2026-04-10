@@ -161,6 +161,11 @@ export type AlimtalkTestResult = {
   providerMessage: string
 }
 
+// ───────────────────────── 인증 (OTTALL) ─────────────────────────
+
+/** 가입 방식 */
+export type AuthProvider = 'local' | 'kakao' | 'google'
+
 // ───────────────────────── OTT 상품 (OTTALL) ─────────────────────────
 
 /** OTT 상품 상태 */

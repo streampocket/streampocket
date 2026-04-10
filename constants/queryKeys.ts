@@ -71,4 +71,9 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['adminPayments', 'list', params] as const,
     detail: (id: string) => ['adminPayments', id] as const,
   },
+  adminUsers: {
+    all: () => ['adminUsers'] as const,
+    list: (params?: Record<string, unknown>) => ['adminUsers', 'list', params] as const,
+    detail: (id: string) => ['adminUsers', id] as const,
+  },
 } as const
