@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -97,7 +98,13 @@ export function ReviewCodesTable() {
                           {item.gameName}
                         </td>
                         <td className="px-5 py-3">
-                          <span className="font-mono text-caption-md text-text-secondary">
+                          <span
+                            className="cursor-pointer font-mono text-caption-md text-text-secondary transition-colors hover:text-text-primary"
+                            onClick={() => {
+                              navigator.clipboard.writeText(item.code)
+                              toast.success('코드가 복사되었습니다.')
+                            }}
+                          >
                             {item.code}
                           </span>
                         </td>
