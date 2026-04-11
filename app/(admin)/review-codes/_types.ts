@@ -16,6 +16,11 @@ export type ReviewCodeFormData = {
   code: string
 }
 
+export type ReviewCodeBatchFormData = {
+  gameName?: string
+  codes: string[]
+}
+
 export type ReviewCodeStatusData = {
   status: ReviewCodeStatus
   usedBy?: string
