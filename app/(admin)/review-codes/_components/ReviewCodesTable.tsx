@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import { formatDate } from '@/lib/utils'
 import { useReviewCodes } from '../_hooks/useReviewCodes'
+import { ReviewCodeBatchModal } from './ReviewCodeBatchModal'
 import { ReviewCodeFormModal } from './ReviewCodeFormModal'
 import { ReviewCodeStatusModal } from './ReviewCodeStatusModal'
 import type { ReviewCode, ReviewCodeStatus } from '@/types/domain'
@@ -22,6 +23,7 @@ const STATUS_MAP: Record<ReviewCodeStatus, { label: string; variant: BadgeVarian
 export function ReviewCodesTable() {
   const searchParams = useSearchParams()
   const [editingCode, setEditingCode] = useState<ReviewCode | null | undefined>(undefined)
+  const [isBatchOpen, setIsBatchOpen] = useState(false)
   const [statusCode, setStatusCode] = useState<ReviewCode | null>(null)
 
   const status = (searchParams.get('status') as ReviewCodeStatus) || undefined
@@ -40,9 +42,14 @@ export function ReviewCodesTable() {
           <p className="text-caption-md text-text-secondary">
             총 <strong className="text-text-primary">{data?.total ?? 0}</strong>건
           </p>
-          <Button size="sm" onClick={() => setEditingCode(null)}>
-            + 코드 등록
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => setIsBatchOpen(true)}>
+              일괄 등록
+            </Button>
+            <Button size="sm" onClick={() => setEditingCode(null)}>
+              + 코드 등록
+            </Button>
+          </div>
         </div>
 
         <CardBody className="p-0">
@@ -173,6 +180,10 @@ export function ReviewCodesTable() {
           reviewCode={editingCode}
           onClose={() => setEditingCode(undefined)}
         />
+      )}
+
+      {isBatchOpen && (
+        <ReviewCodeBatchModal onClose={() => setIsBatchOpen(false)} />
       )}
 
       {statusCode && (
