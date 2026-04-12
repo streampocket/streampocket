@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { ProductTabs } from './_components/ProductTabs'
 import { ProductCard } from './_components/ProductCard'
@@ -12,16 +12,34 @@ import type { SteamProduct, ProductStatus } from '@/types/domain'
 
 function ProductsContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const [editingProduct, setEditingProduct] = useState<SteamProduct | null | undefined>(undefined)
+  const [search, setSearch] = useState(searchParams.get('search') ?? '')
   const status = (searchParams.get('status') as ProductStatus) || undefined
 
-  const { data, isLoading } = useProducts({ status })
+  const { data, isLoading } = useProducts({ status, search: search || undefined })
   const { mutate: sync, isPending: isSyncing } = useSyncProducts()
 
   const isModalOpen = editingProduct !== undefined
 
+  const handleSearchChange = (value: string) => {
+    setSearch(value)
+    const params = new URLSearchParams(searchParams.toString())
+    if (value) params.set('search', value)
+    else params.delete('search')
+    router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ''}`)
+  }
+
   return (
     <>
+      <input
+        type="text"
+        placeholder="상품명 검색..."
+        value={search}
+        onChange={(e) => handleSearchChange(e.target.value)}
+        className="text-body-md w-full rounded-lg border border-border bg-card-bg px-4 py-2 text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none md:max-w-xs"
+      />
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-heading-md text-text-primary">
           {data?.total ?? 0}개 상품
