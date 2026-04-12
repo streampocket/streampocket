@@ -1,11 +1,25 @@
-import type { ProductStatus } from '@/types/domain'
+import type { ProductStatus, SteamProduct } from '@/types/domain'
 
 export type ProductListParams = {
   status?: ProductStatus | ''
+  search?: string
 }
 
 export type ProductFormData = {
   name: string
   naverProductId: string
   status: ProductStatus
+}
+
+export type ProductStatusCounts = {
+  total: number
+  active: number
+  draft: number
+  inactive: number
+}
+
+export type ProductListResponse = {
+  data: SteamProduct[]
+  total: number
+  counts: ProductStatusCounts
 }

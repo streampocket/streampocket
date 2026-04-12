@@ -2,13 +2,15 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useProducts } from '../_hooks/useProducts'
 import type { ProductStatus } from '@/types/domain'
+import type { ProductStatusCounts } from '../_types'
 
-const TABS: { value: ProductStatus | ''; label: string }[] = [
-  { value: '', label: '전체' },
-  { value: 'active', label: '판매 중' },
-  { value: 'draft', label: '임시저장' },
-  { value: 'inactive', label: '판매 중지' },
+const TABS: { value: ProductStatus | ''; label: string; countKey: keyof ProductStatusCounts }[] = [
+  { value: '', label: '전체', countKey: 'total' },
+  { value: 'active', label: '판매 중', countKey: 'active' },
+  { value: 'draft', label: '임시저장', countKey: 'draft' },
+  { value: 'inactive', label: '판매 중지', countKey: 'inactive' },
 ]
 
 export function ProductTabs() {
@@ -17,9 +19,17 @@ export function ProductTabs() {
   const searchParams = useSearchParams()
   const currentStatus = searchParams.get('status') ?? ''
 
+  const currentSearch = searchParams.get('search') ?? ''
+  const { data } = useProducts({
+    status: (currentStatus as ProductStatus) || undefined,
+    search: currentSearch || undefined,
+  })
+  const counts = data?.counts
+
   const handleTab = (value: string) => {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(searchParams.toString())
     if (value) params.set('status', value)
+    else params.delete('status')
     router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ''}`)
   }
 
@@ -36,7 +46,7 @@ export function ProductTabs() {
               : 'text-text-secondary hover:text-text-primary',
           )}
         >
-          {tab.label}
+          {tab.label}{counts ? ` (${counts[tab.countKey]})` : ''}
         </button>
       ))}
     </div>
