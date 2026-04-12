@@ -43,6 +43,7 @@ export type SteamOrderItem = {
   errorMessage: string | null
   paidAt: string | null
   returnedAt: string | null
+  reviewGameSentAt: string | null
   createdAt: string
   updatedAt: string
   deliveryLogs?: DeliveryLog[]

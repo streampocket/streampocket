@@ -9,6 +9,7 @@ import type { DeliveryLogStatus, FulfillmentStatus } from '@/types/domain'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
+import { useSendReviewGame } from '../_hooks/useSendReviewGame'
 
 type OrderDetailModalProps = {
   orderId: string | null
@@ -29,10 +30,20 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   returned: { label: '반품', variant: 'purple' },
 }
 
+const REVIEW_GAME_PATTERN = /(\d+)\s*\+\s*(\d+)/
+
+function parseReviewGameCount(productName: string): number | null {
+  const match = productName.match(REVIEW_GAME_PATTERN)
+  if (!match) return null
+  const count = Number(match[2])
+  return count > 0 ? count : null
+}
+
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
+  const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const canRetry =
@@ -41,6 +52,13 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
     order?.fulfillmentStatus === 'completed' ||
     order?.fulfillmentStatus === 'manual_review' ||
     order?.fulfillmentStatus === 'failed'
+
+  const reviewGameCount = order ? parseReviewGameCount(order.productName) : null
+  const canSendReviewGame =
+    order?.fulfillmentStatus === 'completed' &&
+    order.decisionDate !== null &&
+    order.reviewGameSentAt === null &&
+    reviewGameCount !== null
 
   return (
     <Modal
@@ -63,6 +81,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               }}
             >
               반품 처리
+            </Button>
+          )}
+          {canSendReviewGame && (
+            <Button
+              variant="primary"
+              loading={isSendingReviewGame}
+              onClick={() => {
+                if (order && window.confirm(`리뷰게임 코드 ${reviewGameCount}개를 발송하시겠습니까?`)) {
+                  sendReviewGame(order.id)
+                }
+              }}
+            >
+              리뷰게임 발송 ({reviewGameCount}개)
             </Button>
           )}
           {canRetry && (
@@ -150,6 +181,18 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                 <dt className="text-caption-md text-text-muted">반품일시</dt>
                 <dd className="mt-0.5 text-caption-md text-text-secondary">
                   {formatDate(order.returnedAt)}
+                </dd>
+              </div>
+            )}
+            {reviewGameCount !== null && (
+              <div>
+                <dt className="text-caption-md text-text-muted">리뷰게임</dt>
+                <dd className="mt-0.5 text-caption-md">
+                  {order.reviewGameSentAt ? (
+                    <Badge variant="green">발송 완료 ({formatDate(order.reviewGameSentAt)})</Badge>
+                  ) : (
+                    <Badge variant="yellow">미발송 ({reviewGameCount}개)</Badge>
+                  )}
                 </dd>
               </div>
             )}
