@@ -29,10 +29,11 @@ export function ReviewCodesTable() {
 
   const status = (searchParams.get('status') as ReviewCodeStatus) || undefined
   const gameName = searchParams.get('gameName') || undefined
+  const sortField = (searchParams.get('sortField') as 'createdAt' | 'usedAt') || 'createdAt'
   const dateOrder = (searchParams.get('dateOrder') as 'asc' | 'desc') || 'desc'
   const page = Number(searchParams.get('page') ?? 1)
 
-  const { data, isLoading } = useReviewCodes({ status, gameName, dateOrder, page, pageSize: PAGE_SIZE })
+  const { data, isLoading } = useReviewCodes({ status, gameName, sortField, dateOrder, page, pageSize: PAGE_SIZE })
 
   const isFormModalOpen = editingCode !== undefined
 

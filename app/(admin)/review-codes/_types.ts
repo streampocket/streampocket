@@ -4,6 +4,7 @@ import type { PaginatedResponse } from '@/types/api'
 export type ReviewCodeListParams = {
   status?: ReviewCodeStatus
   gameName?: string
+  sortField?: 'createdAt' | 'usedAt'
   dateOrder?: 'asc' | 'desc'
   page?: number
   pageSize?: number
