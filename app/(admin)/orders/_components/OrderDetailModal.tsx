@@ -135,14 +135,16 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               </dd>
             </div>
             <div>
+              <dt className="text-caption-md text-text-muted">수신자명</dt>
+              <dd className="mt-0.5 text-caption-md text-text-primary">
+                {order.receiverName ?? <span className="text-danger">이름 미확인</span>}
+              </dd>
+            </div>
+            <div>
               <dt className="text-caption-md text-text-muted">수신전화번호</dt>
               <dd className="mt-0.5 text-caption-md text-text-primary">
                 {order.receiverPhoneNumber ?? <span className="text-danger">전화번호 미확인</span>}
               </dd>
-            </div>
-            <div>
-              <dt className="text-caption-md text-text-muted">수신자명</dt>
-              <dd className="mt-0.5 text-caption-md text-text-primary">{order.receiverName ?? '-'}</dd>
             </div>
             <div>
               <dt className="text-caption-md text-text-muted">결제금액</dt>

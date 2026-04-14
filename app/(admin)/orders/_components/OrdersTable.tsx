@@ -49,7 +49,7 @@ export function OrdersTable() {
                 <tr className="border-b border-border bg-gray-50">
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">상품주문번호</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">상품명</th>
-                  <th className="text-label-md px-5 py-3 text-left text-text-secondary">수신전화번호</th>
+                  <th className="text-label-md px-5 py-3 text-left text-text-secondary">수신자명</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">금액</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">상태</th>
                   <th className="text-label-md px-5 py-3 text-left text-text-secondary">결제일시</th>
@@ -86,7 +86,7 @@ export function OrdersTable() {
                           {order.productName}
                         </td>
                         <td className="text-caption-md px-5 py-3 text-text-secondary">
-                          {order.receiverPhoneNumber ?? <span className="text-danger">미확인</span>}
+                          {order.receiverName ?? <span className="text-danger">미확인</span>}
                         </td>
                         <td className="text-body-md px-5 py-3 text-text-primary">
                           {order.unitPrice.toLocaleString()}원
