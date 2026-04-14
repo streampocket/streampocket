@@ -8,6 +8,7 @@ import { useCreateManualRevenue } from '../_hooks/useCreateManualRevenue'
 import { useUpdateManualRevenue } from '../_hooks/useUpdateManualRevenue'
 import { useDeleteManualRevenue } from '../_hooks/useDeleteManualRevenue'
 import { ManualRevenueFormModal } from './ManualRevenueFormModal'
+import { formatMonthDay } from '@/lib/utils'
 import type { ManualRevenue } from '@/types/domain'
 import type { ManualRevenueFormData, ManualRevenueListParams } from '../_types'
 
@@ -105,7 +106,7 @@ export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
                     {items.map((item) => (
                       <tr key={item.id} className="border-b border-border last:border-0">
                         <td className="px-3 py-2.5 text-text-primary">
-                          {item.date.slice(5, 10)}
+                          {formatMonthDay(item.date)}
                         </td>
                         <td className="px-3 py-2.5 text-right text-text-primary">
                           {fmt(item.amount)}원
