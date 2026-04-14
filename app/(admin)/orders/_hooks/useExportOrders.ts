@@ -10,7 +10,7 @@ type ExportOrdersParams = {
 }
 
 function buildFilename(): string {
-  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+  const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' }).format(new Date()).replace(/\. /g, '').replace('.', '')
   return `orders_${date}.xlsx`
 }
 

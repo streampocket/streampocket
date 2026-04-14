@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
+import { formatDateOnly, getTodayStringKST } from '@/lib/utils'
 import type { Expense, ExpenseCategory } from '@/types/domain'
 import type { ExpenseFormData } from '../_types'
 
@@ -21,25 +22,20 @@ type ExpenseFormModalProps = {
   expense?: Expense | null
 }
 
-function getTodayString(): string {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-}
-
 export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense }: ExpenseFormModalProps) {
-  const [date, setDate] = useState(getTodayString())
+  const [date, setDate] = useState(getTodayStringKST())
   const [category, setCategory] = useState<ExpenseCategory>('game_purchase')
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
 
   useEffect(() => {
     if (expense) {
-      setDate(expense.date.slice(0, 10))
+      setDate(formatDateOnly(expense.date))
       setCategory(expense.category)
       setAmount(String(expense.amount))
       setMemo(expense.memo ?? '')
     } else {
-      setDate(getTodayString())
+      setDate(getTodayStringKST())
       setCategory('game_purchase')
       setAmount('')
       setMemo('')

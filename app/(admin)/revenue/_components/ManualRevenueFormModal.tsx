@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
+import { formatDateOnly, getTodayStringKST } from '@/lib/utils'
 import type { ManualRevenue } from '@/types/domain'
 import type { ManualRevenueFormData } from '../_types'
 
@@ -14,23 +15,18 @@ type ManualRevenueFormModalProps = {
   item?: ManualRevenue | null
 }
 
-function getTodayString(): string {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-}
-
 export function ManualRevenueFormModal({ isOpen, onClose, onSubmit, isPending, item }: ManualRevenueFormModalProps) {
-  const [date, setDate] = useState(getTodayString())
+  const [date, setDate] = useState(getTodayStringKST())
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
 
   useEffect(() => {
     if (item) {
-      setDate(item.date.slice(0, 10))
+      setDate(formatDateOnly(item.date))
       setAmount(String(item.amount))
       setMemo(item.memo ?? '')
     } else {
-      setDate(getTodayString())
+      setDate(getTodayStringKST())
       setAmount('')
       setMemo('')
     }

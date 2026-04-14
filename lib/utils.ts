@@ -20,3 +20,35 @@ export function formatDate(date: string | Date): string {
     .replace(/\. /g, '-')
     .replace('.', '')
 }
+
+/** KST 기준 'YYYY-MM-DD' 문자열 반환 */
+export function formatDateOnly(date: string | Date): string {
+  const d = new Date(date)
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Seoul',
+  })
+    .format(d)
+    .replace(/\. /g, '-')
+    .replace('.', '')
+}
+
+/** KST 기준 'MM-DD' 문자열 반환 (테이블 간결 표시용) */
+export function formatMonthDay(date: string | Date): string {
+  const d = new Date(date)
+  return new Intl.DateTimeFormat('ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Seoul',
+  })
+    .format(d)
+    .replace(/\. /g, '-')
+    .replace('.', '')
+}
+
+/** KST 기준 오늘 날짜 'YYYY-MM-DD' 문자열 */
+export function getTodayStringKST(): string {
+  return formatDateOnly(new Date())
+}

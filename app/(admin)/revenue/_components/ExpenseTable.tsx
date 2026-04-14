@@ -8,6 +8,7 @@ import { useCreateExpense } from '../_hooks/useCreateExpense'
 import { useUpdateExpense } from '../_hooks/useUpdateExpense'
 import { useDeleteExpense } from '../_hooks/useDeleteExpense'
 import { ExpenseFormModal } from './ExpenseFormModal'
+import { formatMonthDay } from '@/lib/utils'
 import type { Expense, ExpenseCategory } from '@/types/domain'
 import type { ExpenseFormData, ExpenseListParams } from '../_types'
 
@@ -150,7 +151,7 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                     {items.map((item) => (
                       <tr key={item.id} className="border-b border-border last:border-0">
                         <td className="px-3 py-2.5 text-text-primary">
-                          {item.date.slice(5, 10)}
+                          {formatMonthDay(item.date)}
                         </td>
                         <td className="px-3 py-2.5 text-text-primary">
                           {CATEGORY_LABELS[item.category]}

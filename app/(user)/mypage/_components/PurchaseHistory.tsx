@@ -141,7 +141,7 @@ function ApplicationCard({ application, onViewCredentials }: ApplicationCardProp
             <div className="flex items-center gap-2 rounded-lg border border-border px-3 py-2">
               <span className="text-caption-md text-text-muted">이용 기간</span>
               <span className="text-caption-md text-text-secondary">
-                {new Date(application.startedAt).toLocaleDateString('ko-KR')} ~ {new Date(application.expiresAt).toLocaleDateString('ko-KR')}
+                {new Date(application.startedAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} ~ {new Date(application.expiresAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}
               </span>
             </div>
           )}
@@ -153,6 +153,7 @@ function ApplicationCard({ application, onViewCredentials }: ApplicationCardProp
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
+                timeZone: 'Asia/Seoul',
               })}
             </p>
             {application.status === 'expired' && (
