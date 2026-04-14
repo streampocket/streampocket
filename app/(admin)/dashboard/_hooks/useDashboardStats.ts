@@ -5,18 +5,21 @@ import type { DashboardStats, RevenueData } from '@/types/domain'
 import type { ApiResponse } from '@/types/api'
 
 type DashboardStatsResponse = {
-  today: { orderCount: number }
-  orders: { pending: number; manualReview: number; failed: number }
-  stock: Array<{ productId: string; productName: string; availableCodes: number }>
+  cards: {
+    totalOrders: number
+    confirmedOrders: number
+    pendingDecisionOrders: number
+    returnedOrders: number
+  }
   revenue: RevenueData
 }
 
 function mapResponse(raw: DashboardStatsResponse): DashboardStats {
   return {
-    todayOrders: raw.today.orderCount,
-    pendingOrders: raw.orders.pending,
-    manualReviewOrders: raw.orders.manualReview,
-    lowStockProducts: raw.stock.filter((s) => s.availableCodes <= 2).length,
+    totalOrders: raw.cards.totalOrders,
+    confirmedOrders: raw.cards.confirmedOrders,
+    pendingDecisionOrders: raw.cards.pendingDecisionOrders,
+    returnedOrders: raw.cards.returnedOrders,
     revenue: raw.revenue,
   }
 }
