@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { formatDateOnly, getTodayStringKST } from '@/lib/utils'
-import type { Expense, ExpenseCategory } from '@/types/domain'
+import type { Expense, ExpenseCategory, ExpensePayer } from '@/types/domain'
 import type { ExpenseFormData } from '../_types'
 
 const CATEGORY_OPTIONS: { value: ExpenseCategory; label: string }[] = [
@@ -12,6 +12,11 @@ const CATEGORY_OPTIONS: { value: ExpenseCategory; label: string }[] = [
   { value: 'country_change', label: '국가변경' },
   { value: 'review_game', label: '리뷰 게임' },
   { value: 'other', label: '기타' },
+]
+
+const PAYER_OPTIONS: { value: ExpensePayer; label: string }[] = [
+  { value: 'song_donggeon', label: '송동건' },
+  { value: 'im_jeongbin', label: '임정빈' },
 ]
 
 type ExpenseFormModalProps = {
@@ -25,6 +30,7 @@ type ExpenseFormModalProps = {
 export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense }: ExpenseFormModalProps) {
   const [date, setDate] = useState(getTodayStringKST())
   const [category, setCategory] = useState<ExpenseCategory>('game_purchase')
+  const [payer, setPayer] = useState<ExpensePayer>('song_donggeon')
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
 
@@ -32,11 +38,13 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
     if (expense) {
       setDate(formatDateOnly(expense.date))
       setCategory(expense.category)
+      setPayer(expense.payer)
       setAmount(String(expense.amount))
       setMemo(expense.memo ?? '')
     } else {
       setDate(getTodayStringKST())
       setCategory('game_purchase')
+      setPayer('song_donggeon')
       setAmount('')
       setMemo('')
     }
@@ -48,6 +56,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
     onSubmit({
       date,
       category,
+      payer,
       amount: parsedAmount,
       memo: memo || undefined,
     })
@@ -87,6 +96,20 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
             className="mt-1 w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-body-md text-text-primary focus:border-brand focus:outline-none"
           >
             {CATEGORY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="text-body-md text-text-secondary">결제자</label>
+          <select
+            value={payer}
+            onChange={(e) => setPayer(e.target.value as ExpensePayer)}
+            className="mt-1 w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-body-md text-text-primary focus:border-brand focus:outline-none"
+          >
+            {PAYER_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>

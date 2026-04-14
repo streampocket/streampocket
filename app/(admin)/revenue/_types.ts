@@ -1,4 +1,4 @@
-import type { ExpenseCategory } from '@/types/domain'
+import type { ExpenseCategory, ExpensePayer } from '@/types/domain'
 
 export type ExpenseListParams = {
   category?: ExpenseCategory
@@ -11,6 +11,7 @@ export type ExpenseListParams = {
 export type ExpenseFormData = {
   date: string
   category: ExpenseCategory
+  payer: ExpensePayer
   amount: number
   memo?: string
 }
