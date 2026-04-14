@@ -123,11 +123,31 @@ export type ManualRevenue = {
 
 /** 대시보드 통계 */
 export type DashboardStats = {
-  todayOrders: number
-  pendingOrders: number
-  manualReviewOrders: number
-  lowStockProducts: number
+  totalOrders: number
+  confirmedOrders: number
+  pendingDecisionOrders: number
+  returnedOrders: number
   revenue: RevenueData
+}
+
+/** 매출 차트 아이템 */
+export type RevenueChartItem = {
+  date: string
+  totalRevenue: number
+  netProfit: number
+}
+
+/** 상품별 매출 랭킹 아이템 */
+export type ProductRankingItem = {
+  productName: string
+  orderCount: number
+  totalRevenue: number
+}
+
+/** 대시보드 추가 정보 */
+export type DashboardExtras = {
+  productRanking: ProductRankingItem[]
+  averageDecisionDays: number
 }
 
 export type AlimtalkTemplate = {

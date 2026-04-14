@@ -8,32 +8,32 @@ export function StatsGrid() {
 
   const stats = [
     {
-      label: '오늘 주문',
-      value: isLoading ? '-' : (data?.todayOrders ?? 0),
-      sub: '금일 00:00 이후',
+      label: '총 주문',
+      value: isLoading ? '-' : (data?.totalOrders ?? 0),
+      sub: '전체 누적',
       icon: '📋',
       iconBg: 'bg-brand',
     },
     {
-      label: '처리 대기',
-      value: isLoading ? '-' : (data?.pendingOrders ?? 0),
-      sub: 'pending 상태',
+      label: '구매 확정',
+      value: isLoading ? '-' : (data?.confirmedOrders ?? 0),
+      sub: '확정 완료',
+      icon: '✅',
+      iconBg: 'bg-success',
+    },
+    {
+      label: '확정 대기',
+      value: isLoading ? '-' : (data?.pendingDecisionOrders ?? 0),
+      sub: '발송 완료, 미확정',
       icon: '⏳',
       iconBg: 'bg-warning',
     },
     {
-      label: '수동 처리 필요',
-      value: isLoading ? '-' : (data?.manualReviewOrders ?? 0),
-      sub: '확인 필요',
-      icon: '⚠',
+      label: '반품',
+      value: isLoading ? '-' : (data?.returnedOrders ?? 0),
+      sub: '반품 처리됨',
+      icon: '↩',
       iconBg: 'bg-danger',
-    },
-    {
-      label: '재고 부족 상품',
-      value: isLoading ? '-' : (data?.lowStockProducts ?? 0),
-      sub: '2개 이하',
-      icon: '📦',
-      iconBg: 'bg-info',
     },
   ]
 

@@ -15,6 +15,8 @@ export const QUERY_KEYS = {
   },
   dashboard: {
     stats: (period?: string) => ['dashboard', 'stats', period] as const,
+    revenueChart: (days?: number) => ['dashboard', 'revenueChart', days] as const,
+    extras: () => ['dashboard', 'extras'] as const,
   },
   settings: {},
   alimtalk: {

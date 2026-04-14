@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { StatsGrid } from './_components/StatsGrid'
 import { RevenueStats } from './_components/RevenueStats'
-import { OrderStatusChart } from './_components/OrderStatusChart'
-import { StockChart } from './_components/StockChart'
+import { RevenueChart } from './_components/RevenueChart'
+import { DashboardExtras } from './_components/DashboardExtras'
 import { RecentOrdersTable } from './_components/RecentOrdersTable'
 
 export const metadata: Metadata = {
@@ -16,10 +16,9 @@ export default function DashboardPage() {
 
       <StatsGrid />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <OrderStatusChart />
-        <StockChart />
-      </div>
+      <RevenueChart />
+
+      <DashboardExtras />
 
       <RecentOrdersTable />
     </div>
