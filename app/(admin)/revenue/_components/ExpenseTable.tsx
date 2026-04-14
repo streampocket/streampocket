@@ -9,7 +9,7 @@ import { useUpdateExpense } from '../_hooks/useUpdateExpense'
 import { useDeleteExpense } from '../_hooks/useDeleteExpense'
 import { ExpenseFormModal } from './ExpenseFormModal'
 import { formatMonthDay } from '@/lib/utils'
-import type { Expense, ExpenseCategory } from '@/types/domain'
+import type { Expense, ExpenseCategory, ExpensePayer } from '@/types/domain'
 import type { ExpenseFormData, ExpenseListParams } from '../_types'
 
 const CATEGORY_LABELS: Record<ExpenseCategory, string> = {
@@ -17,6 +17,11 @@ const CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   country_change: '국가변경',
   review_game: '리뷰 게임',
   other: '기타',
+}
+
+const PAYER_LABELS: Record<ExpensePayer, string> = {
+  song_donggeon: '송동건',
+  im_jeongbin: '임정빈',
 }
 
 const ALL_CATEGORIES: { value: ExpenseCategory | ''; label: string }[] = [
@@ -141,6 +146,7 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                     <tr className="border-b border-border text-left text-text-muted">
                       <th className="px-3 py-2">날짜</th>
                       <th className="px-3 py-2">분류</th>
+                      <th className="px-3 py-2">결제자</th>
                       <th className="px-3 py-2 text-right">금액</th>
                       <th className="px-3 py-2 text-right">인당</th>
                       <th className="px-3 py-2">메모</th>
@@ -155,6 +161,9 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                         </td>
                         <td className="px-3 py-2.5 text-text-primary">
                           {CATEGORY_LABELS[item.category]}
+                        </td>
+                        <td className="px-3 py-2.5 text-text-primary">
+                          {PAYER_LABELS[item.payer]}
                         </td>
                         <td className="px-3 py-2.5 text-right text-text-primary">
                           {fmt(item.amount)}

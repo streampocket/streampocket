@@ -80,11 +80,15 @@ export type SteamAccount = {
 /** 비용 카테고리 */
 export type ExpenseCategory = 'game_purchase' | 'country_change' | 'review_game' | 'other'
 
+/** 비용 결제자 */
+export type ExpensePayer = 'song_donggeon' | 'im_jeongbin'
+
 /** 비용 항목 */
 export type Expense = {
   id: string
   date: string
   category: ExpenseCategory
+  payer: ExpensePayer
   amount: number
   memo: string | null
   createdAt: string
