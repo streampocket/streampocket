@@ -43,7 +43,8 @@ export function OrdersTable() {
         </div>
 
         <CardBody className="p-0">
-          <div className="overflow-x-auto">
+          {/* 데스크탑 테이블 */}
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-gray-50">
@@ -112,6 +113,48 @@ export function OrdersTable() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* 모바일 카드 */}
+          <div className="space-y-3 p-4 md:hidden">
+            {isLoading ? (
+              <p className="py-8 text-center text-text-muted">로딩 중...</p>
+            ) : data?.data.length === 0 ? (
+              <p className="py-8 text-center text-text-muted">주문이 없습니다</p>
+            ) : (
+              data?.data.map((order) => {
+                const orderStatus = STATUS_MAP[order.fulfillmentStatus]
+                return (
+                  <button
+                    key={order.id}
+                    type="button"
+                    onClick={() => setSelectedOrderId(order.id)}
+                    className="w-full rounded-lg border border-border bg-card-bg p-4 text-left transition-colors hover:bg-gray-50"
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-body-md font-medium text-text-primary">
+                        {order.productName}
+                      </span>
+                      <Badge variant={orderStatus.variant}>{orderStatus.label}</Badge>
+                    </div>
+                    <p className="text-body-md font-semibold text-text-primary">
+                      {order.unitPrice.toLocaleString()}원
+                    </p>
+                    <div className="mt-1 flex items-center justify-between">
+                      <span className="text-caption-md text-text-secondary">
+                        {order.receiverName ?? '미확인'}
+                      </span>
+                      <span className="text-caption-md text-text-muted">
+                        {order.paidAt ? formatDate(order.paidAt) : '-'}
+                      </span>
+                    </div>
+                    <p className="text-caption-sm mt-1 font-mono text-text-muted">
+                      {order.productOrderId}
+                    </p>
+                  </button>
+                )
+              })
+            )}
           </div>
         </CardBody>
 

@@ -38,7 +38,8 @@ export function CodesTable() {
         </div>
 
         <CardBody className="p-0">
-          <div className="overflow-x-auto">
+          {/* 데스크탑 테이블 */}
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-gray-50">
@@ -100,6 +101,40 @@ export function CodesTable() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* 모바일 카드 */}
+          <div className="space-y-3 p-4 md:hidden">
+            {isLoading ? (
+              <p className="py-8 text-center text-text-muted">로딩 중...</p>
+            ) : data?.data.length === 0 ? (
+              <p className="py-8 text-center text-text-muted">계정이 없습니다</p>
+            ) : (
+              data?.data.map((account) => {
+                const st = STATUS_MAP[account.status]
+                return (
+                  <button
+                    key={account.id}
+                    type="button"
+                    onClick={() => setSelectedAccount(account)}
+                    className="w-full rounded-lg border border-border bg-card-bg p-4 text-left transition-colors hover:bg-gray-50"
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-body-md font-medium text-text-primary">
+                        {account.productName}
+                        {account.productId === null && (
+                          <span className="ml-1 text-text-muted">(삭제됨)</span>
+                        )}
+                      </span>
+                      <Badge variant={st.variant}>{st.label}</Badge>
+                    </div>
+                    <p className="text-caption-md font-mono text-text-secondary">
+                      {account.username} / {account.password}
+                    </p>
+                  </button>
+                )
+              })
+            )}
           </div>
         </CardBody>
       </Card>

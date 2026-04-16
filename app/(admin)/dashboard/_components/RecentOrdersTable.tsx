@@ -35,7 +35,8 @@ export function RecentOrdersTable() {
         </Link>
       </CardHeader>
       <CardBody className="p-0">
-        <div className="overflow-x-auto">
+        {/* 데스크탑 테이블 */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border bg-gray-50">
@@ -81,6 +82,40 @@ export function RecentOrdersTable() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* 모바일 카드 */}
+        <div className="space-y-3 p-4 md:hidden">
+          {isLoading ? (
+            <p className="py-8 text-center text-text-muted">로딩 중...</p>
+          ) : data?.data.length === 0 ? (
+            <p className="py-8 text-center text-text-muted">주문이 없습니다</p>
+          ) : (
+            data?.data.map((order) => {
+              const status = STATUS_MAP[order.fulfillmentStatus]
+              return (
+                <div
+                  key={order.id}
+                  className="rounded-lg border border-border bg-card-bg p-4"
+                >
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-body-md font-medium text-text-primary">
+                      {order.productName}
+                    </span>
+                    <Badge variant={status.variant}>{status.label}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-caption-sm font-mono text-text-muted">
+                      {order.productOrderId}
+                    </span>
+                    <span className="text-caption-md text-text-secondary">
+                      {order.paidAt ? formatDate(order.paidAt) : '-'}
+                    </span>
+                  </div>
+                </div>
+              )
+            })
+          )}
         </div>
       </CardBody>
       <CardFooter>

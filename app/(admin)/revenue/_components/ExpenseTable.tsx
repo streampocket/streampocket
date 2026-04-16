@@ -140,7 +140,8 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
             <p className="py-8 text-center text-text-muted">등록된 비용이 없습니다.</p>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* 데스크탑 테이블 */}
+              <div className="hidden overflow-x-auto md:block">
                 <table className="w-full text-body-sm">
                   <thead>
                     <tr className="border-b border-border text-left text-text-muted">
@@ -192,6 +193,53 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* 모바일 카드 */}
+              <div className="space-y-3 md:hidden">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-lg border border-border bg-card-bg p-4"
+                  >
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-caption-md font-medium text-text-primary">
+                        {CATEGORY_LABELS[item.category]}
+                      </span>
+                      <span className="text-caption-md text-text-muted">
+                        {formatMonthDay(item.date)}
+                      </span>
+                    </div>
+                    <p className="text-body-md font-semibold text-text-primary">
+                      {fmt(item.amount)}원
+                      <span className="ml-2 text-caption-md font-normal text-text-muted">
+                        (인당 {fmt(Math.round(item.amount / 2))}원)
+                      </span>
+                    </p>
+                    <div className="mt-1 flex items-center justify-between">
+                      <span className="text-caption-md text-text-secondary">
+                        {PAYER_LABELS[item.payer]}
+                      </span>
+                      <span className="text-caption-md truncate text-text-muted">
+                        {item.memo ?? '-'}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex gap-3 border-t border-border pt-2">
+                      <button
+                        onClick={() => setEditTarget(item)}
+                        className="text-caption-md text-text-muted hover:text-brand"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="text-caption-md text-text-muted hover:text-red-500"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {meta && meta.totalPages > 1 && (
