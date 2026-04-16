@@ -92,7 +92,8 @@ export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
             <p className="py-8 text-center text-text-muted">등록된 수동 매출이 없습니다.</p>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* 데스크탑 테이블 */}
+              <div className="hidden overflow-x-auto md:block">
                 <table className="w-full text-body-sm">
                   <thead>
                     <tr className="border-b border-border text-left text-text-muted">
@@ -132,6 +133,42 @@ export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* 모바일 카드 */}
+              <div className="space-y-3 md:hidden">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-lg border border-border bg-card-bg p-4"
+                  >
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-caption-md text-text-muted">
+                        {formatMonthDay(item.date)}
+                      </span>
+                      <span className="text-body-md font-semibold text-text-primary">
+                        {fmt(item.amount)}원
+                      </span>
+                    </div>
+                    <p className="text-caption-md truncate text-text-muted">
+                      {item.memo ?? '-'}
+                    </p>
+                    <div className="mt-2 flex gap-3 border-t border-border pt-2">
+                      <button
+                        onClick={() => setEditTarget(item)}
+                        className="text-caption-md text-text-muted hover:text-brand"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="text-caption-md text-text-muted hover:text-red-500"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {meta && meta.totalPages > 1 && (
