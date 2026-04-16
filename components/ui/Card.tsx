@@ -21,7 +21,7 @@ export function Card({ children, className }: CardProps) {
 
 export function CardHeader({ children, className }: CardProps) {
   return (
-    <div className={cn('flex items-center justify-between border-b border-border px-5 py-4', className)}>
+    <div className={cn('flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4', className)}>
       {children}
     </div>
   )

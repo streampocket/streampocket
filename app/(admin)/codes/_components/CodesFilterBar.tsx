@@ -56,7 +56,7 @@ export function CodesFilterBar() {
       </select>
 
       {/* 상태 필터 */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {STATUS_OPTIONS.map((opt) => (
           <button
             key={opt.value}
