@@ -45,6 +45,12 @@ export function ProductCard({ product, onEdit }: ProductCardProps) {
             )}
           </div>
           <div className="flex items-center justify-between">
+            <span className="text-caption-md text-text-muted">판매가</span>
+            <span className="text-caption-md font-semibold text-text-primary">
+              {product.price != null ? `${product.price.toLocaleString()}원` : '-'}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
             <span className="text-caption-md text-text-muted">네이버 상품 ID</span>
             <span className="font-mono text-caption-md text-text-secondary">
               {product.naverProductId}
