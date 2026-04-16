@@ -32,9 +32,13 @@ export default function GuidePage() {
         {/* 2. 국가 변경 제한 정책 안내 */}
         <section className="bg-red-50 border border-red-200 rounded-xl p-5">
           <p className="text-sm text-red-800">
-            AA 상품은 스팀게임을 선물로 보내드리는 상품입니다. 선물해주는
-            계정의 국가가 중국이기 때문에, 상점 국가를 중국으로 변경해야 하니,
-            아래 가이드를 참고해주세요.
+            AA 상품은 스팀게임을 선물로 보내드리거나, 해외에서 구매한
+            게임코드를 드리는 상품입니다. 선물 or 게임코드의 국가가 다르기
+            때문에, 계정의 국가를 변경해야하므로, 아래 가이드를 참고하여 양식을
+            제출해주시면 저희가 직접 변경해드리겠습니다.
+            <span className="block mt-1 text-xs text-red-600">
+              (언어=한국어O 우회결제X 정지X)
+            </span>
             <span className="block mt-2 text-sm text-red-700">
               🚫 스팀(Steam) 정책상 국가 변경은 3개월에 한 번으로 제한되어
               있습니다. 최근 3개월 이내에 국가를 변경한 이력이 있다면 다른 계정
