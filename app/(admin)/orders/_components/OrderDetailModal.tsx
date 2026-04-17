@@ -1,15 +1,20 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/Badge'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
-import { formatDate } from '@/lib/utils'
-import type { DeliveryLogStatus, FulfillmentStatus } from '@/types/domain'
+import { formatDate, cn } from '@/lib/utils'
+import { isAaProduct } from '@/lib/productType'
+import type { DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/types/domain'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
+import { useUpdateFriendLinks } from '../_hooks/useUpdateFriendLinks'
+import { useMarkGiftCompleted } from '../_hooks/useMarkGiftCompleted'
 
 type OrderDetailModalProps = {
   orderId: string | null
@@ -37,6 +42,117 @@ function parseReviewGameCount(productName: string): number | null {
   if (!match) return null
   const count = Number(match[2])
   return count > 0 ? count : null
+}
+
+const giftInputClass = cn(
+  'w-full rounded-lg border border-border bg-white px-3 py-2',
+  'text-body-md text-text-primary placeholder:text-text-muted',
+  'outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand-light',
+)
+
+function GiftSection({ order }: { order: SteamOrderItem }) {
+  const [link1, setLink1] = useState(order.friendLink1 ?? '')
+  const [link2, setLink2] = useState(order.friendLink2 ?? '')
+  const { mutate: updateLinks, isPending: isSaving } = useUpdateFriendLinks()
+  const { mutate: markCompleted, isPending: isCompleting } = useMarkGiftCompleted()
+
+  useEffect(() => {
+    setLink1(order.friendLink1 ?? '')
+    setLink2(order.friendLink2 ?? '')
+  }, [order.friendLink1, order.friendLink2])
+
+  const normalized1 = link1.trim()
+  const normalized2 = link2.trim()
+  const isDirty =
+    normalized1 !== (order.friendLink1 ?? '') || normalized2 !== (order.friendLink2 ?? '')
+
+  const handleCopy = async (value: string) => {
+    if (!value) return
+    try {
+      await navigator.clipboard.writeText(value)
+      toast.success('복사되었습니다.')
+    } catch {
+      toast.error('복사에 실패했습니다.')
+    }
+  }
+
+  const handleSave = () => {
+    updateLinks({
+      id: order.id,
+      friendLink1: normalized1 ? normalized1 : null,
+      friendLink2: normalized2 ? normalized2 : null,
+    })
+  }
+
+  const handleComplete = () => {
+    if (!window.confirm('선물 접수 완료 처리하시겠습니까? 되돌릴 수 없습니다.')) return
+    markCompleted(order.id)
+  }
+
+  return (
+    <div className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
+      <div className="flex items-center justify-between">
+        <p className="text-caption-md font-semibold text-text-primary">선물 처리 (AA)</p>
+        {order.giftCompletedAt ? (
+          <Badge variant="green">선물 접수 완료 ({formatDate(order.giftCompletedAt)})</Badge>
+        ) : (
+          <Button
+            size="sm"
+            variant="primary"
+            loading={isCompleting}
+            onClick={handleComplete}
+          >
+            선물 접수 완료
+          </Button>
+        )}
+      </div>
+
+      {[
+        { idx: 1, value: link1, setValue: setLink1, saved: order.friendLink1 },
+        { idx: 2, value: link2, setValue: setLink2, saved: order.friendLink2 },
+      ].map(({ idx, value, setValue, saved }) => (
+        <div key={idx}>
+          <label className="text-caption-md mb-1 block text-text-muted">친구 추가 링크 {idx}</label>
+          <div className="flex gap-2">
+            <input
+              className={giftInputClass}
+              placeholder="https://..."
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            />
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={!saved}
+              onClick={() => saved && handleCopy(saved)}
+            >
+              복사
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={!value}
+              onClick={() => setValue('')}
+            >
+              ✕
+            </Button>
+          </div>
+        </div>
+      ))}
+
+      <div className="flex justify-end">
+        <Button
+          size="sm"
+          variant="primary"
+          disabled={!isDirty}
+          loading={isSaving}
+          onClick={handleSave}
+        >
+          저장
+        </Button>
+      </div>
+    </div>
+  )
 }
 
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
@@ -199,6 +315,8 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               </div>
             )}
           </dl>
+
+          {isAaProduct(order.productName) && <GiftSection order={order} />}
 
           {order.errorMessage && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3">

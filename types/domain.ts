@@ -44,6 +44,9 @@ export type SteamOrderItem = {
   paidAt: string | null
   returnedAt: string | null
   reviewGameSentAt: string | null
+  friendLink1: string | null
+  friendLink2: string | null
+  giftCompletedAt: string | null
   createdAt: string
   updatedAt: string
   deliveryLogs?: DeliveryLog[]
