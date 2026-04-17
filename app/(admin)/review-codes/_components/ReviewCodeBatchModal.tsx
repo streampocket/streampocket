@@ -23,8 +23,13 @@ export function ReviewCodeBatchModal({ onClose }: ReviewCodeBatchModalProps) {
 
   const parsedCodes = codesText
     .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
+    .map((line) => {
+      const trimmed = line.trim()
+      if (!trimmed.includes('|')) return trimmed
+      const afterPipe = trimmed.split('|').pop()
+      return afterPipe ? afterPipe.trim() : ''
+    })
+    .filter((code) => code.length > 0)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,12 +87,12 @@ export function ReviewCodeBatchModal({ onClose }: ReviewCodeBatchModalProps) {
           </label>
           <textarea
             className={cn(inputClass, 'h-48 resize-y font-mono text-sm')}
-            placeholder={'한 줄에 코드 하나씩 입력하세요\n\nXXXXX-YYYYY-ZZZZZ\nAAAAA-BBBBB-CCCCC\nDDDDD-EEEEE-FFFFF'}
+            placeholder={'코드만 또는 공급처 원본 형식 모두 붙여넣을 수 있습니다\n\nXXXXX-YYYYY-ZZZZZ\n또는\n卡号：게임명 | XXXXX-YYYYY-ZZZZZ'}
             value={codesText}
             onChange={(e) => setCodesText(e.target.value)}
           />
           <p className="text-caption-sm mt-1 text-text-muted">
-            줄바꿈으로 구분하여 여러 코드를 한번에 입력할 수 있습니다. (최대 500개)
+            줄바꿈으로 구분하여 여러 코드를 한번에 입력할 수 있습니다. (최대 500개) `|` 포함 시 뒤 코드만 자동 추출됩니다.
           </p>
         </div>
       </form>
