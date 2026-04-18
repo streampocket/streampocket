@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
+import { PRODUCTS_PAGE_SIZE } from '@/constants/app'
 import { ProductTabs } from './_components/ProductTabs'
 import { ProductCard } from './_components/ProductCard'
 import { ProductFormModal } from './_components/ProductFormModal'
@@ -17,8 +18,14 @@ function ProductsContent() {
   const [editingProduct, setEditingProduct] = useState<SteamProduct | null | undefined>(undefined)
   const [search, setSearch] = useState(searchParams.get('search') ?? '')
   const status = (searchParams.get('status') as ProductStatus) || undefined
+  const page = Number(searchParams.get('page') ?? 1)
 
-  const { data, isLoading } = useProducts({ status, search: search || undefined })
+  const { data, isLoading } = useProducts({
+    status,
+    search: search || undefined,
+    page,
+    pageSize: PRODUCTS_PAGE_SIZE,
+  })
   const { mutate: sync, isPending: isSyncing } = useSyncProducts()
 
   const isModalOpen = editingProduct !== undefined
@@ -28,7 +35,14 @@ function ProductsContent() {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set('search', value)
     else params.delete('search')
+    params.delete('page')
     router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ''}`)
+  }
+
+  const handlePageChange = (nextPage: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', String(nextPage))
+    router.push(`${pathname}?${params.toString()}`)
   }
 
   return (
@@ -63,6 +77,30 @@ function ProductsContent() {
           {data?.data.map((product) => (
             <ProductCard key={product.id} product={product} onEdit={setEditingProduct} />
           ))}
+        </div>
+      )}
+
+      {data && data.totalPages > 1 && (
+        <div className="flex w-full items-center justify-center gap-2 pt-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => handlePageChange(page - 1)}
+          >
+            이전
+          </Button>
+          <span className="text-caption-md text-text-secondary">
+            {page} / {data.totalPages}
+          </span>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={page >= data.totalPages}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            다음
+          </Button>
         </div>
       )}
 

@@ -30,6 +30,7 @@ export function ProductTabs() {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set('status', value)
     else params.delete('status')
+    params.delete('page')
     router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ''}`)
   }
 

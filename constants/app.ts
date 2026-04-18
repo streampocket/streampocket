@@ -1,6 +1,7 @@
 export const STOCK_THRESHOLD_WARN = 2;
 export const STOCK_THRESHOLD_CRITICAL = 0;
 export const PAGE_SIZE = 20;
+export const PRODUCTS_PAGE_SIZE = 100;
 export const ORDER_POLL_INTERVAL_SECONDS = 300;
 export const INITIAL_LOOKBACK_MINUTES = 10;
 export const BRAND_NAME = "스트림포켓";
