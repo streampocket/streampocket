@@ -3,6 +3,8 @@ import type { ProductStatus, SteamProduct } from '@/types/domain'
 export type ProductListParams = {
   status?: ProductStatus | ''
   search?: string
+  page?: number
+  pageSize?: number
 }
 
 export type ProductFormData = {
@@ -21,5 +23,8 @@ export type ProductStatusCounts = {
 export type ProductListResponse = {
   data: SteamProduct[]
   total: number
+  page: number
+  pageSize: number
+  totalPages: number
   counts: ProductStatusCounts
 }
