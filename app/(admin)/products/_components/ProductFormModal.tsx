@@ -35,6 +35,8 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
     name: '',
     naverProductId: '',
     status: 'draft',
+    goofishMonitorEnabled: false,
+    goofishSearchQuery: null,
   })
   const [isConfirming, setIsConfirming] = useState(false)
 
@@ -44,9 +46,17 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
         name: product.name,
         naverProductId: product.naverProductId,
         status: product.status,
+        goofishMonitorEnabled: product.goofishMonitorEnabled,
+        goofishSearchQuery: product.goofishSearchQuery,
       })
     } else {
-      setForm({ name: '', naverProductId: '', status: 'draft' })
+      setForm({
+        name: '',
+        naverProductId: '',
+        status: 'draft',
+        goofishMonitorEnabled: false,
+        goofishSearchQuery: null,
+      })
     }
   }, [product])
 
@@ -179,6 +189,35 @@ export function ProductFormModal({ product, onClose }: ProductFormModalProps) {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="space-y-3 rounded-lg border border-border bg-background-muted p-3">
+          <label className="flex items-center justify-between">
+            <span className="text-caption-md font-semibold text-text-secondary">
+              Goofish 모니터링
+            </span>
+            <input
+              type="checkbox"
+              checked={form.goofishMonitorEnabled}
+              onChange={(e) => setField('goofishMonitorEnabled', e.target.checked)}
+              className="h-4 w-4"
+            />
+          </label>
+          {form.goofishMonitorEnabled && (
+            <div>
+              <label className="text-caption-md mb-1.5 block font-semibold text-text-secondary">
+                Goofish 검색어 (비우면 상품명 사용)
+              </label>
+              <input
+                className={inputClass}
+                value={form.goofishSearchQuery ?? ''}
+                onChange={(e) =>
+                  setField('goofishSearchQuery', e.target.value.trim() === '' ? null : e.target.value)
+                }
+                placeholder={form.name || '예: crimson desert'}
+              />
+            </div>
+          )}
         </div>
       </form>
     </Modal>

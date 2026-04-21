@@ -11,6 +11,8 @@ export type ProductFormData = {
   name: string
   naverProductId: string
   status: ProductStatus
+  goofishMonitorEnabled: boolean
+  goofishSearchQuery: string | null
 }
 
 export type ProductStatusCounts = {

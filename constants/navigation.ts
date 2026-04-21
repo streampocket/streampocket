@@ -22,6 +22,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: '계정 관리', href: '/codes', icon: '🔑' },
       { label: '리뷰 게임 관리', href: '/review-codes', icon: '🎮' },
       { label: '매출 관리', href: '/revenue', icon: '💰' },
+      { label: 'Goofish 시세', href: '/goofish', icon: '🐟' },
     ],
   },
   {

@@ -78,4 +78,8 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['adminUsers', 'list', params] as const,
     detail: (id: string) => ['adminUsers', id] as const,
   },
+  goofish: {
+    all: () => ['goofish'] as const,
+    report: () => ['goofish', 'report'] as const,
+  },
 } as const

@@ -60,6 +60,8 @@ export type SteamProduct = {
   price: number | null
   status: ProductStatus
   stockCount: number
+  goofishMonitorEnabled: boolean
+  goofishSearchQuery: string | null
   createdAt: string
   updatedAt: string
 }
