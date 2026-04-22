@@ -21,6 +21,21 @@ export const NAVER_API_BASE_URL = "https://api.commerce.naver.com/external";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
+export const PORTONE_STORE_ID = process.env.NEXT_PUBLIC_PORTONE_STORE_ID ?? "";
+export const PORTONE_KAKAOPAY_CHANNEL_KEY =
+  process.env.NEXT_PUBLIC_PORTONE_KAKAOPAY_CHANNEL_KEY ?? "";
+export const PORTONE_GALAXIA_CHANNEL_KEY =
+  process.env.NEXT_PUBLIC_PORTONE_GALAXIA_CHANNEL_KEY ?? "";
+
+export const PAY_METHOD_OPTIONS = [
+  { value: "kakaopay", label: "카카오페이" },
+  { value: "card", label: "신용/체크카드" },
+  { value: "transfer", label: "실시간 계좌이체" },
+  { value: "virtualAccount", label: "가상계좌" },
+  { value: "mobile", label: "휴대폰 결제" },
+] as const; // 단언 사유: 결제수단 라벨/값 튜플을 좁은 리터럴 타입으로 고정
+export type PayMethod = (typeof PAY_METHOD_OPTIONS)[number]["value"];
+
 export const YOUTUBE_CHANNELS = [
   { name: 'DramaBox', channelId: 'UCyKIeHu9Sv7_3Gqbg-vo3bg' },
   { name: 'DramaWave', channelId: 'UCOSVEh-kzZ8yBYtEQMHBEaQ' },

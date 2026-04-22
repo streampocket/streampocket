@@ -26,6 +26,26 @@ const METHOD_LABEL: Record<PaymentMethod, string> = {
   pg: 'PG',
 }
 
+const PG_PROVIDER_LABEL: Record<string, string> = {
+  kakaopay: '카카오페이',
+  galaxia: '갤럭시아',
+}
+
+const PAY_METHOD_LABEL: Record<string, string> = {
+  kakaopay: '카카오페이',
+  card: '신용카드',
+  transfer: '계좌이체',
+  virtualAccount: '가상계좌',
+  mobile: '휴대폰',
+}
+
+function formatPgLabel(payment: { method: PaymentMethod; pgProvider: string | null; payMethod: string | null }): string {
+  if (payment.method !== 'pg') return METHOD_LABEL[payment.method]
+  const provider = payment.pgProvider ? PG_PROVIDER_LABEL[payment.pgProvider] ?? payment.pgProvider : 'PG'
+  const method = payment.payMethod ? PAY_METHOD_LABEL[payment.payMethod] ?? payment.payMethod : null
+  return method ? `${provider} · ${method}` : provider
+}
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -73,6 +93,7 @@ export function PaymentTable({
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">수수료</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">합계</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">결제방법</th>
+                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">거래번호</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">상태</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">신청일</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">액션</th>
@@ -105,7 +126,18 @@ export function PaymentTable({
                       {formatPrice(payment.amount)}원
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {METHOD_LABEL[payment.method]}
+                      {formatPgLabel(payment)}
+                    </td>
+                    <td className="text-caption-md px-4 py-3 font-mono text-text-muted">
+                      {payment.pgTransactionId ? (
+                        <span title={payment.pgTransactionId}>
+                          {payment.pgTransactionId.length > 12
+                            ? `${payment.pgTransactionId.slice(0, 12)}…`
+                            : payment.pgTransactionId}
+                        </span>
+                      ) : (
+                        '-'
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={badge.variant}>{badge.label}</Badge>
@@ -157,6 +189,10 @@ export function PaymentTable({
                 </p>
                 <p className="text-body-md mt-1 font-medium text-text-primary">
                   합계: {formatPrice(payment.amount)}원
+                </p>
+                <p className="text-caption-sm mt-1 text-text-secondary">
+                  {formatPgLabel(payment)}
+                  {payment.pgTransactionId ? ` · ${payment.pgTransactionId}` : ''}
                 </p>
                 <p className="text-caption-sm mt-1 text-text-muted">
                   {formatDate(payment.createdAt)}

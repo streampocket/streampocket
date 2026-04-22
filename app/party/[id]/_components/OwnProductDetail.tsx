@@ -12,9 +12,15 @@ import { useOwnProductDetail } from '../_hooks/useOwnProductDetail'
 import { useDeleteOwnProduct } from '../_hooks/useDeleteOwnProduct'
 import { useApplyParty } from '../_hooks/useApplyParty'
 import { useCheckApplied } from '../_hooks/useCheckApplied'
+import { usePortOnePayment } from '../_hooks/usePortOnePayment'
+import { useVerifyPayment } from '../_hooks/useVerifyPayment'
 import { PaymentModal } from './PaymentModal'
 import { getUserInfo } from '@/lib/userAuth'
-import { PARTY_DEFAULT_RULES, USER_LOGIN_PATH } from '@/constants/app'
+import { userApi } from '@/lib/userApi'
+import { PARTY_DEFAULT_RULES, USER_LOGIN_PATH, type PayMethod } from '@/constants/app'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/constants/queryKeys'
+import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { cn } from '@/lib/utils'
@@ -33,12 +39,53 @@ export function OwnProductDetail() {
   const pathname = usePathname()
   const id = params.id as string
   const { data: product, isLoading } = useOwnProductDetail(id)
+  const queryClient = useQueryClient()
   const deleteMutation = useDeleteOwnProduct()
   const applyMutation = useApplyParty(id)
+  const verifyMutation = useVerifyPayment()
+  const portOne = usePortOnePayment()
   const { data: applicationCheck } = useCheckApplied(id)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [agreedToRules, setAgreedToRules] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  async function handlePay(payMethod: PayMethod) {
+    setIsProcessing(true)
+    try {
+      const applyRes = await applyMutation.mutateAsync({ payMethod })
+      const { paymentId, orderName, amount } = applyRes.data
+
+      const result = await portOne.request({ paymentId, orderName, amount, payMethod })
+
+      if (result.status === 'cancelled' || result.status === 'failed') {
+        // pending 결제/신청 정리 + 슬롯 원복
+        await userApi
+          .post(`/own/payments/${paymentId}/abort`)
+          .catch(() => {})
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.detail(id) })
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partyApplications.check(id) })
+        if (result.status === 'cancelled') {
+          toast.info('결제가 취소되었습니다.')
+        } else {
+          toast.error(result.message)
+        }
+        return
+      }
+
+      await verifyMutation.mutateAsync(paymentId)
+      toast.success('결제가 완료되었습니다. 파티 참여가 확정되었습니다.')
+      setShowPaymentModal(false)
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.detail(id) })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partyApplications.check(id) })
+      router.push('/mypage')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '결제 처리 중 오류가 발생했습니다.'
+      toast.error(message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   const userInfo = getUserInfo()
   const isOwner = userInfo?.id === product?.userId
@@ -297,14 +344,12 @@ export function OwnProductDetail() {
       {product && (
         <PaymentModal
           isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          product={product}
-          onSubmit={() => {
-            applyMutation.mutate(undefined, {
-              onSuccess: () => setShowPaymentModal(false),
-            })
+          onClose={() => {
+            if (!isProcessing) setShowPaymentModal(false)
           }}
-          isSubmitting={applyMutation.isPending}
+          product={product}
+          onPay={handlePay}
+          isSubmitting={isProcessing || applyMutation.isPending || portOne.isPending || verifyMutation.isPending}
         />
       )}
 

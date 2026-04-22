@@ -27,6 +27,19 @@ const METHOD_LABEL: Record<PaymentMethod, string> = {
   pg: 'PG 결제',
 }
 
+const PG_PROVIDER_LABEL: Record<string, string> = {
+  kakaopay: '카카오페이',
+  galaxia: '갤럭시아머니트리',
+}
+
+const PAY_METHOD_LABEL: Record<string, string> = {
+  kakaopay: '카카오페이',
+  card: '신용카드',
+  transfer: '계좌이체',
+  virtualAccount: '가상계좌',
+  mobile: '휴대폰',
+}
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -231,6 +244,21 @@ export function PaymentDetailModal({ paymentId, onClose }: PaymentDetailModalPro
             <InfoRow label="수수료" value={`${formatPrice(payment.application.fee)}원`} />
             <InfoRow label="합계" value={`${formatPrice(payment.amount)}원`} />
             <InfoRow label="결제방법" value={METHOD_LABEL[payment.method]} />
+            {payment.method === 'pg' && payment.pgProvider && (
+              <InfoRow
+                label="PG사"
+                value={PG_PROVIDER_LABEL[payment.pgProvider] ?? payment.pgProvider}
+              />
+            )}
+            {payment.method === 'pg' && payment.payMethod && (
+              <InfoRow
+                label="결제수단"
+                value={PAY_METHOD_LABEL[payment.payMethod] ?? payment.payMethod}
+              />
+            )}
+            {payment.pgTransactionId && (
+              <InfoRow label="거래번호" value={payment.pgTransactionId} />
+            )}
             <div className="flex items-center gap-3">
               <span className="text-body-md w-20 shrink-0 text-text-muted">상태</span>
               <Badge variant={STATUS_BADGE[payment.status].variant}>

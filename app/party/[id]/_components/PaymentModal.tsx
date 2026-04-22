@@ -1,8 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import type { OwnProduct } from '@/types/domain'
+import type { PayMethod } from '@/constants/app'
+import { PayMethodSelector } from './PayMethodSelector'
 
 const FEE_RATE = 0.1
 
@@ -10,7 +13,7 @@ type PaymentModalProps = {
   isOpen: boolean
   onClose: () => void
   product: OwnProduct
-  onSubmit: () => void
+  onPay: (payMethod: PayMethod) => void
   isSubmitting: boolean
 }
 
@@ -18,9 +21,10 @@ export function PaymentModal({
   isOpen,
   onClose,
   product,
-  onSubmit,
+  onPay,
   isSubmitting,
 }: PaymentModalProps) {
+  const [payMethod, setPayMethod] = useState<PayMethod>('kakaopay')
   const displayPrice = product.currentPrice ?? product.price
   const fee = Math.round(displayPrice * FEE_RATE)
   const totalAmount = displayPrice + fee
@@ -30,14 +34,14 @@ export function PaymentModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="파티 참여 신청"
+      title="파티 참여 결제"
       footer={
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
             취소
           </Button>
-          <Button variant="primary" onClick={onSubmit} loading={isSubmitting}>
-            신청하기
+          <Button variant="primary" onClick={() => onPay(payMethod)} loading={isSubmitting}>
+            {totalAmount.toLocaleString()}원 결제하기
           </Button>
         </div>
       }
@@ -76,10 +80,18 @@ export function PaymentModal({
           </div>
         </div>
 
-        {/* 안내 메시지 */}
-        <div className="rounded-lg bg-yellow-50 p-3">
-          <p className="text-body-sm text-yellow-800">
-            현재 결제 시스템 준비 중입니다. 신청 완료 후 관리자가 연락드리겠습니다.
+        {/* 결제 수단 */}
+        <div className="space-y-2">
+          <p className="text-body-md font-medium text-text-primary">결제 수단 선택</p>
+          <PayMethodSelector value={payMethod} onChange={setPayMethod} disabled={isSubmitting} />
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-body-sm text-text-muted">
+            테스트 모드로 운영 중입니다. 실제 금액이 청구되지 않습니다.
+          </p>
+          <p className="text-body-sm text-text-muted">
+            결제 관련 문의는 고객센터로 연락해 주세요.
           </p>
         </div>
       </div>
