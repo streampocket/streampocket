@@ -295,6 +295,7 @@ export type Payment = {
   amount: number
   method: PaymentMethod
   status: PaymentStatus
+  payMethod: string | null
   pgTransactionId: string | null
   pgProvider: string | null
   paidAt: string | null
