@@ -19,6 +19,7 @@ export type DeliveryLog = {
   orderItemId: string
   channel: DeliveryChannel
   recipient: string
+  templateCode: string | null
   status: DeliveryLogStatus
   errorMessage: string | null
   providerMessageId: string | null
@@ -176,6 +177,8 @@ export type AlimtalkSettings = {
     templateCodeNA: string | null
     templateCodeAA: string | null
     templateCodeNASecondary: string | null
+    templateCodeReviewGame: string | null
+    templateCodeGiftCompleted: string | null
     sender: string | null
     providerConnected: boolean
     providerMessage: string

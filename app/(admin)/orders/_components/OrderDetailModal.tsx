@@ -9,6 +9,7 @@ import { Modal } from '@/components/ui/Modal'
 import { formatDate, cn } from '@/lib/utils'
 import { isAaProduct } from '@/lib/productType'
 import type { DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/types/domain'
+import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
@@ -157,9 +158,16 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
 
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
+  const { data: alimtalkTemplates } = useAlimtalkTemplates()
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
+
+  const resolveTemplateName = (code: string | null): string | null => {
+    if (!code) return null
+    const found = alimtalkTemplates?.find((template) => template.templateCode === code)
+    return found?.templateName ?? null
+  }
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const canRetry =
@@ -333,6 +341,12 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                   .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                   .map((log) => {
                     const deliveryStatus = DELIVERY_STATUS_MAP[log.status]
+                    const templateName = resolveTemplateName(log.templateCode)
+                    const templateLabel = log.templateCode
+                      ? templateName
+                        ? `${templateName} (${log.templateCode})`
+                        : log.templateCode
+                      : null
 
                     return (
                       <div
@@ -345,6 +359,11 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                           </span>
                           <Badge variant={deliveryStatus.variant}>{deliveryStatus.label}</Badge>
                         </div>
+                        {templateLabel && (
+                          <p className="text-caption-md font-medium text-text-primary">
+                            {templateLabel}
+                          </p>
+                        )}
                         <p className="text-caption-md text-text-muted">
                           {log.sentAt ? formatDate(log.sentAt) : formatDate(log.createdAt)}
                         </p>
