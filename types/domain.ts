@@ -59,6 +59,8 @@ export type SteamProduct = {
   name: string
   naverProductId: string
   price: number | null
+  discountPricePc: number | null
+  discountPriceMobile: number | null
   status: ProductStatus
   stockCount: number
   createdAt: string

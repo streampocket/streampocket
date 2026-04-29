@@ -50,6 +50,41 @@ export function ProductCard({ product, onEdit }: ProductCardProps) {
               {product.price != null ? `${product.price.toLocaleString()}원` : '-'}
             </span>
           </div>
+          {(() => {
+            const pc = product.discountPricePc
+            const mobile = product.discountPriceMobile
+            if (pc == null && mobile == null) return null
+            if (pc != null && mobile != null && pc === mobile) {
+              return (
+                <div className="flex items-center justify-between">
+                  <span className="text-caption-md text-text-muted">할인가</span>
+                  <span className="text-caption-md font-semibold text-text-primary">
+                    {`${pc.toLocaleString()}원`}
+                  </span>
+                </div>
+              )
+            }
+            return (
+              <>
+                {pc != null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-caption-md text-text-muted">할인가(PC)</span>
+                    <span className="text-caption-md font-semibold text-text-primary">
+                      {`${pc.toLocaleString()}원`}
+                    </span>
+                  </div>
+                )}
+                {mobile != null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-caption-md text-text-muted">할인가(모바일)</span>
+                    <span className="text-caption-md font-semibold text-text-primary">
+                      {`${mobile.toLocaleString()}원`}
+                    </span>
+                  </div>
+                )}
+              </>
+            )
+          })()}
           <div className="flex items-center justify-between">
             <span className="text-caption-md text-text-muted">네이버 상품 ID</span>
             <span className="font-mono text-caption-md text-text-secondary">
