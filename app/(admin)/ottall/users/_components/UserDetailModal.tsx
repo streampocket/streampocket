@@ -7,7 +7,6 @@ import type {
   AuthProvider,
   OwnProductStatus,
   PartyApplicationStatus,
-  PaymentStatus,
   PartnerStatus,
 } from '@/types/domain'
 import { useAdminUserDetail } from '../_hooks/useAdminUserDetail'
@@ -34,12 +33,6 @@ const APP_STATUS_BADGE: Record<PartyApplicationStatus, { variant: BadgeVariant; 
   confirmed: { variant: 'green', label: '확정' },
   cancelled: { variant: 'red', label: '취소' },
   expired: { variant: 'gray', label: '만료' },
-}
-
-const PAYMENT_STATUS_BADGE: Record<PaymentStatus, { variant: BadgeVariant; label: string }> = {
-  pending: { variant: 'yellow', label: '대기' },
-  paid: { variant: 'green', label: '완료' },
-  cancelled: { variant: 'red', label: '취소' },
 }
 
 const PARTNER_STATUS_BADGE: Record<PartnerStatus, { variant: BadgeVariant; label: string }> = {
@@ -165,29 +158,6 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
                           </span>
                         )}
                       </div>
-                      {app.payments.length > 0 && (
-                        <div className="mt-2 space-y-1">
-                          {app.payments.map((payment) => {
-                            const payBadge = PAYMENT_STATUS_BADGE[payment.status]
-                            return (
-                              <div
-                                key={payment.id}
-                                className="flex items-center gap-2 text-caption-md"
-                              >
-                                <Badge variant={payBadge.variant}>{payBadge.label}</Badge>
-                                <span className="text-text-secondary">
-                                  {formatPrice(payment.amount)}원
-                                </span>
-                                {payment.paidAt && (
-                                  <span className="text-text-muted">
-                                    {formatDate(payment.paidAt)}
-                                  </span>
-                                )}
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
                     </div>
                   )
                 })}

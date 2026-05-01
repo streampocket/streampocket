@@ -15,12 +15,6 @@ export type MyApplicationProduct = {
   }
 }
 
-export type MyApplicationPayment = {
-  id: string
-  status: 'pending' | 'paid' | 'cancelled'
-  paidAt: string | null
-}
-
 export type MyApplication = {
   id: string
   productId: string
@@ -32,7 +26,6 @@ export type MyApplication = {
   expiresAt: string | null
   createdAt: string
   product: MyApplicationProduct
-  payments: MyApplicationPayment[]
 }
 
 export type ApplicationCredentials = {
