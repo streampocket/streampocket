@@ -4,12 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { userApi } from '@/lib/userApi'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { getUserInfo } from '@/lib/userAuth'
-import type { PartyApplicationStatus, PaymentStatus } from '@/types/domain'
+import type { PartyApplicationStatus } from '@/types/domain'
 
 type CheckData = {
   applied: boolean
   applicationStatus: PartyApplicationStatus | null
-  paymentStatus: PaymentStatus | null
 }
 
 type CheckResponse = {

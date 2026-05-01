@@ -285,37 +285,7 @@ export type PartyApplication = {
   updatedAt: string
 }
 
-// ───────────────────────── 결제 (OTTALL) ─────────────────────────
-
-/** 결제 상태 */
-export type PaymentStatus = 'pending' | 'paid' | 'cancelled'
-
-/** 결제 수단 */
-export type PaymentMethod = 'manual' | 'pg'
-
-/** 결제 */
-export type Payment = {
-  id: string
-  applicationId: string
-  amount: number
-  method: PaymentMethod
-  status: PaymentStatus
-  payMethod: string | null
-  pgTransactionId: string | null
-  pgProvider: string | null
-  paidAt: string | null
-  adminNote: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-/** 결제 상세 (application 포함) */
-export type PaymentWithDetails = Payment & {
-  application: PartyApplication & {
-    product: OwnProduct
-    user: { id: string; name: string; email: string; phone: string }
-  }
-}
+// ───────────────────────── 파티 상세 (관리자) ─────────────────────────
 
 /** 파티 상세 (참여자 포함) */
 export type AdminPartyDetail = Omit<OwnProduct, 'user'> & {
@@ -331,7 +301,6 @@ export type AdminPartyDetail = Omit<OwnProduct, 'user'> & {
   }
   applications: (PartyApplication & {
     user: { id: string; name: string; email: string; phone: string }
-    payments: Payment[]
   })[]
 }
 

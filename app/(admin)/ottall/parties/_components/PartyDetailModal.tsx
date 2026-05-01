@@ -5,7 +5,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
-import type { OwnProductStatus, PartyApplicationStatus, PaymentStatus } from '@/types/domain'
+import type { OwnProductStatus, PartyApplicationStatus } from '@/types/domain'
 import { useAdminPartyDetail } from '../_hooks/useAdminPartyDetail'
 import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdatePartyStatus } from '../_hooks/useUpdatePartyStatus'
@@ -26,12 +26,6 @@ const APP_STATUS_BADGE: Record<PartyApplicationStatus, { variant: BadgeVariant; 
   confirmed: { variant: 'green', label: '확정' },
   cancelled: { variant: 'red', label: '취소' },
   expired: { variant: 'gray', label: '만료' },
-}
-
-const PAYMENT_STATUS_BADGE: Record<PaymentStatus, { variant: BadgeVariant; label: string }> = {
-  pending: { variant: 'yellow', label: '결제대기' },
-  paid: { variant: 'green', label: '결제완료' },
-  cancelled: { variant: 'red', label: '결제취소' },
 }
 
 function formatDate(dateStr: string): string {
@@ -169,9 +163,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                           신청상태
                         </th>
                         <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
-                          결제상태
-                        </th>
-                        <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
                           시작일
                         </th>
                         <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
@@ -185,10 +176,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                     <tbody>
                       {party.applications.map((app) => {
                         const appBadge = APP_STATUS_BADGE[app.status]
-                        const latestPayment = app.payments[0]
-                        const payBadge = latestPayment
-                          ? PAYMENT_STATUS_BADGE[latestPayment.status]
-                          : null
                         return (
                           <tr key={app.id} className="border-b border-border">
                             <td className="text-body-md px-3 py-2 text-text-primary">
@@ -202,13 +189,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                             </td>
                             <td className="px-3 py-2">
                               <Badge variant={appBadge.variant}>{appBadge.label}</Badge>
-                            </td>
-                            <td className="px-3 py-2">
-                              {payBadge ? (
-                                <Badge variant={payBadge.variant}>{payBadge.label}</Badge>
-                              ) : (
-                                <span className="text-caption-md text-text-muted">-</span>
-                              )}
                             </td>
                             <td className="text-body-md px-3 py-2 text-text-muted">
                               {app.startedAt ? formatDate(app.startedAt) : '-'}
@@ -230,10 +210,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                 <div className="space-y-2 md:hidden">
                   {party.applications.map((app) => {
                     const appBadge = APP_STATUS_BADGE[app.status]
-                    const latestPayment = app.payments[0]
-                    const payBadge = latestPayment
-                      ? PAYMENT_STATUS_BADGE[latestPayment.status]
-                      : null
                     return (
                       <div
                         key={app.id}
@@ -245,9 +221,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                           </span>
                           <div className="flex gap-1">
                             <Badge variant={appBadge.variant}>{appBadge.label}</Badge>
-                            {payBadge && (
-                              <Badge variant={payBadge.variant}>{payBadge.label}</Badge>
-                            )}
                           </div>
                         </div>
                         <p className="text-caption-md text-text-secondary">{app.user.phone}</p>

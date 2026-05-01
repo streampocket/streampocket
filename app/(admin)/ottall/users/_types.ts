@@ -2,8 +2,6 @@ import type {
   AuthProvider,
   OwnProductStatus,
   PartyApplicationStatus,
-  PaymentStatus,
-  PaymentMethod,
 } from '@/types/domain'
 
 export type AdminUserListItem = {
@@ -34,15 +32,6 @@ export type AdminUserDetailProduct = {
   category: { id: string; name: string }
 }
 
-export type AdminUserDetailPayment = {
-  id: string
-  amount: number
-  status: PaymentStatus
-  method: PaymentMethod
-  paidAt: string | null
-  createdAt: string
-}
-
 export type AdminUserDetailApplication = {
   id: string
   status: PartyApplicationStatus
@@ -58,7 +47,6 @@ export type AdminUserDetailApplication = {
     status: OwnProductStatus
     durationDays: number
   }
-  payments: AdminUserDetailPayment[]
 }
 
 export type AdminUserDetail = {

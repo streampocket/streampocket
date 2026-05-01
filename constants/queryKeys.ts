@@ -68,10 +68,10 @@ export const QUERY_KEYS = {
     detail: (id: string) => ['adminParties', id] as const,
     credentials: (id: string) => ['adminParties', id, 'credentials'] as const,
   },
-  adminPayments: {
-    all: () => ['adminPayments'] as const,
-    list: (params?: Record<string, unknown>) => ['adminPayments', 'list', params] as const,
-    detail: (id: string) => ['adminPayments', id] as const,
+  adminApplications: {
+    all: () => ['adminApplications'] as const,
+    list: (params?: Record<string, unknown>) => ['adminApplications', 'list', params] as const,
+    detail: (id: string) => ['adminApplications', id] as const,
   },
   adminUsers: {
     all: () => ['adminUsers'] as const,

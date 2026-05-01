@@ -16,12 +16,6 @@ const APPLICATION_STATUS_MAP: Record<string, { label: string; variant: BadgeVari
   expired: { label: '기간 만료', variant: 'gray' },
 }
 
-const PAYMENT_STATUS_MAP: Record<string, { label: string; variant: BadgeVariant }> = {
-  pending: { label: '결제 대기', variant: 'yellow' },
-  paid: { label: '결제 완료', variant: 'green' },
-  cancelled: { label: '결제 취소', variant: 'red' },
-}
-
 export function PurchaseHistory() {
   const { data: applications, isLoading, error } = useMyApplications()
   const [credentialTarget, setCredentialTarget] = useState<{
@@ -87,10 +81,6 @@ type ApplicationCardProps = {
 
 function ApplicationCard({ application, onViewCredentials }: ApplicationCardProps) {
   const appStatus = APPLICATION_STATUS_MAP[application.status]
-  const latestPayment = application.payments[0]
-  const paymentStatus = latestPayment
-    ? PAYMENT_STATUS_MAP[latestPayment.status]
-    : null
 
   return (
     <Card>
@@ -108,9 +98,6 @@ function ApplicationCard({ application, onViewCredentials }: ApplicationCardProp
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
               {appStatus && <Badge variant={appStatus.variant}>{appStatus.label}</Badge>}
-              {paymentStatus && (
-                <Badge variant={paymentStatus.variant}>{paymentStatus.label}</Badge>
-              )}
             </div>
           </div>
 

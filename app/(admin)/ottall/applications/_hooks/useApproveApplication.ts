@@ -5,16 +5,15 @@ import { api } from '@/lib/api'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
 
-export function useApprovePayment() {
+export function useApproveApplication() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, adminNote }: { id: string; adminNote?: string }) =>
-      api.patch(`/own/admin/payments/${id}/approve`, { adminNote }),
+    mutationFn: (applicationId: string) =>
+      api.post(`/own/admin/applications/${applicationId}/approve`, {}),
     onSuccess: () => {
-      toast.success('결제가 승인되었습니다.')
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminPayments.all() })
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.all() })
+      toast.success('신청을 승인했습니다.')
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminApplications.all() })
     },
     onError: (error: Error) => {
       toast.error(error.message ?? '승인에 실패했습니다.')
