@@ -24,29 +24,47 @@ export default function GuidePage() {
             🎮 [필독] 스팀 등록 안내 가이드
           </h1>
           <p className="text-gray-600 leading-relaxed">
-            주문해주셔서 감사합니다! 본 상품은 스팀 상점 국가가 변경되는
-            상품입니다. 등록 전 아래 내용을 반드시 확인해 주세요.
+            🎉 주문해주셔서 감사합니다!
+            <br />본 상품은{" "}
+            <strong className="font-semibold text-gray-900">
+              해외 정식 게임코드를 등록
+            </strong>
+            하는 상품으로, 진행 과정에서 스팀 상점 국가 변경이 포함되어
+            있습니다.
           </p>
         </section>
 
         {/* 2. 국가 변경 제한 정책 안내 */}
-        <section className="bg-red-50 border border-red-200 rounded-xl p-5">
-          <p className="text-sm text-red-800">
-            AA 상품은 스팀게임을 선물로 보내드리거나, 해외에서 구매한
-            게임코드를 드리는 상품입니다. 선물 or 게임코드의 국가가 다르기
-            때문에, 계정의 국가를 변경해야하므로, 아래 가이드를 참고하여 양식을
-            제출해주시면 저희가 직접 변경해드리겠습니다.
-            <span className="block mt-1 text-xs text-red-600">
-              (언어=한국어O 우회결제X 정지X)
-            </span>
-            <span className="block mt-2 text-sm text-red-700">
-              🚫 스팀(Steam) 정책상 국가 변경은 3개월에 한 번으로 제한되어
-              있습니다. 최근 3개월 이내에 국가를 변경한 이력이 있다면 다른 계정
-              사용을 부탁드립니다.
-            </span>
-            <span className="block mt-1 text-xs text-red-600">
-              (상점 국가: 중국 예외)
-            </span>
+        <section className="bg-red-50 border border-red-200 rounded-xl p-5 space-y-4 mt-4!">
+          <div className="space-y-2">
+            <h2 className="text-base font-semibold text-red-800">
+              🌏 AA 상품: 스팀 국가 변경 및 등록 안내
+            </h2>
+            <p className="text-sm text-red-800">
+              해외 정식 코드 등록을 위한 계정 국가 변경은 저희가 직접 처리해
+              드립니다! 양식만 제출해 주세요!
+            </p>
+          </div>
+
+          <ul className="space-y-1.5 text-sm text-red-800">
+            <li>✅ 한국어 유지 (플레이 지장 없음)</li>
+            <li>✅ 정식 코드 (우회 결제 X, 정지 걱정 NO)</li>
+            <li>✅ 안전 등록 (수천 건의 무사고 노하우)</li>
+          </ul>
+
+          <div className="space-y-2 border-t border-red-200 pt-3">
+            <p className="text-sm font-semibold text-red-800">⚠️ 필수 확인</p>
+            <ul className="space-y-1.5 text-sm text-red-700">
+              <li>
+                🚫 3개월 내 변경 이력이 있으면 진행 불가 (다른 계정 권장)
+              </li>
+              <li>🇨🇳 중국 계정은 제한 없이 즉시 가능 (별도 문의)</li>
+            </ul>
+          </div>
+
+          <p className="text-right text-[11px] text-red-500/80 leading-snug">
+            <strong className="font-semibold">💡 해외 코드란?</strong> 해외
+            공식 판매처에서 정식 유통되는 100% 스팀 정품 코드를 의미합니다.
           </p>
         </section>
 
@@ -121,6 +139,10 @@ export default function GuidePage() {
             <br />
             <a href="#section-email" className="text-purple-700 underline hover:text-purple-900">
               이메일 스팀가드 사용자는 2번 항목으로!
+            </a>
+            <br />
+            <a href="#section-easy" className="text-amber-700 underline hover:text-amber-900">
+              설정이 복잡하고 번거롭다면 3번 항목으로! (가장 간편한 방법)
             </a>
           </h2>
 
@@ -263,6 +285,64 @@ export default function GuidePage() {
 5. 구매자 성함 :
 
 6. 국가 변경 및 등록 이후 환불 불가 동의 :`}
+              </pre>
+            </div>
+          </div>
+
+          {/* (3) 간편 접수 */}
+          <div id="section-easy" className="bg-amber-50 rounded-xl border border-amber-200 p-5 space-y-4 scroll-mt-4">
+            <h3 className="text-lg font-semibold text-amber-800">
+              (3) 다 귀찮으신가요? 가장 간편한 방법!
+            </h3>
+            <p className="text-sm text-gray-700">
+              설명도 복잡하고 직접 설정하기 번거로운 분들을 위한 빠른 접수
+              방법입니다.
+            </p>
+
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-gray-800">
+                ✅ 진행 방법
+              </h4>
+              <p className="text-sm text-gray-700">
+                복잡한 설정 변경 없이, 아래 [간편 양식]만 작성해서 카카오톡으로
+                보내주세요! 저희가 직접 접속해서 처리해 드립니다.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-gray-800">
+                ⚠️ 주의사항
+              </h4>
+              <p className="text-sm text-gray-700">
+                로그인 시 이메일이나 앱으로 발송되는 인증번호를 저희에게
+                알려주셔야 합니다. 접수 후 잠시만 대기 부탁드립니다! ⏳
+              </p>
+            </div>
+
+            <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2 mt-4">
+              📥 간편 등록 접수 양식
+            </h4>
+            <p className="text-sm text-gray-600">
+              아무것도 건드리지 말고 아래 양식만 채워 보내주세요.
+            </p>
+            <div className="relative">
+              <div className="absolute right-3 top-3">
+                <CopyFormButton
+                  text={`📄[간편 접수 양식]\n\n1. 스팀 ID :\n\n2. 스팀 PW :\n\n3. 구매하신 게임 :\n\n4. 구매자 성함 :\n\n5. 등록진행 중 환불 불가 동의 : (동의함)`}
+                />
+              </div>
+              <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 pt-10 text-sm font-mono whitespace-pre overflow-x-auto leading-relaxed">
+                {`📄[간편 접수 양식]
+
+1. 스팀 ID :
+
+2. 스팀 PW :
+
+3. 구매하신 게임 :
+
+4. 구매자 성함 :
+
+5. 등록진행 중 환불 불가 동의 : (동의함)`}
               </pre>
             </div>
           </div>
