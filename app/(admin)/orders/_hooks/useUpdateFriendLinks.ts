@@ -7,14 +7,15 @@ type UpdateFriendLinksInput = {
   id: string
   friendLink1: string | null
   friendLink2: string | null
+  giftCode: string | null
 }
 
 export function useUpdateFriendLinks() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, friendLink1, friendLink2 }: UpdateFriendLinksInput) =>
-      api.patch(`/steam/admin/orders/${id}/friend-links`, { friendLink1, friendLink2 }),
+    mutationFn: ({ id, friendLink1, friendLink2, giftCode }: UpdateFriendLinksInput) =>
+      api.patch(`/steam/admin/orders/${id}/friend-links`, { friendLink1, friendLink2, giftCode }),
     onSuccess: (_, variables) => {
       toast.success('친구 링크가 저장되었습니다.')
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.orders.detail(variables.id) })

@@ -51,21 +51,32 @@ const giftInputClass = cn(
   'outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand-light',
 )
 
+const GIFT_RECEIPT_LINK_OPTIONS = [
+  { value: 'https://new.zqbg.cn/steam2/zqbcdk/cdk', label: '기본' },
+  { value: 'https://new.zqbg.cn/steam2/zqbcdk/customcdk', label: '커스텀' },
+]
+
 function GiftSection({ order }: { order: SteamOrderItem }) {
   const [link1, setLink1] = useState(order.friendLink1 ?? '')
   const [link2, setLink2] = useState(order.friendLink2 ?? '')
+  const [giftCode, setGiftCode] = useState(order.giftCode ?? '')
+  const [receiptLink, setReceiptLink] = useState(GIFT_RECEIPT_LINK_OPTIONS[0].value)
   const { mutate: updateLinks, isPending: isSaving } = useUpdateFriendLinks()
   const { mutate: markCompleted, isPending: isCompleting } = useMarkGiftCompleted()
 
   useEffect(() => {
     setLink1(order.friendLink1 ?? '')
     setLink2(order.friendLink2 ?? '')
-  }, [order.friendLink1, order.friendLink2])
+    setGiftCode(order.giftCode ?? '')
+  }, [order.friendLink1, order.friendLink2, order.giftCode])
 
   const normalized1 = link1.trim()
   const normalized2 = link2.trim()
+  const normalizedGiftCode = giftCode.trim()
   const isDirty =
-    normalized1 !== (order.friendLink1 ?? '') || normalized2 !== (order.friendLink2 ?? '')
+    normalized1 !== (order.friendLink1 ?? '') ||
+    normalized2 !== (order.friendLink2 ?? '') ||
+    normalizedGiftCode !== (order.giftCode ?? '')
 
   const handleCopy = async (value: string) => {
     if (!value) return
@@ -82,6 +93,7 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
       id: order.id,
       friendLink1: normalized1 ? normalized1 : null,
       friendLink2: normalized2 ? normalized2 : null,
+      giftCode: normalizedGiftCode ? normalizedGiftCode : null,
     })
   }
 
@@ -140,6 +152,58 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
           </div>
         </div>
       ))}
+
+      <div>
+        <label className="text-caption-md mb-1 block text-text-muted">선물 코드 번호</label>
+        <div className="flex gap-2">
+          <input
+            className={giftInputClass}
+            placeholder="선물 코드 번호 입력"
+            value={giftCode}
+            onChange={(e) => setGiftCode(e.target.value)}
+          />
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={!order.giftCode}
+            onClick={() => order.giftCode && handleCopy(order.giftCode)}
+          >
+            복사
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={!giftCode}
+            onClick={() => setGiftCode('')}
+          >
+            ✕
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-caption-md mb-1 block text-text-muted">선물 접수 링크</label>
+        <div className="flex gap-2">
+          <select
+            className={giftInputClass}
+            value={receiptLink}
+            onChange={(e) => setReceiptLink(e.target.value)}
+          >
+            {GIFT_RECEIPT_LINK_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => window.open(receiptLink, '_blank')}
+          >
+            이동
+          </Button>
+        </div>
+      </div>
 
       <div className="flex justify-end">
         <Button

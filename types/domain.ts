@@ -47,6 +47,7 @@ export type SteamOrderItem = {
   reviewGameSentAt: string | null
   friendLink1: string | null
   friendLink2: string | null
+  giftCode: string | null
   giftCompletedAt: string | null
   createdAt: string
   updatedAt: string

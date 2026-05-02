@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import type { FulfillmentStatus } from '@/types/domain'
 
@@ -47,6 +47,8 @@ export function OrdersFilterBar() {
   const currentFrom = searchParams.get('from') ?? ''
   const currentTo = searchParams.get('to') ?? ''
   const currentStatus = searchParams.get('status') ?? ''
+  const currentReceiverName = searchParams.get('receiverName') ?? ''
+  const [nameInput, setNameInput] = useState(currentReceiverName)
 
   useEffect(() => {
     if (!currentFrom && !currentTo) {
@@ -114,8 +116,30 @@ export function OrdersFilterBar() {
         />
       </div>
 
-      {(currentStatus || currentFrom || currentTo) && (
-        <Button variant="secondary" size="sm" onClick={handleReset}>
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              updateParams({ receiverName: nameInput.trim() })
+            }
+          }}
+          placeholder="수신자명 검색"
+          className="text-body-md rounded-lg border border-border px-3 py-1.5 text-text-primary outline-none focus:border-brand"
+        />
+      </div>
+
+      {(currentStatus || currentFrom || currentTo || currentReceiverName) && (
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            setNameInput('')
+            handleReset()
+          }}
+        >
           초기화
         </Button>
       )}
