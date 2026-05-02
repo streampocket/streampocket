@@ -28,9 +28,10 @@ export function OrdersTable() {
   const status = (searchParams.get('status') as FulfillmentStatus) || undefined
   const from = searchParams.get('from') || undefined
   const to = searchParams.get('to') || undefined
+  const receiverName = searchParams.get('receiverName') || undefined
   const page = Number(searchParams.get('page') ?? 1)
 
-  const { data, isLoading } = useOrders({ status, from, to, page, pageSize: PAGE_SIZE })
+  const { data, isLoading } = useOrders({ status, from, to, receiverName, page, pageSize: PAGE_SIZE })
 
   return (
     <>
