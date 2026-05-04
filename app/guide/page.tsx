@@ -134,15 +134,15 @@ export default function GuidePage() {
         <section className="space-y-8">
           <h2 className="text-lg font-semibold text-gray-800">
             <a href="#section-mobile" className="text-green-700 underline hover:text-green-900">
-              모바일 스팀가드 사용자는 1번 항목으로!
+              ✅ 현재 모바일 스팀가드 이용 중 → [1번 가이드 이동]
             </a>
             <br />
             <a href="#section-email" className="text-purple-700 underline hover:text-purple-900">
-              이메일 스팀가드 사용자는 2번 항목으로!
+              ✅ 현재 이메일 스팀가드 이용 중 → [2번 가이드 이동]
             </a>
             <br />
             <a href="#section-easy" className="text-amber-700 underline hover:text-amber-900">
-              설정이 복잡하고 번거롭다면 3번 항목으로! (가장 간편한 방법)
+              ✨ &quot;이것저것 다 귀찮다면?&quot; → [3번 초간편 모드] 바로가기
             </a>
           </h2>
 
