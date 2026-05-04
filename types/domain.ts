@@ -48,6 +48,8 @@ export type SteamOrderItem = {
   friendLink1: string | null
   friendLink2: string | null
   giftCode: string | null
+  gameUrl: string | null
+  memo: string | null
   giftCompletedAt: string | null
   createdAt: string
   updatedAt: string

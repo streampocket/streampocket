@@ -60,7 +60,11 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
   const [link1, setLink1] = useState(order.friendLink1 ?? '')
   const [link2, setLink2] = useState(order.friendLink2 ?? '')
   const [giftCode, setGiftCode] = useState(order.giftCode ?? '')
-  const [receiptLink, setReceiptLink] = useState(GIFT_RECEIPT_LINK_OPTIONS[0].value)
+  const [gameUrl, setGameUrl] = useState(order.gameUrl ?? '')
+  const [memo, setMemo] = useState(order.memo ?? '')
+  const [receiptLink, setReceiptLink] = useState(
+    order.gameUrl ? GIFT_RECEIPT_LINK_OPTIONS[1].value : GIFT_RECEIPT_LINK_OPTIONS[0].value,
+  )
   const { mutate: updateLinks, isPending: isSaving } = useUpdateFriendLinks()
   const { mutate: markCompleted, isPending: isCompleting } = useMarkGiftCompleted()
 
@@ -68,15 +72,24 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
     setLink1(order.friendLink1 ?? '')
     setLink2(order.friendLink2 ?? '')
     setGiftCode(order.giftCode ?? '')
-  }, [order.friendLink1, order.friendLink2, order.giftCode])
+    setGameUrl(order.gameUrl ?? '')
+    setMemo(order.memo ?? '')
+    setReceiptLink(
+      order.gameUrl ? GIFT_RECEIPT_LINK_OPTIONS[1].value : GIFT_RECEIPT_LINK_OPTIONS[0].value,
+    )
+  }, [order.friendLink1, order.friendLink2, order.giftCode, order.gameUrl, order.memo])
 
   const normalized1 = link1.trim()
   const normalized2 = link2.trim()
   const normalizedGiftCode = giftCode.trim()
+  const normalizedGameUrl = gameUrl.trim()
+  const normalizedMemo = memo.trim()
   const isDirty =
     normalized1 !== (order.friendLink1 ?? '') ||
     normalized2 !== (order.friendLink2 ?? '') ||
-    normalizedGiftCode !== (order.giftCode ?? '')
+    normalizedGiftCode !== (order.giftCode ?? '') ||
+    normalizedGameUrl !== (order.gameUrl ?? '') ||
+    normalizedMemo !== (order.memo ?? '')
 
   const handleCopy = async (value: string) => {
     if (!value) return
@@ -94,6 +107,8 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
       friendLink1: normalized1 ? normalized1 : null,
       friendLink2: normalized2 ? normalized2 : null,
       giftCode: normalizedGiftCode ? normalizedGiftCode : null,
+      gameUrl: normalizedGameUrl ? normalizedGameUrl : null,
+      memo: normalizedMemo ? normalizedMemo : null,
     })
   }
 
@@ -205,6 +220,48 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
         </div>
       </div>
 
+      {receiptLink === GIFT_RECEIPT_LINK_OPTIONS[1].value && (
+        <div>
+          <label className="text-caption-md mb-1 block text-text-muted">게임 URL</label>
+          <div className="flex gap-2">
+            <input
+              className={giftInputClass}
+              placeholder="https://store.steampowered.com/..."
+              value={gameUrl}
+              onChange={(e) => setGameUrl(e.target.value)}
+            />
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={!order.gameUrl}
+              onClick={() => order.gameUrl && handleCopy(order.gameUrl)}
+            >
+              복사
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={!gameUrl}
+              onClick={() => setGameUrl('')}
+            >
+              ✕
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div>
+        <label className="text-caption-md mb-1 block text-text-muted">메모</label>
+        <textarea
+          className={cn(giftInputClass, 'min-h-24 resize-y')}
+          rows={4}
+          maxLength={1000}
+          placeholder="자유 메모 (최대 1000자)"
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+        />
+      </div>
+
       <div className="flex justify-end">
         <Button
           size="sm"
@@ -227,6 +284,12 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
 
+  const [activeTab, setActiveTab] = useState<'input' | 'status'>('input')
+
+  useEffect(() => {
+    setActiveTab('input')
+  }, [orderId])
+
   const resolveTemplateName = (code: string | null): string | null => {
     if (!code) return null
     const found = alimtalkTemplates?.find((template) => template.templateCode === code)
@@ -234,6 +297,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   }
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
+  const showTabs = order ? isAaProduct(order.productName) : false
   const canRetry =
     order?.fulfillmentStatus === 'manual_review' || order?.fulfillmentStatus === 'failed'
   const canReturn =
@@ -309,6 +373,38 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
             {status && <Badge variant={status.variant}>{status.label}</Badge>}
           </div>
 
+          {showTabs && (
+            <div className="flex gap-1">
+              {(
+                [
+                  { v: 'input', l: '입력/저장' },
+                  { v: 'status', l: '상태' },
+                ] as const
+              ).map((t) => (
+                <button
+                  key={t.v}
+                  type="button"
+                  onClick={() => setActiveTab(t.v)}
+                  className={cn(
+                    'text-body-md shrink-0 rounded-lg px-4 py-2 font-medium transition-colors',
+                    activeTab === t.v
+                      ? 'bg-brand text-white'
+                      : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+                  )}
+                >
+                  {t.l}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {showTabs && (
+            <div className={cn(activeTab !== 'input' && 'hidden')}>
+              <GiftSection order={order} />
+            </div>
+          )}
+
+          <div className={cn('space-y-4', showTabs && activeTab !== 'status' && 'hidden')}>
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
             <div>
               <dt className="text-caption-md text-text-muted">상품주문번호</dt>
@@ -388,7 +484,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
             )}
           </dl>
 
-          {isAaProduct(order.productName) && <GiftSection order={order} />}
+          {!showTabs && isAaProduct(order.productName) && <GiftSection order={order} />}
 
           {order.errorMessage && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3">
@@ -445,6 +541,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               </div>
             </div>
           )}
+          </div>
         </div>
       ) : null}
     </Modal>
