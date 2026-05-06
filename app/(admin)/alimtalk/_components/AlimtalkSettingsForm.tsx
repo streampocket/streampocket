@@ -91,6 +91,7 @@ export function AlimtalkSettingsForm() {
           <InfoRow label="템플릿 코드 (NA)" value={runtime?.templateCodeNA ?? '-'} />
           <InfoRow label="템플릿 코드 (AA)" value={runtime?.templateCodeAA ?? '-'} />
           <InfoRow label="템플릿 코드 (NA 2차이메일)" value={runtime?.templateCodeNASecondary ?? '-'} />
+          <InfoRow label="템플릿 코드 (NA 재고없음 안내)" value={runtime?.templateCodeNAOutOfStock ?? '-'} />
           <InfoRow label="템플릿 코드 (리뷰게임)" value={runtime?.templateCodeReviewGame ?? '-'} />
           <InfoRow label="템플릿 코드 (선물 접수 완료)" value={runtime?.templateCodeGiftCompleted ?? '-'} />
           <InfoRow label="발신번호" value={runtime?.sender ?? '-'} />
@@ -115,6 +116,7 @@ export function AlimtalkSettingsForm() {
                 template.templateCode === runtime?.templateCodeNA ||
                 template.templateCode === runtime?.templateCodeAA ||
                 template.templateCode === runtime?.templateCodeNASecondary ||
+                template.templateCode === runtime?.templateCodeNAOutOfStock ||
                 template.templateCode === runtime?.templateCodeReviewGame ||
                 template.templateCode === runtime?.templateCodeGiftCompleted
 
