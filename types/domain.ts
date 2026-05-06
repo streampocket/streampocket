@@ -38,6 +38,7 @@ export type SteamOrderItem = {
   receiverPhoneNumber: string | null
   receiverName: string | null
   unitPrice: number
+  paymentAmount: number | null
   settlementAmount: number | null
   decisionDate: string | null
   fulfillmentStatus: FulfillmentStatus
