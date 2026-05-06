@@ -183,6 +183,7 @@ export type AlimtalkSettings = {
     templateCodeNA: string | null
     templateCodeAA: string | null
     templateCodeNASecondary: string | null
+    templateCodeNAOutOfStock: string | null
     templateCodeReviewGame: string | null
     templateCodeGiftCompleted: string | null
     sender: string | null
