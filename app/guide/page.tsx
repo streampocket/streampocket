@@ -34,6 +34,18 @@ export default function GuidePage() {
           </p>
         </section>
 
+        {/* 배너: 등록 속도 1위 */}
+        <section className="mt-4">
+          <Image
+            src="/images/guide/배너.png"
+            alt="네이버 AA 업체 중 게임 등록 속도 압도적 1위"
+            width={1200}
+            height={300}
+            priority
+            className="rounded-xl w-full"
+          />
+        </section>
+
         {/* 2. 국가 변경 제한 정책 안내 */}
         <section className="bg-red-50 border border-red-200 rounded-xl p-5 space-y-4 mt-4!">
           <div className="space-y-2">
@@ -363,7 +375,7 @@ export default function GuidePage() {
           </p>
           <ul className="space-y-3">
             {[
-              "등록 접수 후 완료까지 최소 30분 이상 소요될 수 있습니다. 장시간 소요될 수 있다는 점 알려드립니다.",
+              "✅ 접수 순서에 따라 순차적으로 진행되며, 완료까지 약 15분~1시간 30분가량 소요될 수 있습니다.",
               "새벽 시간 접수 건은 오전 10시 이후 순차적으로 처리됩니다.",
               "등록 절차 진행 도중 혹은 이후에는 환불이 불가합니다. 환불은 절차 이전에 문의바랍니다.",
               "등록 대기 중 게임 플레이는 가능하지만, 비밀번호 변경 및 스팀가드 설정은 절대 금지합니다. 설정 변경 시 등록이 지연됩니다.",

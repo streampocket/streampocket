@@ -433,7 +433,16 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
             <div>
               <dt className="text-caption-md text-text-muted">결제금액</dt>
               <dd className="mt-0.5 text-caption-md text-text-primary">
-                {order.unitPrice.toLocaleString()}원
+                {order.paymentAmount != null && order.paymentAmount !== order.unitPrice ? (
+                  <>
+                    <span className="mr-2 text-text-muted line-through">
+                      {order.unitPrice.toLocaleString()}원
+                    </span>
+                    {order.paymentAmount.toLocaleString()}원
+                  </>
+                ) : (
+                  <>{(order.paymentAmount ?? order.unitPrice).toLocaleString()}원</>
+                )}
               </dd>
             </div>
             <div>

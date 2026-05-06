@@ -91,7 +91,16 @@ export function OrdersTable() {
                           {order.receiverName ?? <span className="text-danger">미확인</span>}
                         </td>
                         <td className="text-body-md px-5 py-3 text-text-primary">
-                          {order.unitPrice.toLocaleString()}원
+                          {order.paymentAmount != null && order.paymentAmount !== order.unitPrice ? (
+                            <>
+                              <div className="text-caption-sm text-text-muted line-through">
+                                {order.unitPrice.toLocaleString()}원
+                              </div>
+                              <div>{order.paymentAmount.toLocaleString()}원</div>
+                            </>
+                          ) : (
+                            <>{(order.paymentAmount ?? order.unitPrice).toLocaleString()}원</>
+                          )}
                         </td>
                         <td className="px-5 py-3">
                           <Badge variant={orderStatus.variant}>{orderStatus.label}</Badge>
@@ -138,9 +147,18 @@ export function OrdersTable() {
                       </span>
                       <Badge variant={orderStatus.variant}>{orderStatus.label}</Badge>
                     </div>
-                    <p className="text-body-md font-semibold text-text-primary">
-                      {order.unitPrice.toLocaleString()}원
-                    </p>
+                    {order.paymentAmount != null && order.paymentAmount !== order.unitPrice ? (
+                      <p className="text-body-md font-semibold text-text-primary">
+                        <span className="mr-2 text-caption-sm font-normal text-text-muted line-through">
+                          {order.unitPrice.toLocaleString()}원
+                        </span>
+                        {order.paymentAmount.toLocaleString()}원
+                      </p>
+                    ) : (
+                      <p className="text-body-md font-semibold text-text-primary">
+                        {(order.paymentAmount ?? order.unitPrice).toLocaleString()}원
+                      </p>
+                    )}
                     <div className="mt-1 flex items-center justify-between">
                       <span className="text-caption-md text-text-secondary">
                         {order.receiverName ?? '미확인'}
