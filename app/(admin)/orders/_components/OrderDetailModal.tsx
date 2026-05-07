@@ -12,6 +12,7 @@ import type { DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/typ
 import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
+import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
 import { useUpdateFriendLinks } from '../_hooks/useUpdateFriendLinks'
@@ -31,6 +32,7 @@ const DELIVERY_STATUS_MAP: Record<DeliveryLogStatus, { label: string; variant: B
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '처리 대기', variant: 'yellow' },
   completed: { label: '처리 완료', variant: 'green' },
+  purchase_decided: { label: '구매확정', variant: 'blue' },
   manual_review: { label: '수동 처리 필요', variant: 'red' },
   failed: { label: '처리 실패', variant: 'gray' },
   returned: { label: '반품', variant: 'purple' },
@@ -281,6 +283,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
   const { data: alimtalkTemplates } = useAlimtalkTemplates()
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
+  const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
 
@@ -298,17 +301,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const showTabs = order ? isAaProduct(order.productName) : false
+  const canComplete = order?.fulfillmentStatus === 'pending'
   const canRetry =
     order?.fulfillmentStatus === 'manual_review' || order?.fulfillmentStatus === 'failed'
   const canReturn =
+    order?.fulfillmentStatus === 'pending' ||
     order?.fulfillmentStatus === 'completed' ||
+    order?.fulfillmentStatus === 'purchase_decided' ||
     order?.fulfillmentStatus === 'manual_review' ||
     order?.fulfillmentStatus === 'failed'
 
   const reviewGameCount = order ? parseReviewGameCount(order.productName) : null
   const canSendReviewGame =
-    order?.fulfillmentStatus === 'completed' &&
-    order.decisionDate !== null &&
+    order?.fulfillmentStatus === 'purchase_decided' &&
     order.reviewGameSentAt === null &&
     reviewGameCount !== null
 
@@ -359,6 +364,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               }}
             >
               알림톡 재발송
+            </Button>
+          )}
+          {canComplete && (
+            <Button
+              variant="primary"
+              loading={isCompleting}
+              onClick={() => {
+                if (order && window.confirm('이 주문을 완료 처리하시겠습니까?')) {
+                  complete(order.id)
+                }
+              }}
+            >
+              완료 처리
             </Button>
           )}
         </>

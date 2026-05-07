@@ -14,6 +14,7 @@ import type { PaginatedResponse } from '@/types/api'
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '대기', variant: 'yellow' },
   completed: { label: '완료', variant: 'green' },
+  purchase_decided: { label: '구매확정', variant: 'blue' },
   manual_review: { label: '수동처리', variant: 'red' },
   failed: { label: '실패', variant: 'gray' },
   returned: { label: '반품', variant: 'purple' },

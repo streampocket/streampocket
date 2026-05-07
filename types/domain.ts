@@ -1,5 +1,11 @@
 /** 주문 처리 상태 (Prisma FulfillmentStatus 기준) */
-export type FulfillmentStatus = 'pending' | 'completed' | 'manual_review' | 'failed' | 'returned'
+export type FulfillmentStatus =
+  | 'pending'
+  | 'completed'
+  | 'purchase_decided'
+  | 'manual_review'
+  | 'failed'
+  | 'returned'
 
 /** 계정 상태 (Prisma AccountStatus 기준) */
 export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled' | 'manual'
