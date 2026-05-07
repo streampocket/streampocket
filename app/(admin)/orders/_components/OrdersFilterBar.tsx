@@ -9,6 +9,7 @@ const STATUS_OPTIONS: { value: FulfillmentStatus | ''; label: string }[] = [
   { value: '', label: '전체' },
   { value: 'pending', label: '대기' },
   { value: 'completed', label: '완료' },
+  { value: 'purchase_decided', label: '구매확정' },
   { value: 'manual_review', label: '수동처리' },
   { value: 'failed', label: '실패' },
   { value: 'returned', label: '반품' },
