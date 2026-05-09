@@ -3,16 +3,23 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
+import { PAGE_SIZE } from '@/constants/app'
 import type { FulfillmentStatus } from '@/types/domain'
+import { useOrders } from '../_hooks/useOrders'
+import type { OrderStatusCounts } from '../_types'
 
-const STATUS_OPTIONS: { value: FulfillmentStatus | ''; label: string }[] = [
-  { value: '', label: '전체' },
-  { value: 'pending', label: '대기' },
-  { value: 'completed', label: '완료' },
-  { value: 'purchase_decided', label: '구매확정' },
-  { value: 'manual_review', label: '수동처리' },
-  { value: 'failed', label: '실패' },
-  { value: 'returned', label: '반품' },
+const STATUS_OPTIONS: {
+  value: FulfillmentStatus | ''
+  label: string
+  countKey: keyof OrderStatusCounts
+}[] = [
+  { value: '', label: '전체', countKey: 'total' },
+  { value: 'pending', label: '대기', countKey: 'pending' },
+  { value: 'completed', label: '완료', countKey: 'completed' },
+  { value: 'purchase_decided', label: '구매확정', countKey: 'purchase_decided' },
+  { value: 'manual_review', label: '수동처리', countKey: 'manual_review' },
+  { value: 'failed', label: '실패', countKey: 'failed' },
+  { value: 'returned', label: '반품', countKey: 'returned' },
 ]
 
 function toStartOfDay(date: string): string {
@@ -49,7 +56,18 @@ export function OrdersFilterBar() {
   const currentTo = searchParams.get('to') ?? ''
   const currentStatus = searchParams.get('status') ?? ''
   const currentReceiverName = searchParams.get('receiverName') ?? ''
+  const currentPage = Number(searchParams.get('page') ?? 1)
   const [nameInput, setNameInput] = useState(currentReceiverName)
+
+  const { data } = useOrders({
+    status: (currentStatus as FulfillmentStatus) || undefined,
+    from: currentFrom || undefined,
+    to: currentTo || undefined,
+    receiverName: currentReceiverName || undefined,
+    page: currentPage,
+    pageSize: PAGE_SIZE,
+  })
+  const counts = data?.counts
 
   useEffect(() => {
     if (!currentFrom && !currentTo) {
@@ -94,7 +112,7 @@ export function OrdersFilterBar() {
                 : 'bg-gray-100 text-text-secondary hover:bg-gray-200'
             }`}
           >
-            {opt.label}
+            {opt.label}{counts ? ` (${counts[opt.countKey]})` : ''}
           </button>
         ))}
       </div>
