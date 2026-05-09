@@ -529,11 +529,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                   .map((log) => {
                     const deliveryStatus = DELIVERY_STATUS_MAP[log.status]
                     const templateName = resolveTemplateName(log.templateCode)
-                    const templateLabel = log.templateCode
-                      ? templateName
-                        ? `${templateName} (${log.templateCode})`
-                        : log.templateCode
-                      : null
+                    const sentAt = log.sentAt ?? log.createdAt
 
                     return (
                       <div
@@ -541,18 +537,30 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                         className="space-y-1 rounded-lg border border-border bg-surface-secondary p-3"
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-mono text-caption-md text-text-secondary">
-                            {log.recipient}
-                          </span>
+                          {templateName ? (
+                            <span className="min-w-0 flex-1 text-body-md font-semibold text-text-primary">
+                              {templateName}
+                            </span>
+                          ) : log.templateCode ? (
+                            <span className="min-w-0 flex-1 font-mono text-body-md font-semibold text-text-primary">
+                              {log.templateCode}
+                            </span>
+                          ) : (
+                            <span className="min-w-0 flex-1 text-body-md font-semibold text-text-muted">
+                              템플릿 정보 없음
+                            </span>
+                          )}
                           <Badge variant={deliveryStatus.variant}>{deliveryStatus.label}</Badge>
                         </div>
-                        {templateLabel && (
-                          <p className="text-caption-md font-medium text-text-primary">
-                            {templateLabel}
+                        {templateName && log.templateCode && (
+                          <p className="text-caption-sm font-mono text-text-muted">
+                            {log.templateCode}
                           </p>
                         )}
                         <p className="text-caption-md text-text-muted">
-                          {log.sentAt ? formatDate(log.sentAt) : formatDate(log.createdAt)}
+                          <span className="font-mono">{log.recipient}</span>
+                          {' · '}
+                          {formatDate(sentAt)}
                         </p>
                         {log.providerMessageId && (
                           <p className="text-caption-md text-text-muted">

@@ -10,4 +10,16 @@ export type OrderListParams = {
   pageSize?: number
 }
 
-export type OrderListResponse = PaginatedResponse<SteamOrderItem>
+export type OrderStatusCounts = {
+  total: number
+  pending: number
+  completed: number
+  purchase_decided: number
+  manual_review: number
+  failed: number
+  returned: number
+}
+
+export type OrderListResponse = PaginatedResponse<SteamOrderItem> & {
+  counts: OrderStatusCounts
+}
