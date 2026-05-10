@@ -49,7 +49,7 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
 
   const handleReject = () => {
     if (!applicationId) return
-    if (!confirm('이 신청을 거절하시겠습니까? 슬롯이 원복됩니다.')) return
+    if (!confirm('이 신청을 거절하시겠습니까?')) return
     rejectMutation.mutate(applicationId, { onSuccess: onClose })
   }
 

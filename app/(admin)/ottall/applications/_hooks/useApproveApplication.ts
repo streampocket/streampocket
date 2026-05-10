@@ -5,14 +5,22 @@ import { api } from '@/lib/api'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
 
+type ApproveResponse = {
+  autoRejected: boolean
+}
+
 export function useApproveApplication() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (applicationId: string) =>
-      api.post(`/own/admin/applications/${applicationId}/approve`, {}),
-    onSuccess: () => {
-      toast.success('신청을 승인했습니다.')
+      api.post<ApproveResponse>(`/own/admin/applications/${applicationId}/approve`, {}),
+    onSuccess: (response) => {
+      if (response.autoRejected) {
+        toast.warning('정원이 가득 차 자동으로 거절 처리되었습니다.')
+      } else {
+        toast.success('신청을 승인했습니다.')
+      }
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminApplications.all() })
     },
     onError: (error: Error) => {
