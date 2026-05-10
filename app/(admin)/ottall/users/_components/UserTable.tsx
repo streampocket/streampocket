@@ -63,8 +63,6 @@ export function UserTable({
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">이메일</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">전화번호</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가입방식</th>
-                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">파트너</th>
-                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">상품</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">파티</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가입일</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">액션</th>
@@ -85,16 +83,6 @@ export function UserTable({
                     <td className="text-body-md px-4 py-3 text-text-secondary">{user.phone}</td>
                     <td className="px-4 py-3">
                       <Badge variant={providerBadge.variant}>{providerBadge.label}</Badge>
-                    </td>
-                    <td className="px-4 py-3">
-                      {user.hasPartner ? (
-                        <Badge variant="green">Y</Badge>
-                      ) : (
-                        <span className="text-body-md text-text-muted">-</span>
-                      )}
-                    </td>
-                    <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {user._count.ownProducts}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       {user._count.partyApplications}
@@ -137,14 +125,8 @@ export function UserTable({
                 <p className="text-caption-md text-text-secondary">{user.phone}</p>
                 <div className="mt-2 flex gap-3">
                   <span className="text-caption-md text-text-muted">
-                    상품 {user._count.ownProducts}
-                  </span>
-                  <span className="text-caption-md text-text-muted">
                     파티 {user._count.partyApplications}
                   </span>
-                  {user.hasPartner && (
-                    <Badge variant="green">파트너</Badge>
-                  )}
                 </div>
                 <p className="text-caption-sm mt-1 text-text-muted">{formatDate(user.createdAt)}</p>
               </button>

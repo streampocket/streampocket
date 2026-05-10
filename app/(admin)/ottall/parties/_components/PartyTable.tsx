@@ -87,7 +87,7 @@ export function PartyTable({
                       {party.category.name}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {party.user.name}
+                      {party.leaderName}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       {party.currentPrice != null && party.currentPrice < party.price ? (
@@ -141,7 +141,7 @@ export function PartyTable({
                   <Badge variant={badge.variant}>{badge.label}</Badge>
                 </div>
                 <p className="text-caption-md text-text-secondary">
-                  {party.category.name} · {party.user.name}
+                  {party.category.name} · {party.leaderName}
                 </p>
                 <p className="text-caption-md mt-1 text-text-secondary">
                   {party.currentPrice != null && party.currentPrice < party.price

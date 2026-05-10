@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/Button'
 import { OwnProductCard } from './OwnProductCard'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
@@ -28,11 +26,8 @@ export function OwnProductList() {
   return (
     <div className="space-y-6">
       {/* 헤더 */}
-      <div className="flex items-center justify-between">
+      <div>
         <h1 className="text-heading-lg text-text-primary">파티 모집</h1>
-        <Link href="/party/new">
-          <Button variant="primary" size="sm">+ 파티 등록하기</Button>
-        </Link>
       </div>
 
       {/* 상태 필터 */}

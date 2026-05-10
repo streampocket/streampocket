@@ -1,0 +1,34 @@
+'use client'
+
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '@/lib/api'
+import { QUERY_KEYS } from '@/constants/queryKeys'
+import type { OwnProduct } from '@/types/domain'
+
+export type CreateAdminPartyInput = {
+  name: string
+  durationDays: number
+  price: number
+  dailyDiscount: number
+  totalSlots: number
+  imagePath?: string | null
+  notes?: string | null
+  accountId?: string | null
+  accountPassword?: string | null
+  leaderName: string
+}
+
+type CreateResponse = {
+  data: OwnProduct
+}
+
+export function useCreateAdminParty() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: CreateAdminPartyInput) =>
+      api.post<CreateResponse>('/own/admin/products', input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.all() })
+    },
+  })
+}

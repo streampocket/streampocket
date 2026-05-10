@@ -107,14 +107,7 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
           {/* 파티장 정보 */}
           <section className="space-y-2">
             <h3 className="text-body-md font-semibold text-text-primary">파티장 정보</h3>
-            <InfoRow label="이름" value={party.user.name} />
-            <InfoRow label="연락처" value={party.user.phone} />
-            {party.user.partner && (
-              <>
-                <InfoRow label="은행" value={party.user.partner.bankName} />
-                <InfoRow label="계좌" value={party.user.partner.bankAccount} />
-              </>
-            )}
+            <InfoRow label="이름" value={party.leaderName} />
           </section>
 
           {/* 계정 정보 */}

@@ -13,23 +13,9 @@ export type AdminUserListItem = {
   provider: AuthProvider
   createdAt: string
   updatedAt: string
-  hasPartner: boolean
   _count: {
-    ownProducts: number
     partyApplications: number
   }
-}
-
-export type AdminUserDetailProduct = {
-  id: string
-  name: string
-  status: OwnProductStatus
-  price: number
-  totalSlots: number
-  filledSlots: number
-  durationDays: number
-  createdAt: string
-  category: { id: string; name: string }
 }
 
 export type AdminUserDetailApplication = {
@@ -60,23 +46,12 @@ export type AdminUserDetail = {
     createdAt: string
     updatedAt: string
   }
-  partner: {
-    id: string
-    name: string
-    phone: string
-    bankName: string
-    bankAccount: string
-    status: 'pending' | 'approved' | 'rejected'
-    createdAt: string
-  } | null
-  ownProducts: AdminUserDetailProduct[]
   partyApplications: AdminUserDetailApplication[]
   termsAgreements: { type: string; agreedAt: string }[]
   stats: {
     totalPaidAmount: number
     partyCount: number
     activePartyCount: number
-    ownProductCount: number
   }
 }
 
