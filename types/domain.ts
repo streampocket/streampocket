@@ -241,8 +241,7 @@ export type OwnProduct = {
   hasCredentials: boolean
   status: OwnProductStatus
   startedAt: string | null
-  userId: string
-  user: { id: string; name: string }
+  leaderName: string
   currentPrice: number
   partyExpiresAt: string | null
   remainingDays: number
@@ -254,26 +253,6 @@ export type OwnProduct = {
 export type ProductListParams = {
   categoryId?: string
   status?: OwnProductStatus
-}
-
-// ───────────────────────── 파트너 (OTTALL) ─────────────────────────
-
-/** 파트너 상태 */
-export type PartnerStatus = 'pending' | 'approved' | 'rejected'
-
-/** 파트너 */
-export type Partner = {
-  id: string
-  userId: string
-  name: string
-  phone: string
-  bankName: string
-  bankAccount: string
-  status: PartnerStatus
-  rejectedAt: string | null
-  rejectionNote: string | null
-  createdAt: string
-  updatedAt: string
 }
 
 // ───────────────────────── 파티 신청 (OTTALL) ─────────────────────────
@@ -299,17 +278,7 @@ export type PartyApplication = {
 // ───────────────────────── 파티 상세 (관리자) ─────────────────────────
 
 /** 파티 상세 (참여자 포함) */
-export type AdminPartyDetail = Omit<OwnProduct, 'user'> & {
-  user: {
-    id: string
-    name: string
-    phone: string
-    partner: {
-      phone: string
-      bankName: string
-      bankAccount: string
-    } | null
-  }
+export type AdminPartyDetail = OwnProduct & {
   applications: (PartyApplication & {
     user: { id: string; name: string; email: string; phone: string }
   })[]

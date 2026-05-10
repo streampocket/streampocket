@@ -7,9 +7,7 @@ import Link from 'next/link'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { Modal } from '@/components/ui/Modal'
 import { useOwnProductDetail } from '../_hooks/useOwnProductDetail'
-import { useDeleteOwnProduct } from '../_hooks/useDeleteOwnProduct'
 import { useApplyParty } from '../_hooks/useApplyParty'
 import { useCheckApplied } from '../_hooks/useCheckApplied'
 import { ApplyCompletedModal } from './ApplyCompletedModal'
@@ -37,10 +35,8 @@ export function OwnProductDetail() {
   const id = params.id as string
   const { data: product, isLoading } = useOwnProductDetail(id)
   const queryClient = useQueryClient()
-  const deleteMutation = useDeleteOwnProduct()
   const applyMutation = useApplyParty(id)
   const { data: applicationCheck } = useCheckApplied(id)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [agreedToRules, setAgreedToRules] = useState(false)
   const [completedInfo, setCompletedInfo] = useState<{
     price: number
@@ -65,7 +61,6 @@ export function OwnProductDetail() {
   }
 
   const userInfo = getUserInfo()
-  const isOwner = userInfo?.id === product?.userId
   const isClosed = product
     ? product.filledSlots >= product.totalSlots || (product.startedAt !== null && product.remainingDays <= 1)
     : false
@@ -82,15 +77,6 @@ export function OwnProductDetail() {
   const progress = product.totalSlots > 0
     ? Math.round((product.filledSlots / product.totalSlots) * 100)
     : 0
-
-  const handleDelete = () => {
-    deleteMutation.mutate(id, {
-      onSuccess: () => {
-        setShowDeleteModal(false)
-        router.push('/party/my')
-      },
-    })
-  }
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
@@ -191,9 +177,9 @@ export function OwnProductDetail() {
             </div>
           </div>
 
-          {/* 등록자 정보 */}
+          {/* 파티장 정보 */}
           <div className="flex items-center gap-4 text-body-md text-text-secondary">
-            <span>등록자: {product.user.name}</span>
+            <span>파티장: {product.leaderName}</span>
             <span>등록일: {new Date(product.createdAt).toLocaleDateString('ko-KR')}</span>
           </div>
         </CardBody>
@@ -226,7 +212,7 @@ export function OwnProductDetail() {
       </p>
 
       {/* 참여 신청 */}
-      {product.status === 'recruiting' && !isOwner && (
+      {product.status === 'recruiting' && (
         <div className="space-y-3">
           {applicationCheck?.applied && applicationCheck.applicationStatus === 'confirmed' ? (
             <div className="flex flex-col items-center gap-2 rounded-lg bg-green-50 p-4">
@@ -300,24 +286,6 @@ export function OwnProductDetail() {
         </div>
       )}
 
-      {/* 등록자 본인 액션 */}
-      {isOwner && (
-        <div className="flex items-center gap-3">
-          <Link href={`/party/${product.id}/edit`} className="flex-1">
-            <Button variant="secondary" className="w-full">수정</Button>
-          </Link>
-          {product.status === 'recruiting' && (
-            <Button
-              variant="danger"
-              className="flex-1"
-              onClick={() => setShowDeleteModal(true)}
-            >
-              삭제
-            </Button>
-          )}
-        </div>
-      )}
-
       {/* 신청 완료 모달 */}
       {completedInfo && (
         <ApplyCompletedModal
@@ -328,23 +296,6 @@ export function OwnProductDetail() {
           totalAmount={completedInfo.totalAmount}
         />
       )}
-
-      {/* 삭제 확인 모달 */}
-      <Modal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        title="파티 삭제"
-        footer={
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>취소</Button>
-            <Button variant="danger" loading={deleteMutation.isPending} onClick={handleDelete}>삭제</Button>
-          </div>
-        }
-      >
-        <p className="text-body-md text-text-secondary">
-          이 파티를 삭제하시겠습니까? 삭제된 파티는 복구할 수 없습니다.
-        </p>
-      </Modal>
     </div>
   )
 }

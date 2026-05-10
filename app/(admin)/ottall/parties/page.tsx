@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { Button } from '@/components/ui/Button'
 import { PAGE_SIZE } from '@/constants/app'
 import { PartyFilterBar } from './_components/PartyFilterBar'
 import { PartyTable } from './_components/PartyTable'
 import { PartyDetailModal } from './_components/PartyDetailModal'
+import { PartyCreateModal } from './_components/PartyCreateModal'
 import { useAdminParties } from './_hooks/useAdminParties'
 import type { PartyTabStatus } from './_types'
 
@@ -13,6 +15,7 @@ export default function PartiesPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [detailId, setDetailId] = useState<string | null>(null)
+  const [createOpen, setCreateOpen] = useState(false)
 
   const queryStatus = activeTab === 'all' ? undefined : activeTab
   const { data, isLoading } = useAdminParties({
@@ -34,6 +37,12 @@ export default function PartiesPage() {
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-end">
+        <Button variant="primary" size="sm" onClick={() => setCreateOpen(true)}>
+          + 파티 생성하기
+        </Button>
+      </div>
+
       <PartyFilterBar
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -57,6 +66,7 @@ export default function PartiesPage() {
       )}
 
       <PartyDetailModal partyId={detailId} onClose={() => setDetailId(null)} />
+      <PartyCreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} />
     </div>
   )
 }
