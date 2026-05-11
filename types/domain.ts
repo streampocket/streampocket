@@ -284,6 +284,51 @@ export type AdminPartyDetail = OwnProduct & {
   })[]
 }
 
+// ───────────────────────── OTT 리뷰 (OTTALL) ─────────────────────────
+
+/** OTT 리뷰 (공개 응답) */
+export type OwnReview = {
+  id: string
+  applicationId: string
+  productId: string
+  userId: string
+  content: string
+  rating: number
+  imageUrl: string | null
+  createdAt: string
+  updatedAt: string
+  product: {
+    id: string
+    name: string
+    category: { id: string; name: string }
+  }
+  user: { id: string; name: string }
+}
+
+/** 관리자 리뷰 (이메일 포함) */
+export type OwnAdminReview = Omit<OwnReview, 'user'> & {
+  user: { id: string; name: string; email: string }
+}
+
+/** 리뷰 작성 가능 파티 신청 */
+export type ReviewableApplication = {
+  id: string
+  startedAt: string | null
+  expiresAt: string | null
+  product: {
+    id: string
+    name: string
+    category: { id: string; name: string }
+  }
+}
+
+/** Presigned URL 응답 */
+export type ReviewImageUploadUrl = {
+  uploadUrl: string
+  objectUrl: string
+  key: string
+}
+
 /** 리뷰 코드 상태 */
 export type ReviewCodeStatus = 'unused' | 'used'
 

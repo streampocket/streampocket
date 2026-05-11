@@ -30,6 +30,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: '회원 관리', href: '/ottall/users', icon: '👤' },
       { label: '파티 관리', href: '/ottall/parties', icon: '🎉' },
       { label: '신청 관리', href: '/ottall/applications', icon: '📝' },
+      { label: '리뷰 관리', href: '/ottall/reviews', icon: '⭐' },
     ],
   },
   {
