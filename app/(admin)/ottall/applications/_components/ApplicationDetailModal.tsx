@@ -8,6 +8,7 @@ import type { PartyApplicationStatus } from '@/types/domain'
 import { useAdminApplicationDetail } from '../_hooks/useAdminApplicationDetail'
 import { useApproveApplication } from '../_hooks/useApproveApplication'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
+import type { AdminAlimtalkLog } from '../_types'
 
 type ApplicationDetailModalProps = {
   applicationId: string | null
@@ -126,6 +127,12 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
             )}
           </section>
 
+          {/* 알림톡 발송 이력 */}
+          <section className="space-y-2">
+            <h3 className="text-body-md font-semibold text-text-primary">알림톡 발송 이력</h3>
+            <AlimtalkLogList logs={detail.alimtalkLogs} />
+          </section>
+
           {/* 액션 (대기 상태에서만) */}
           {detail.status === 'pending' && (
             <div className="flex justify-end gap-2 border-t border-border pt-4">
@@ -159,5 +166,45 @@ function InfoRow({ label, value }: { label: string; value: string }) {
       <span className="text-body-md w-20 shrink-0 text-text-muted">{label}</span>
       <span className="text-body-md text-text-primary">{value}</span>
     </div>
+  )
+}
+
+const ALIMTALK_STATUS_BADGE: Record<
+  AdminAlimtalkLog['status'],
+  { variant: BadgeVariant; label: string }
+> = {
+  sent: { variant: 'green', label: '발송완료' },
+  failed: { variant: 'red', label: '실패' },
+  queued: { variant: 'yellow', label: '대기' },
+}
+
+function AlimtalkLogList({ logs }: { logs: AdminAlimtalkLog[] }) {
+  if (logs.length === 0) {
+    return <p className="text-body-md text-text-muted">발송 이력이 없습니다.</p>
+  }
+  return (
+    <ul className="space-y-2">
+      {logs.map((log) => {
+        const badge = ALIMTALK_STATUS_BADGE[log.status]
+        const timestamp = log.sentAt ?? log.createdAt
+        return (
+          <li
+            key={log.id}
+            className="flex flex-col gap-1 rounded-lg border border-border bg-gray-50 p-3"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-body-md text-text-primary">{formatDateTime(timestamp)}</span>
+              <Badge variant={badge.variant}>{badge.label}</Badge>
+              {log.templateCode && (
+                <span className="text-caption-md text-text-muted">{log.templateCode}</span>
+              )}
+            </div>
+            {log.status === 'failed' && log.errorMessage && (
+              <p className="text-caption-md text-text-muted">{log.errorMessage}</p>
+            )}
+          </li>
+        )
+      })}
+    </ul>
   )
 }
