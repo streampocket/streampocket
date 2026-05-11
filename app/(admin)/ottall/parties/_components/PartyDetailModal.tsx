@@ -9,6 +9,7 @@ import type { OwnProductStatus, PartyApplicationStatus } from '@/types/domain'
 import { useAdminPartyDetail } from '../_hooks/useAdminPartyDetail'
 import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdatePartyStatus } from '../_hooks/useUpdatePartyStatus'
+import { PartyEditForm } from './PartyEditForm'
 
 type PartyDetailModalProps = {
   partyId: string | null
@@ -50,6 +51,7 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
   )
   const statusMutation = useUpdatePartyStatus()
   const [selectedStatus, setSelectedStatus] = useState<OwnProductStatus | ''>('')
+  const [mode, setMode] = useState<'view' | 'edit'>('view')
 
   const handleStatusChange = () => {
     if (!partyId || !selectedStatus) return
@@ -68,15 +70,27 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
         onClose()
         setShowCredentials(false)
         setSelectedStatus('')
+        setMode('view')
       }}
-      title="파티 상세"
+      title={mode === 'edit' ? '파티 수정' : '파티 상세'}
     >
       {isLoading || !party ? (
         <div className="py-10 text-center">
           <p className="text-body-md text-text-muted">로딩 중...</p>
         </div>
+      ) : mode === 'edit' ? (
+        <PartyEditForm
+          party={party}
+          onCancel={() => setMode('view')}
+          onSuccess={() => setMode('view')}
+        />
       ) : (
         <div className="space-y-5">
+          <div className="flex justify-end">
+            <Button variant="secondary" size="sm" onClick={() => setMode('edit')}>
+              수정
+            </Button>
+          </div>
           {/* 기본 정보 */}
           <section className="space-y-2">
             <h3 className="text-body-md font-semibold text-text-primary">기본 정보</h3>
