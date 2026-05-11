@@ -22,6 +22,13 @@ export const NAVER_API_BASE_URL = "https://api.commerce.naver.com/external";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
+export const REVIEW_PAGE_SIZE = 12;
+export const REVIEW_ADMIN_PAGE_SIZE = 20;
+export const REVIEW_CONTENT_MAX_LENGTH = 2000;
+export const REVIEW_RATING_MAX = 5;
+export const REVIEW_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+export const REVIEW_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
+
 export const YOUTUBE_CHANNELS = [
   { name: 'DramaBox', channelId: 'UCyKIeHu9Sv7_3Gqbg-vo3bg' },
   { name: 'DramaWave', channelId: 'UCOSVEh-kzZ8yBYtEQMHBEaQ' },
