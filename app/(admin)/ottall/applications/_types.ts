@@ -25,11 +25,21 @@ export type AdminApplicationListItem = {
   }
 }
 
+export type AdminAlimtalkLog = {
+  id: string
+  status: 'queued' | 'sent' | 'failed'
+  templateCode: string | null
+  errorMessage: string | null
+  sentAt: string | null
+  createdAt: string
+}
+
 export type AdminApplicationDetail = AdminApplicationListItem & {
   product: AdminApplicationListItem['product'] & {
     totalSlots: number
     filledSlots: number
   }
+  alimtalkLogs: AdminAlimtalkLog[]
 }
 
 export type AdminApplicationListParams = {
