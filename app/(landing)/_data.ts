@@ -14,6 +14,7 @@ export const LANDING_SECTION_IDS = {
 
 export const LANDING_NAV_ITEMS: LandingNavItem[] = [
   { href: '/party', label: '전체 파티' },
+  { href: '/reviews', label: '리뷰' },
   { href: `#${LANDING_SECTION_IDS.steps}`, label: '이용 방법' },
 ]
 
