@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 async function fetchPopularProducts(): Promise<OwnProduct[]> {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/own/products?status=recruiting&sort=urgency&limit=4`,
+      `${API_BASE_URL}/own/products?status=recruiting&limit=4`,
       { next: { revalidate: 60 } },
     )
     if (!res.ok) return []
