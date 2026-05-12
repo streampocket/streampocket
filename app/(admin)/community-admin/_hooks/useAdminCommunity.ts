@@ -31,6 +31,7 @@ type CreatePayload = {
   title: string
   content: string
   imageUrl: string | null
+  isPinned: boolean
 }
 
 export function useAdminCreatePost() {
@@ -51,6 +52,7 @@ type UpdatePayload = {
   title: string
   content: string
   imageUrl: string | null
+  isPinned: boolean
 }
 
 export function useAdminUpdatePost() {

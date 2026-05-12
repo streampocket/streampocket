@@ -354,6 +354,7 @@ export type CommunityPost = {
   title: string
   content: string
   imageUrl: string | null
+  isPinned: boolean
   authorType: 'user' | 'admin'
   authorId: string | null
   authorName: string
