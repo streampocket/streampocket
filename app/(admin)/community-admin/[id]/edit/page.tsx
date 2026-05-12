@@ -29,6 +29,7 @@ export default function AdminCommunityEditPage() {
         initialContent={post.content}
         initialImageUrl={post.imageUrl}
         initialCategory={post.category}
+        initialIsPinned={post.isPinned}
         submitLabel="수정"
         onCancel={() => router.push('/community-admin')}
         uploader={uploadAdminCommunityImage}
@@ -40,6 +41,7 @@ export default function AdminCommunityEditPage() {
             title: payload.title,
             content: payload.content,
             imageUrl: payload.imageUrl,
+            isPinned: payload.isPinned ?? false,
           })
           router.push('/community-admin')
           router.refresh()

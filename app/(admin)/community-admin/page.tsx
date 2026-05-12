@@ -88,6 +88,7 @@ export default function AdminCommunityPage() {
           <thead className="bg-gray-50 text-left text-text-secondary">
             <tr>
               <th className="px-3 py-2">카테고리</th>
+              <th className="px-3 py-2">고정</th>
               <th className="px-3 py-2">제목</th>
               <th className="px-3 py-2">작성자</th>
               <th className="px-3 py-2">작성일</th>
@@ -97,7 +98,7 @@ export default function AdminCommunityPage() {
           <tbody className="divide-y divide-border">
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="px-3 py-8 text-center text-text-muted">
+                <td colSpan={6} className="px-3 py-8 text-center text-text-muted">
                   불러오는 중...
                 </td>
               </tr>
@@ -114,6 +115,13 @@ export default function AdminCommunityPage() {
                     >
                       {post.category === 'notice' ? '공지' : '자유'}
                     </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    {post.isPinned ? (
+                      <span aria-label="상단 고정" title="상단 고정">📌</span>
+                    ) : (
+                      <span className="text-text-muted" aria-hidden>—</span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     <Link href={`/community/${post.id}`} className="text-text-primary hover:underline">
@@ -143,7 +151,7 @@ export default function AdminCommunityPage() {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="px-3 py-8 text-center text-text-muted">
+                <td colSpan={6} className="px-3 py-8 text-center text-text-muted">
                   게시글이 없습니다.
                 </td>
               </tr>

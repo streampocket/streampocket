@@ -15,6 +15,7 @@ type SubmitPayload = {
   content: string
   imageUrl: string | null
   category?: CommunityCategory
+  isPinned?: boolean
 }
 
 type Props = {
@@ -22,6 +23,7 @@ type Props = {
   initialContent?: string
   initialImageUrl?: string | null
   initialCategory?: CommunityCategory
+  initialIsPinned?: boolean
   showCategorySelect?: boolean
   submitLabel: string
   onSubmit: (payload: SubmitPayload) => Promise<void>
@@ -34,6 +36,7 @@ export function PostForm({
   initialContent = '',
   initialImageUrl = null,
   initialCategory = 'free',
+  initialIsPinned = false,
   showCategorySelect = false,
   submitLabel,
   onSubmit,
@@ -44,6 +47,7 @@ export function PostForm({
   const [content, setContent] = useState(initialContent)
   const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl)
   const [category, setCategory] = useState<CommunityCategory>(initialCategory)
+  const [isPinned, setIsPinned] = useState(initialIsPinned)
   const [preview, setPreview] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -67,7 +71,9 @@ export function PostForm({
         title: trimmedTitle,
         content: trimmedContent,
         imageUrl,
-        ...(showCategorySelect ? { category } : {}),
+        ...(showCategorySelect
+          ? { category, isPinned: category === 'notice' ? isPinned : false }
+          : {}),
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : '저장에 실패했어요.')
@@ -79,30 +85,45 @@ export function PostForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {showCategorySelect ? (
-        <div className="space-y-1">
-          <label className="text-caption-md font-semibold text-text-secondary">카테고리</label>
-          <div className="flex gap-2">
-            <label className="inline-flex items-center gap-2">
-              <input
-                type="radio"
-                name="category"
-                value="notice"
-                checked={category === 'notice'}
-                onChange={() => setCategory('notice')}
-              />
-              공지
-            </label>
-            <label className="inline-flex items-center gap-2">
-              <input
-                type="radio"
-                name="category"
-                value="free"
-                checked={category === 'free'}
-                onChange={() => setCategory('free')}
-              />
-              자유
-            </label>
+        <div className="space-y-2">
+          <div className="space-y-1">
+            <label className="text-caption-md font-semibold text-text-secondary">카테고리</label>
+            <div className="flex gap-2">
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="category"
+                  value="notice"
+                  checked={category === 'notice'}
+                  onChange={() => setCategory('notice')}
+                />
+                공지
+              </label>
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="category"
+                  value="free"
+                  checked={category === 'free'}
+                  onChange={() => {
+                    setCategory('free')
+                    setIsPinned(false)
+                  }}
+                />
+                자유
+              </label>
+            </div>
           </div>
+          {category === 'notice' ? (
+            <label className="inline-flex items-center gap-2 text-caption-md text-text-secondary">
+              <input
+                type="checkbox"
+                checked={isPinned}
+                onChange={(e) => setIsPinned(e.target.checked)}
+              />
+              <span>📌 상단 고정 (모든 페이지 상단에 노출)</span>
+            </label>
+          ) : null}
         </div>
       ) : null}
 

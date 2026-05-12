@@ -32,6 +32,7 @@ export default function AdminCommunityNewPage() {
             title: payload.title,
             content: payload.content,
             imageUrl: payload.imageUrl,
+            isPinned: payload.isPinned ?? false,
           })
           router.push('/community-admin')
           router.refresh()
