@@ -5,6 +5,11 @@ type ProductListItem = {
   id: string
 }
 
+type CommunityPostListItem = {
+  id: string
+  updatedAt: string
+}
+
 async function fetchProductIds(): Promise<string[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/own/products?status=recruiting`, {
@@ -13,6 +18,19 @@ async function fetchProductIds(): Promise<string[]> {
     if (!res.ok) return []
     const json = await res.json() as { data: ProductListItem[] }
     return json.data.map((p) => p.id)
+  } catch {
+    return []
+  }
+}
+
+async function fetchCommunityPostIds(): Promise<CommunityPostListItem[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/community/posts/sitemap`, {
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) return []
+    const json = (await res.json()) as { items: CommunityPostListItem[] }
+    return json.items
   } catch {
     return []
   }
@@ -38,5 +56,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticPages, ...productPages]
+  const communityPosts = await fetchCommunityPostIds()
+  const communityPages: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/community`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
+    ...communityPosts.map((p) => ({
+      url: `${baseUrl}/community/${p.id}`,
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    })),
+  ]
+
+  return [...staticPages, ...productPages, ...communityPages]
 }

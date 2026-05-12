@@ -34,6 +34,10 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: '커뮤니티',
+    items: [{ label: '게시글 관리', href: '/community-admin', icon: '📝' }],
+  },
+  {
     title: '시스템',
     items: [
       { label: '알림톡', href: '/alimtalk', icon: '💬' },

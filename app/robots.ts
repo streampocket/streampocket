@@ -6,7 +6,18 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/login', '/dashboard', '/products', '/orders', '/codes', '/revenue', '/settings'],
+        disallow: [
+          '/login',
+          '/dashboard',
+          '/products',
+          '/orders',
+          '/codes',
+          '/revenue',
+          '/settings',
+          '/community/new',
+          '/community/*/edit',
+          '/community-admin',
+        ],
       },
       {
         userAgent: 'Yeti',
