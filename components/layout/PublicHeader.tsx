@@ -16,7 +16,7 @@ export function PublicHeader({ navItems = [] }: PublicHeaderProps) {
         </Link>
 
         {navItems.length > 0 && (
-          <nav className="hidden items-center gap-6 md:flex">
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}

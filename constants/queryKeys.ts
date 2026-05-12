@@ -78,4 +78,13 @@ export const QUERY_KEYS = {
     all: () => ['adminOwnReviews'] as const,
     list: (params?: Record<string, unknown>) => ['adminOwnReviews', 'list', params] as const,
   },
+  community: {
+    all: () => ['community'] as const,
+    list: (params?: Record<string, unknown>) => ['community', 'list', params] as const,
+    detail: (id: string) => ['community', 'detail', id] as const,
+  },
+  adminCommunity: {
+    all: () => ['adminCommunity'] as const,
+    list: (params?: Record<string, unknown>) => ['adminCommunity', 'list', params] as const,
+  },
 } as const

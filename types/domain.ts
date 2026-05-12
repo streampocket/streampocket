@@ -343,3 +343,29 @@ export type ReviewCode = {
   createdAt: string
   updatedAt: string
 }
+
+/** 커뮤니티 카테고리 */
+export type CommunityCategory = 'notice' | 'free'
+
+/** 커뮤니티 게시글 */
+export type CommunityPost = {
+  id: string
+  category: CommunityCategory
+  title: string
+  content: string
+  imageUrl: string | null
+  authorType: 'user' | 'admin'
+  authorId: string | null
+  authorName: string
+  createdAt: string
+  updatedAt: string
+}
+
+/** 커뮤니티 게시글 목록 응답 */
+export type CommunityPostListResponse = {
+  items: CommunityPost[]
+  total: number
+  page: number
+  pageSize: number
+  pinnedNotices: CommunityPost[]
+}

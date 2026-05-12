@@ -29,6 +29,12 @@ export const REVIEW_RATING_MAX = 5;
 export const REVIEW_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const REVIEW_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
 
+export const COMMUNITY_PAGE_SIZE = 20;
+export const COMMUNITY_TITLE_MAX_LENGTH = 100;
+export const COMMUNITY_CONTENT_MAX_LENGTH = 5000;
+export const COMMUNITY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+export const COMMUNITY_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
+
 export const YOUTUBE_CHANNELS = [
   { name: 'DramaBox', channelId: 'UCyKIeHu9Sv7_3Gqbg-vo3bg' },
   { name: 'DramaWave', channelId: 'UCOSVEh-kzZ8yBYtEQMHBEaQ' },
