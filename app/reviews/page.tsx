@@ -10,7 +10,7 @@ import {
   fetchOwnProductsLiteServer,
   fetchReviewsServer,
 } from '@/lib/reviewServerApi'
-import { ReviewCard } from './_components/ReviewCard'
+import { ReviewCard } from '@/components/own/ReviewCard'
 import { ReviewFilters } from './_components/ReviewFilters'
 import { ReviewPagination } from './_components/ReviewPagination'
 

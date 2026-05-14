@@ -13,6 +13,20 @@ export const USER_MYPAGE_PATH = "/mypage";
 export const KAKAO_OPEN_CHAT_URL = "https://pf.kakao.com/_MkxalX";
 export const KAKAO_PAYMENT_CHAT_URL = "http://pf.kakao.com/_MkxalX/chat";
 
+export const ADMIN_PATH_PREFIXES = [
+  "/dashboard",
+  "/products",
+  "/orders",
+  "/revenue",
+  "/codes",
+  "/alimtalk",
+  "/review-codes",
+  "/settings",
+  "/community-admin",
+  "/ottall",
+  "/login",
+] as const; // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
+
 export const PARTY_DEFAULT_RULES = [
   "운영시간 기준 6시간 내 파티장 연락 두절시 100% 전액환불 가능",
   "디지털 상품은 '이용 후 환불 불가'",

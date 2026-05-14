@@ -8,9 +8,17 @@ import type {
 export const LANDING_SECTION_IDS = {
   products: 'products',
   steps: 'steps',
+  reviews: 'reviews',
   videos: 'videos',
   faq: 'faq',
 } as const // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
+
+export const LANDING_REVIEWS_HEADING = '파티원 리뷰'
+export const LANDING_REVIEWS_SUBHEADING =
+  '실제 OTTALL 파티에 참여한 회원들이 남긴 별점과 솔직한 후기예요.'
+export const LANDING_REVIEWS_EMPTY = '아직 등록된 리뷰가 없어요.'
+export const LANDING_REVIEWS_MORE_LABEL = '리뷰 더보기 →'
+export const LANDING_REVIEWS_LIMIT = 5
 
 export const LANDING_NAV_ITEMS: LandingNavItem[] = [
   { href: '/party', label: '전체 파티' },

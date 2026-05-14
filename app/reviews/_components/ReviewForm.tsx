@@ -7,7 +7,7 @@ import { REVIEW_CONTENT_MAX_LENGTH } from '@/constants/app'
 import { useCreateReview, useUpdateReview } from '../_hooks/useOwnReview'
 import { useReviewableApplications } from '../_hooks/useReviewableApplications'
 import { ReviewImageUploader } from './ReviewImageUploader'
-import { StarRating } from './StarRating'
+import { StarRating } from '@/components/own/StarRating'
 
 type ReviewFormProps =
   | {
