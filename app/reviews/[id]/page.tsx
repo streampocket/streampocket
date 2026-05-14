@@ -8,7 +8,7 @@ import { USER_BRAND_NAME } from '@/constants/app'
 import { fetchReviewServer } from '@/lib/reviewServerApi'
 import { formatDate } from '@/lib/utils'
 import { ReviewOwnerActions } from '../_components/ReviewOwnerActions'
-import { StarRating } from '../_components/StarRating'
+import { StarRating } from '@/components/own/StarRating'
 
 type DetailPageProps = {
   params: Promise<{ id: string }>

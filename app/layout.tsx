@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'sonner'
+import { FloatingKakaoButton } from '@/components/layout/FloatingKakaoButton'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { UIProvider } from '@/providers/UIProvider'
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <UIProvider>
             {children}
+            <FloatingKakaoButton />
             <Toaster
               position="bottom-right"
               toastOptions={{
