@@ -12,6 +12,7 @@ import type { DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/typ
 import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
+import { useMarkInProgress } from '../_hooks/useMarkInProgress'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
@@ -31,6 +32,7 @@ const DELIVERY_STATUS_MAP: Record<DeliveryLogStatus, { label: string; variant: B
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '처리 대기', variant: 'yellow' },
+  in_progress: { label: '진행중', variant: 'indigo' },
   completed: { label: '처리 완료', variant: 'green' },
   purchase_decided: { label: '구매확정', variant: 'blue' },
   manual_review: { label: '수동 처리 필요', variant: 'red' },
@@ -283,6 +285,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
   const { data: alimtalkTemplates } = useAlimtalkTemplates()
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
+  const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
@@ -301,11 +304,14 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const showTabs = order ? isAaProduct(order.productName) : false
-  const canComplete = order?.fulfillmentStatus === 'pending'
+  const canMarkInProgress = order?.fulfillmentStatus === 'pending'
+  const canComplete =
+    order?.fulfillmentStatus === 'pending' || order?.fulfillmentStatus === 'in_progress'
   const canRetry =
     order?.fulfillmentStatus === 'manual_review' || order?.fulfillmentStatus === 'failed'
   const canReturn =
     order?.fulfillmentStatus === 'pending' ||
+    order?.fulfillmentStatus === 'in_progress' ||
     order?.fulfillmentStatus === 'completed' ||
     order?.fulfillmentStatus === 'purchase_decided' ||
     order?.fulfillmentStatus === 'manual_review' ||
@@ -364,6 +370,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               }}
             >
               알림톡 재발송
+            </Button>
+          )}
+          {canMarkInProgress && (
+            <Button
+              variant="secondary"
+              loading={isMarkingInProgress}
+              onClick={() => {
+                if (order && window.confirm('이 주문을 진행중으로 전환하시겠습니까?')) {
+                  markInProgress(order.id)
+                }
+              }}
+            >
+              진행중으로 전환
             </Button>
           )}
           {canComplete && (
