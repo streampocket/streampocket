@@ -13,6 +13,7 @@ export type OrderListParams = {
 export type OrderStatusCounts = {
   total: number
   pending: number
+  in_progress: number
   completed: number
   purchase_decided: number
   manual_review: number

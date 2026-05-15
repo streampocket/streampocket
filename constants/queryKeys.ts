@@ -4,6 +4,9 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['orders', params] as const,
     detail: (id: string) => ['orders', id] as const,
   },
+  orderTracking: {
+    detail: (productOrderId: string) => ['orderTracking', productOrderId] as const,
+  },
   products: {
     all: () => ['products'] as const,
     list: (params?: Record<string, unknown>) => ['products', params] as const,

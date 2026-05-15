@@ -15,6 +15,7 @@ const STATUS_OPTIONS: {
 }[] = [
   { value: '', label: '전체', countKey: 'total' },
   { value: 'pending', label: '대기', countKey: 'pending' },
+  { value: 'in_progress', label: '진행중', countKey: 'in_progress' },
   { value: 'completed', label: '완료', countKey: 'completed' },
   { value: 'purchase_decided', label: '구매확정', countKey: 'purchase_decided' },
   { value: 'manual_review', label: '수동처리', countKey: 'manual_review' },

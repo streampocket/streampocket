@@ -1,6 +1,7 @@
 /** 주문 처리 상태 (Prisma FulfillmentStatus 기준) */
 export type FulfillmentStatus =
   | 'pending'
+  | 'in_progress'
   | 'completed'
   | 'purchase_decided'
   | 'manual_review'
