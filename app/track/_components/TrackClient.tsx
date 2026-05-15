@@ -4,8 +4,9 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { KAKAO_OPEN_CHAT_URL } from '@/constants/app'
+import { KAKAO_OPEN_CHAT_URL, NAVER_PAY_HISTORY_URL } from '@/constants/app'
 import { formatDate } from '@/lib/utils'
+import { parseReviewGameCount } from '@/lib/productType'
 import { useOrderTracking } from '../_hooks/useOrderTracking'
 import { resolveTrackView } from '../_types'
 import type { OrderTracking } from '../_types'
@@ -79,6 +80,7 @@ type TrackResultProps = {
 
 function TrackResult({ productOrderId, data }: TrackResultProps) {
   const view = resolveTrackView(data.fulfillmentStatus)
+  const reviewGameCount = parseReviewGameCount(data.productName)
 
   return (
     <Card>
@@ -114,6 +116,16 @@ function TrackResult({ productOrderId, data }: TrackResultProps) {
                   ? '주문이 접수되어 처리를 기다리고 있어요.'
                   : '주문을 처리하고 있어요. 잠시만 기다려 주세요.'}
             </p>
+            {view.done && reviewGameCount !== null && (
+              <a
+                href={NAVER_PAY_HISTORY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block w-full rounded-lg bg-brand px-4 py-3 text-center text-body-md font-semibold text-white transition-colors hover:bg-brand-dark"
+              >
+                리뷰 쓰고 게임 {reviewGameCount}개 받기
+              </a>
+            )}
             {!view.done && (
               <p className="mt-1 text-center text-caption-md text-text-muted">
                 상태가 바뀌면 자동으로 갱신됩니다.

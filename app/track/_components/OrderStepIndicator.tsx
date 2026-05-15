@@ -8,7 +8,7 @@ type OrderStepIndicatorProps = {
 }
 
 const STEPS = [
-  { step: 1, label: '대기' },
+  { step: 1, label: '접수중' },
   { step: 2, label: '진행중' },
   { step: 3, label: '완료' },
 ] as const

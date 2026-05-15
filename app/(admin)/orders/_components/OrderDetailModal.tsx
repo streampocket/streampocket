@@ -7,7 +7,7 @@ import type { BadgeVariant } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { formatDate, cn } from '@/lib/utils'
-import { isAaProduct } from '@/lib/productType'
+import { isAaProduct, parseReviewGameCount } from '@/lib/productType'
 import type { DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/types/domain'
 import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
@@ -38,15 +38,6 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   manual_review: { label: '수동 처리 필요', variant: 'red' },
   failed: { label: '처리 실패', variant: 'gray' },
   returned: { label: '반품', variant: 'purple' },
-}
-
-const REVIEW_GAME_PATTERN = /(\d+)\s*\+\s*(\d+)/
-
-function parseReviewGameCount(productName: string): number | null {
-  const match = productName.match(REVIEW_GAME_PATTERN)
-  if (!match) return null
-  const count = Number(match[2])
-  return count > 0 ? count : null
 }
 
 const giftInputClass = cn(
