@@ -32,7 +32,7 @@ const DELIVERY_STATUS_MAP: Record<DeliveryLogStatus, { label: string; variant: B
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '처리 대기', variant: 'yellow' },
-  in_progress: { label: '진행중', variant: 'teal' },
+  in_progress: { label: '진행중', variant: 'pink' },
   completed: { label: '처리 완료', variant: 'green' },
   purchase_decided: { label: '구매확정', variant: 'blue' },
   manual_review: { label: '수동 처리 필요', variant: 'red' },

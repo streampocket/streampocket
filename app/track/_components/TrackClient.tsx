@@ -39,7 +39,7 @@ export function TrackClient() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="네이버 상품주문번호를 입력하세요"
               aria-describedby="productOrderId-hint"
-              className="w-full rounded-lg border border-border bg-gray-50 px-4 py-3 text-base text-text-primary outline-none transition-colors placeholder:text-text-muted focus:border-brand focus:bg-white sm:text-body-md"
+              className="w-full rounded-lg border border-border bg-gray-50 px-4 py-3 text-body-md text-text-primary outline-none transition-colors placeholder:text-text-muted focus:border-brand focus:bg-white"
             />
             <p id="productOrderId-hint" className="text-caption-sm text-text-muted">
               &lsquo;주문번호&rsquo;가 아닌 &lsquo;상품주문번호&rsquo;입니다. 판매자가 안내한 번호를
