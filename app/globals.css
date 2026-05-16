@@ -67,8 +67,8 @@
   --color-badge-purple-text: #6d28d9;
   --color-badge-indigo-bg: #e0e7ff;
   --color-badge-indigo-text: #4338ca;
-  --color-badge-teal-bg: #ccfbf1;
-  --color-badge-teal-text: #0f766e;
+  --color-badge-pink-bg: #fce7f3;
+  --color-badge-pink-text: #be185d;
 }
 
 /* =========================
@@ -159,5 +159,19 @@
   /* Sonner Toast 커스터마이징 */
   [data-sonner-toaster] {
     font-family: var(--font-sans) !important;
+  }
+}
+
+/* =========================
+   모바일 input 자동 확대 방지
+   ========================= */
+/* iOS Safari는 input의 font-size가 16px 미만이면 포커스 시 화면을 자동 확대한다.
+   모바일(sm 미만)에서만 16px로 키워 확대를 막는다. 데스크톱은 기존 크기 유지.
+   @layer 밖에 두어 Tailwind 유틸리티(text-body-md 등)보다 우선 적용되게 한다. */
+@media (max-width: 639.98px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
