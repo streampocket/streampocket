@@ -7,6 +7,7 @@ export type OrderTracking = {
   paidAt: string | null
   updatedAt: string
   returnedAt: string | null
+  estimatedCompletedAt: string | null
 }
 
 /** 주문 상태를 구매자 화면 표현으로 변환한 결과 */
