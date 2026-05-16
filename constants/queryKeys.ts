@@ -21,7 +21,9 @@ export const QUERY_KEYS = {
     revenueChart: (days?: number) => ['dashboard', 'revenueChart', days] as const,
     extras: () => ['dashboard', 'extras'] as const,
   },
-  settings: {},
+  settings: {
+    system: () => ['settings', 'system'] as const,
+  },
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
   },

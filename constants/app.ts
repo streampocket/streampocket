@@ -28,6 +28,15 @@ export const ADMIN_PATH_PREFIXES = [
   "/login",
 ] as const; // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
 
+// 진행중 전환 시 적용하는 전역 기본 소요시간 선택지 (관리자 설정 페이지)
+export const DURATION_OPTIONS = [
+  { label: "20분", minutes: 20 },
+  { label: "40분", minutes: 40 },
+  { label: "1시간", minutes: 60 },
+  { label: "1시간 30분", minutes: 90 },
+  { label: "2시간", minutes: 120 },
+] as const; // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
+
 export const PARTY_DEFAULT_RULES = [
   "운영시간 기준 6시간 내 파티장 연락 두절시 100% 전액환불 가능",
   "디지털 상품은 '이용 후 환불 불가'",

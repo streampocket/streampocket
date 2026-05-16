@@ -59,6 +59,7 @@ export type SteamOrderItem = {
   gameUrl: string | null
   memo: string | null
   giftCompletedAt: string | null
+  estimatedCompletedAt: string | null
   createdAt: string
   updatedAt: string
   deliveryLogs?: DeliveryLog[]
@@ -205,6 +206,11 @@ export type AlimtalkTestResult = {
   recipient: string
   providerMessageId: string | null
   providerMessage: string
+}
+
+/** 시스템 설정 (전역 기본 소요시간 등) */
+export type SystemSettings = {
+  defaultDurationMinutes: number
 }
 
 // ───────────────────────── 인증 (OTTALL) ─────────────────────────

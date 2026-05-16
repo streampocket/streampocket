@@ -13,6 +13,7 @@ import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
 import { useMarkInProgress } from '../_hooks/useMarkInProgress'
+import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
@@ -277,6 +278,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: alimtalkTemplates } = useAlimtalkTemplates()
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
   const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
+  const { mutate: extendTime, isPending: isExtendingTime } = useExtendOrderTime()
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
@@ -296,6 +298,8 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const showTabs = order ? isAaProduct(order.productName) : false
   const canMarkInProgress = order?.fulfillmentStatus === 'pending'
+  const canExtendTime =
+    order?.fulfillmentStatus === 'in_progress' && order.estimatedCompletedAt !== null
   const canComplete =
     order?.fulfillmentStatus === 'pending' || order?.fulfillmentStatus === 'in_progress'
   const canRetry =
@@ -376,6 +380,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               진행중으로 전환
             </Button>
           )}
+          {canExtendTime && (
+            <Button
+              variant="secondary"
+              loading={isExtendingTime}
+              onClick={() => {
+                if (order && window.confirm('예상 완료시각을 10분 연장하시겠습니까?')) {
+                  extendTime(order.id)
+                }
+              }}
+            >
+              +10분
+            </Button>
+          )}
           {canComplete && (
             <Button
               variant="primary"
@@ -400,6 +417,12 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
             <span className="text-body-md font-semibold text-text-primary">{order.productName}</span>
             {status && <Badge variant={status.variant}>{status.label}</Badge>}
           </div>
+
+          {order.fulfillmentStatus === 'in_progress' && order.estimatedCompletedAt && (
+            <p className="text-caption-md text-text-secondary">
+              예상 완료시각: {formatDate(order.estimatedCompletedAt)}
+            </p>
+          )}
 
           {showTabs && (
             <div className="flex gap-1">

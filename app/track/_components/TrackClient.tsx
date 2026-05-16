@@ -11,6 +11,7 @@ import { useOrderTracking } from '../_hooks/useOrderTracking'
 import { resolveTrackView } from '../_types'
 import type { OrderTracking } from '../_types'
 import { OrderStepIndicator } from './OrderStepIndicator'
+import { EstimatedTimeCountdown } from './EstimatedTimeCountdown'
 
 export function TrackClient() {
   const [input, setInput] = useState('')
@@ -108,6 +109,9 @@ function TrackResult({ productOrderId, data }: TrackResultProps) {
 
         {view.kind === 'step' && (
           <>
+            {view.step === 2 && !view.done && data.estimatedCompletedAt && (
+              <EstimatedTimeCountdown estimatedCompletedAt={data.estimatedCompletedAt} />
+            )}
             <OrderStepIndicator currentStep={view.step} done={view.done} />
             <p className="mt-5 text-center text-body-md font-semibold text-text-primary">
               {view.done
