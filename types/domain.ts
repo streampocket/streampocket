@@ -60,6 +60,7 @@ export type SteamOrderItem = {
   memo: string | null
   giftCompletedAt: string | null
   estimatedCompletedAt: string | null
+  completedAt: string | null
   createdAt: string
   updatedAt: string
   deliveryLogs?: DeliveryLog[]

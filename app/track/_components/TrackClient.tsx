@@ -80,7 +80,7 @@ type TrackResultProps = {
 }
 
 function TrackResult({ productOrderId, data }: TrackResultProps) {
-  const view = resolveTrackView(data.fulfillmentStatus)
+  const view = resolveTrackView(data.fulfillmentStatus, data.completedAt)
   const reviewGameCount = parseReviewGameCount(data.productName)
 
   return (
