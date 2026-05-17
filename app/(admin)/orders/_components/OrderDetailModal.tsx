@@ -300,8 +300,13 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const canMarkInProgress = order?.fulfillmentStatus === 'pending'
   const canExtendTime =
     order?.fulfillmentStatus === 'in_progress' && order.estimatedCompletedAt !== null
+  // 구매자가 먼저 구매확정(purchase_decided)한 주문도 아직 발송완료 전이면 완료 처리 가능
   const canComplete =
-    order?.fulfillmentStatus === 'pending' || order?.fulfillmentStatus === 'in_progress'
+    order != null &&
+    order.completedAt === null &&
+    (order.fulfillmentStatus === 'pending' ||
+      order.fulfillmentStatus === 'in_progress' ||
+      order.fulfillmentStatus === 'purchase_decided')
   const canRetry =
     order?.fulfillmentStatus === 'manual_review' || order?.fulfillmentStatus === 'failed'
   const canReturn =
@@ -514,6 +519,16 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               <dt className="text-caption-md text-text-muted">구매확정일</dt>
               <dd className="mt-0.5 text-caption-md text-text-secondary">
                 {order.decisionDate ? formatDate(order.decisionDate) : '대기중'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-caption-md text-text-muted">발송완료</dt>
+              <dd className="mt-0.5 text-caption-md text-text-secondary">
+                {order.completedAt ? (
+                  formatDate(order.completedAt)
+                ) : (
+                  <span className="text-text-muted">미완료</span>
+                )}
               </dd>
             </div>
             <div>
