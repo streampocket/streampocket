@@ -7,6 +7,12 @@ export const QUERY_KEYS = {
   orderTracking: {
     detail: (productOrderId: string) => ['orderTracking', productOrderId] as const,
   },
+  steamRegistrations: {
+    all: () => ['steamRegistrations'] as const,
+    list: (params?: Record<string, unknown>) => ['steamRegistrations', 'list', params] as const,
+    detail: (id: string) => ['steamRegistrations', id] as const,
+    byOrder: (orderItemId: string) => ['steamRegistrations', 'byOrder', orderItemId] as const,
+  },
   products: {
     all: () => ['products'] as const,
     list: (params?: Record<string, unknown>) => ['products', params] as const,

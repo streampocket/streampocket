@@ -19,6 +19,7 @@ import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
 import { useUpdateFriendLinks } from '../_hooks/useUpdateFriendLinks'
 import { useMarkGiftCompleted } from '../_hooks/useMarkGiftCompleted'
+import { SteamRegistrationSection } from './SteamRegistrationSection'
 
 type OrderDetailModalProps = {
   orderId: string | null
@@ -428,6 +429,9 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               예상 완료시각: {formatDate(order.estimatedCompletedAt)}
             </p>
           )}
+
+          {/* 스팀 등록 접수 정보 — 상품 종류·탭과 무관하게 항상 표시 */}
+          <SteamRegistrationSection orderId={order.id} />
 
           {showTabs && (
             <div className="flex gap-1">
