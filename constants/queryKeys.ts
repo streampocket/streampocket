@@ -30,6 +30,9 @@ export const QUERY_KEYS = {
   settings: {
     system: () => ['settings', 'system'] as const,
   },
+  chatbotMenu: {
+    all: () => ['chatbotMenu'] as const,
+  },
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
   },
