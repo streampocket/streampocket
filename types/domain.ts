@@ -352,6 +352,37 @@ export type ReviewCode = {
   updatedAt: string
 }
 
+// ───────────────────────── 스팀 등록 접수 (카카오 챗봇) ─────────────────────────
+
+/** 스팀 등록 접수 처리 상태 */
+export type SteamRegistrationStatus = 'received' | 'needs_info' | 'completed'
+
+/** 스팀 등록 접수 주문 매칭 상태 */
+export type SteamRegistrationMatchStatus = 'unmatched' | 'auto_matched' | 'manual_matched'
+
+/** 스팀 등록 접수 (카카오 챗봇으로 수신한 등록 양식) */
+export type SteamRegistration = {
+  id: string
+  orderItemId: string | null
+  steamId: string | null
+  steamPassword: string | null
+  gameName: string | null
+  buyerName: string | null
+  steamGuardCodes: string | null
+  steamGuardDisabled: boolean | null
+  refundConsent: boolean
+  rawMessage: string
+  formVariant: string | null
+  botUserKey: string
+  missingFields: string[]
+  matchStatus: SteamRegistrationMatchStatus
+  status: SteamRegistrationStatus
+  adminMemo: string | null
+  createdAt: string
+  updatedAt: string
+  orderItem: SteamOrderItem | null
+}
+
 /** 커뮤니티 카테고리 */
 export type CommunityCategory = 'notice' | 'free'
 

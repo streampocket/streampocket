@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { KAKAO_OPEN_CHAT_URL, NAVER_PAY_HISTORY_URL } from '@/constants/app'
@@ -14,8 +15,11 @@ import { OrderStepIndicator } from './OrderStepIndicator'
 import { EstimatedTimeCountdown } from './EstimatedTimeCountdown'
 
 export function TrackClient() {
-  const [input, setInput] = useState('')
-  const [queryId, setQueryId] = useState<string | null>(null)
+  // 챗봇 응답 버튼의 딥링크(?productOrderId=)로 들어오면 자동 조회한다.
+  const searchParams = useSearchParams()
+  const presetId = searchParams.get('productOrderId')?.trim() ?? ''
+  const [input, setInput] = useState(presetId)
+  const [queryId, setQueryId] = useState<string | null>(presetId || null)
   const { data, isLoading, isError, error } = useOrderTracking(queryId)
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

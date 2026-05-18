@@ -18,6 +18,7 @@ export const NAV_SECTIONS: NavSection[] = [
     title: '스마트스토어',
     items: [
       { label: '주문 관리', href: '/orders', icon: '📋' },
+      { label: '스팀 등록 접수', href: '/registrations', icon: '🎯' },
       { label: '상품 관리', href: '/products', icon: '📦' },
       { label: '계정 관리', href: '/codes', icon: '🔑' },
       { label: '리뷰 게임 관리', href: '/review-codes', icon: '🎮' },
