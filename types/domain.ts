@@ -27,6 +27,7 @@ export type DeliveryLog = {
   channel: DeliveryChannel
   recipient: string
   templateCode: string | null
+  message: string | null
   status: DeliveryLogStatus
   errorMessage: string | null
   providerMessageId: string | null
@@ -53,6 +54,7 @@ export type SteamOrderItem = {
   paidAt: string | null
   returnedAt: string | null
   reviewGameSentAt: string | null
+  orderStatusAlimtalkSentAt: string | null
   friendLink1: string | null
   friendLink2: string | null
   giftCode: string | null

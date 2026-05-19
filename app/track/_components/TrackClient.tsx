@@ -42,7 +42,7 @@ export function TrackClient() {
               inputMode="numeric"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="네이버 상품주문번호를 입력하세요"
+              placeholder="카카오톡으로 받은 주문번호를 입력하세요."
               aria-describedby="productOrderId-hint"
               className="w-full rounded-lg border border-border bg-gray-50 px-4 py-3 text-body-md text-text-primary outline-none transition-colors placeholder:text-text-muted focus:border-brand focus:bg-white"
             />
