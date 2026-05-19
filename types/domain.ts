@@ -58,7 +58,6 @@ export type SteamOrderItem = {
   giftCode: string | null
   gameUrl: string | null
   memo: string | null
-  giftCompletedAt: string | null
   estimatedCompletedAt: string | null
   completedAt: string | null
   createdAt: string
@@ -194,7 +193,11 @@ export type AlimtalkSettings = {
     templateCodeNASecondary: string | null
     templateCodeNAOutOfStock: string | null
     templateCodeReviewGame: string | null
-    templateCodeGiftCompleted: string | null
+    templateCodeBG: string | null
+    templateCodePartyApply: string | null
+    templateCodeOrderStatus: string | null
+    templateCodeOrderCompleted: string | null
+    templateCodePhoneVerify: string | null
     sender: string | null
     providerConnected: boolean
     providerMessage: string

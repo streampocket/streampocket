@@ -18,7 +18,7 @@ import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
 import { useUpdateFriendLinks } from '../_hooks/useUpdateFriendLinks'
-import { useMarkGiftCompleted } from '../_hooks/useMarkGiftCompleted'
+import { useSendOrderStatusAlimtalk } from '../_hooks/useSendOrderStatusAlimtalk'
 import { SteamRegistrationSection } from './SteamRegistrationSection'
 
 type OrderDetailModalProps = {
@@ -63,7 +63,7 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
     order.gameUrl ? GIFT_RECEIPT_LINK_OPTIONS[1].value : GIFT_RECEIPT_LINK_OPTIONS[0].value,
   )
   const { mutate: updateLinks, isPending: isSaving } = useUpdateFriendLinks()
-  const { mutate: markCompleted, isPending: isCompleting } = useMarkGiftCompleted()
+  const { mutate: sendOrderStatus, isPending: isSendingStatus } = useSendOrderStatusAlimtalk()
 
   useEffect(() => {
     setLink1(order.friendLink1 ?? '')
@@ -109,27 +109,29 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
     })
   }
 
-  const handleComplete = () => {
-    if (!window.confirm('선물 접수 완료 처리하시겠습니까? 되돌릴 수 없습니다.')) return
-    markCompleted(order.id)
+  const handleSendOrderStatus = () => {
+    if (!window.confirm('주문상황 알림톡을 발송하시겠습니까?')) return
+    sendOrderStatus(order.id)
   }
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
       <div className="flex items-center justify-between">
         <p className="text-caption-md font-semibold text-text-primary">선물 처리 (AA)</p>
-        {order.giftCompletedAt ? (
-          <Badge variant="green">선물 접수 완료 ({formatDate(order.giftCompletedAt)})</Badge>
-        ) : (
-          <Button
-            size="sm"
-            variant="primary"
-            loading={isCompleting}
-            onClick={handleComplete}
-          >
-            선물 접수 완료
-          </Button>
-        )}
+        <Button
+          size="sm"
+          variant="secondary"
+          loading={isSendingStatus}
+          disabled={!order.receiverPhoneNumber}
+          title={
+            order.receiverPhoneNumber
+              ? undefined
+              : '수신 전화번호가 없어 발송할 수 없습니다.'
+          }
+          onClick={handleSendOrderStatus}
+        >
+          주문상황 알림톡
+        </Button>
       </div>
 
       {[
