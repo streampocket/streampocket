@@ -93,7 +93,11 @@ export function AlimtalkSettingsForm() {
           <InfoRow label="템플릿 코드 (NA 2차이메일)" value={runtime?.templateCodeNASecondary ?? '-'} />
           <InfoRow label="템플릿 코드 (NA 재고없음 안내)" value={runtime?.templateCodeNAOutOfStock ?? '-'} />
           <InfoRow label="템플릿 코드 (리뷰게임)" value={runtime?.templateCodeReviewGame ?? '-'} />
-          <InfoRow label="템플릿 코드 (선물 접수 완료)" value={runtime?.templateCodeGiftCompleted ?? '-'} />
+          <InfoRow label="템플릿 코드 (배틀그라운드)" value={runtime?.templateCodeBG ?? '-'} />
+          <InfoRow label="템플릿 코드 (파티 신청)" value={runtime?.templateCodePartyApply ?? '-'} />
+          <InfoRow label="템플릿 코드 (주문상황 조회)" value={runtime?.templateCodeOrderStatus ?? '-'} />
+          <InfoRow label="템플릿 코드 (게임선물 완료)" value={runtime?.templateCodeOrderCompleted ?? '-'} />
+          <InfoRow label="템플릿 코드 (휴대폰 인증)" value={runtime?.templateCodePhoneVerify ?? '-'} />
           <InfoRow label="발신번호" value={runtime?.sender ?? '-'} />
           <InfoRow
             label="선택 템플릿"
@@ -118,7 +122,11 @@ export function AlimtalkSettingsForm() {
                 template.templateCode === runtime?.templateCodeNASecondary ||
                 template.templateCode === runtime?.templateCodeNAOutOfStock ||
                 template.templateCode === runtime?.templateCodeReviewGame ||
-                template.templateCode === runtime?.templateCodeGiftCompleted
+                template.templateCode === runtime?.templateCodeBG ||
+                template.templateCode === runtime?.templateCodePartyApply ||
+                template.templateCode === runtime?.templateCodeOrderStatus ||
+                template.templateCode === runtime?.templateCodeOrderCompleted ||
+                template.templateCode === runtime?.templateCodePhoneVerify
 
               return (
                 <div
