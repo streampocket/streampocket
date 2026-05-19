@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { formatDate, cn } from '@/lib/utils'
 import { isAaProduct, parseReviewGameCount } from '@/lib/productType'
-import type { DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/types/domain'
+import type { DeliveryLog, DeliveryLogStatus, FulfillmentStatus, SteamOrderItem } from '@/types/domain'
 import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
@@ -118,20 +118,26 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
     <div className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
       <div className="flex items-center justify-between">
         <p className="text-caption-md font-semibold text-text-primary">선물 처리 (AA)</p>
-        <Button
-          size="sm"
-          variant="secondary"
-          loading={isSendingStatus}
-          disabled={!order.receiverPhoneNumber}
-          title={
-            order.receiverPhoneNumber
-              ? undefined
-              : '수신 전화번호가 없어 발송할 수 없습니다.'
-          }
-          onClick={handleSendOrderStatus}
-        >
-          주문상황 알림톡
-        </Button>
+        {order.orderStatusAlimtalkSentAt ? (
+          <Badge variant="green">
+            주문상황 알림톡 발송 ({formatDate(order.orderStatusAlimtalkSentAt)})
+          </Badge>
+        ) : (
+          <Button
+            size="sm"
+            variant="secondary"
+            loading={isSendingStatus}
+            disabled={!order.receiverPhoneNumber}
+            title={
+              order.receiverPhoneNumber
+                ? undefined
+                : '수신 전화번호가 없어 발송할 수 없습니다.'
+            }
+            onClick={handleSendOrderStatus}
+          >
+            주문상황 알림톡
+          </Button>
+        )}
       </div>
 
       {[
@@ -272,6 +278,65 @@ function GiftSection({ order }: { order: SteamOrderItem }) {
           저장
         </Button>
       </div>
+    </div>
+  )
+}
+
+function DeliveryLogItem({
+  log,
+  templateName,
+}: {
+  log: DeliveryLog
+  templateName: string | null
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const deliveryStatus = DELIVERY_STATUS_MAP[log.status]
+  const sentAt = log.sentAt ?? log.createdAt
+
+  return (
+    <div className="space-y-1 rounded-lg border border-border bg-surface-secondary p-3">
+      <div className="flex items-center justify-between gap-2">
+        {templateName ? (
+          <span className="min-w-0 flex-1 text-body-md font-semibold text-text-primary">
+            {templateName}
+          </span>
+        ) : log.templateCode ? (
+          <span className="min-w-0 flex-1 font-mono text-body-md font-semibold text-text-primary">
+            {log.templateCode}
+          </span>
+        ) : (
+          <span className="min-w-0 flex-1 text-body-md font-semibold text-text-muted">
+            템플릿 정보 없음
+          </span>
+        )}
+        <Badge variant={deliveryStatus.variant}>{deliveryStatus.label}</Badge>
+      </div>
+      {templateName && log.templateCode && (
+        <p className="text-caption-sm font-mono text-text-muted">{log.templateCode}</p>
+      )}
+      <p className="text-caption-md text-text-muted">
+        <span className="font-mono">{log.recipient}</span>
+        {' · '}
+        {formatDate(sentAt)}
+      </p>
+      {log.providerMessageId && (
+        <p className="text-caption-md text-text-muted">메시지 ID: {log.providerMessageId}</p>
+      )}
+      {log.errorMessage && <p className="text-caption-md text-danger">{log.errorMessage}</p>}
+
+      <button
+        type="button"
+        onClick={() => setExpanded((prev) => !prev)}
+        className="flex items-center gap-1 pt-1 text-caption-md text-text-secondary transition-colors hover:text-text-primary"
+      >
+        <span className="text-[10px]">{expanded ? '▲' : '▼'}</span>
+        {expanded ? '발송 내용 닫기' : '발송 내용 보기'}
+      </button>
+      {expanded && (
+        <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-card-bg p-3 text-caption-md text-text-secondary">
+          {log.message ?? '저장된 발송 내용이 없습니다.'}
+        </pre>
+      )}
     </div>
   )
 }
@@ -580,53 +645,13 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               <div className="space-y-2">
                 {[...order.deliveryLogs]
                   .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                  .map((log) => {
-                    const deliveryStatus = DELIVERY_STATUS_MAP[log.status]
-                    const templateName = resolveTemplateName(log.templateCode)
-                    const sentAt = log.sentAt ?? log.createdAt
-
-                    return (
-                      <div
-                        key={log.id}
-                        className="space-y-1 rounded-lg border border-border bg-surface-secondary p-3"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          {templateName ? (
-                            <span className="min-w-0 flex-1 text-body-md font-semibold text-text-primary">
-                              {templateName}
-                            </span>
-                          ) : log.templateCode ? (
-                            <span className="min-w-0 flex-1 font-mono text-body-md font-semibold text-text-primary">
-                              {log.templateCode}
-                            </span>
-                          ) : (
-                            <span className="min-w-0 flex-1 text-body-md font-semibold text-text-muted">
-                              템플릿 정보 없음
-                            </span>
-                          )}
-                          <Badge variant={deliveryStatus.variant}>{deliveryStatus.label}</Badge>
-                        </div>
-                        {templateName && log.templateCode && (
-                          <p className="text-caption-sm font-mono text-text-muted">
-                            {log.templateCode}
-                          </p>
-                        )}
-                        <p className="text-caption-md text-text-muted">
-                          <span className="font-mono">{log.recipient}</span>
-                          {' · '}
-                          {formatDate(sentAt)}
-                        </p>
-                        {log.providerMessageId && (
-                          <p className="text-caption-md text-text-muted">
-                            메시지 ID: {log.providerMessageId}
-                          </p>
-                        )}
-                        {log.errorMessage && (
-                          <p className="text-caption-md text-danger">{log.errorMessage}</p>
-                        )}
-                      </div>
-                    )
-                  })}
+                  .map((log) => (
+                    <DeliveryLogItem
+                      key={log.id}
+                      log={log}
+                      templateName={resolveTemplateName(log.templateCode)}
+                    />
+                  ))}
               </div>
             </div>
           )}
