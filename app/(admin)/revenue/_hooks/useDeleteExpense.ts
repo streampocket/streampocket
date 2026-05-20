@@ -11,6 +11,7 @@ export function useDeleteExpense() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.expenses.all() })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.dashboard.stats() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.orders.all() })
     },
   })
 }
