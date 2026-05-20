@@ -75,6 +75,8 @@ export type OrderListParams = {
   from?: string
   to?: string
   receiverName?: string
+  excludeStatuses?: FulfillmentStatus[]
+  excludeWithExpense?: boolean
   page?: number
   pageSize?: number
 }
