@@ -9,7 +9,16 @@ export type OrderListResponse = PaginatedResponse<SteamOrderItem> & {
 }
 
 export function useOrders(params: OrderListParams = {}) {
-  const { status, from, to, receiverName, page = 1, pageSize = 20 } = params
+  const {
+    status,
+    from,
+    to,
+    receiverName,
+    excludeStatuses,
+    excludeWithExpense,
+    page = 1,
+    pageSize = 20,
+  } = params
 
   const searchParams = new URLSearchParams()
   searchParams.set('page', String(page))
@@ -18,6 +27,10 @@ export function useOrders(params: OrderListParams = {}) {
   if (from) searchParams.set('from', from)
   if (to) searchParams.set('to', to)
   if (receiverName) searchParams.set('receiverName', receiverName)
+  if (excludeStatuses && excludeStatuses.length > 0) {
+    searchParams.set('excludeStatuses', excludeStatuses.join(','))
+  }
+  if (excludeWithExpense) searchParams.set('excludeWithExpense', 'true')
 
   return useQuery({
     queryKey: QUERY_KEYS.orders.list(params),

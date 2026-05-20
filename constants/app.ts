@@ -8,6 +8,9 @@ export const INITIAL_LOOKBACK_MINUTES = 10;
 /** 비용추가 모달의 주문 선택 리스트에 노출할 주문의 시작 시각 (KST).
  *  이 시각 이전 주문은 OrderPicker에 보이지 않는다. 비용 등록·통계·알림에는 영향 없음. */
 export const EXPENSE_ORDER_LINK_SINCE = "2026-05-20T20:30:00+09:00";
+
+/** OrderPicker 노출에서 제외하는 주문 상태 (비용 대상이 아닌 상태) */
+export const EXPENSE_ORDER_LINK_EXCLUDE_STATUSES = ["failed", "returned"] as const;
 export const BRAND_NAME = "스트림포켓";
 export const USER_BRAND_NAME = "OTTALL";
 export const LOGIN_PATH = "/login";

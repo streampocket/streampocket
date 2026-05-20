@@ -5,7 +5,10 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { formatDate } from '@/lib/utils'
 import { useOrders } from '@/hooks/useOrders'
-import { EXPENSE_ORDER_LINK_SINCE } from '@/constants/app'
+import {
+  EXPENSE_ORDER_LINK_SINCE,
+  EXPENSE_ORDER_LINK_EXCLUDE_STATUSES,
+} from '@/constants/app'
 import type { ExpenseSteamOrderItem } from '@/types/domain'
 
 type OrderPickerProps = {
@@ -29,6 +32,8 @@ export function OrderPicker({ selectedOrderId, selectedOrderSummary, onChange }:
     () => ({
       receiverName: debouncedTerm || undefined,
       from: EXPENSE_ORDER_LINK_SINCE,
+      excludeStatuses: [...EXPENSE_ORDER_LINK_EXCLUDE_STATUSES],
+      excludeWithExpense: true,
       page: 1,
       pageSize: 20,
     }),
