@@ -1,26 +1,3 @@
-import type { FulfillmentStatus, SteamOrderItem } from '@/types/domain'
-import type { PaginatedResponse } from '@/types/api'
-
-export type OrderListParams = {
-  status?: FulfillmentStatus | ''
-  from?: string
-  to?: string
-  receiverName?: string
-  page?: number
-  pageSize?: number
-}
-
-export type OrderStatusCounts = {
-  total: number
-  pending: number
-  in_progress: number
-  completed: number
-  purchase_decided: number
-  manual_review: number
-  failed: number
-  returned: number
-}
-
-export type OrderListResponse = PaginatedResponse<SteamOrderItem> & {
-  counts: OrderStatusCounts
-}
+// 페이지 전용 타입이 필요하면 여기에 추가한다.
+// 주문 목록 관련 타입(OrderListParams, OrderStatusCounts, OrderListResponse)은
+// 공통 위치로 이동: types/domain.ts + hooks/useOrders.ts

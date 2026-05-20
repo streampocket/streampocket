@@ -65,6 +65,30 @@ export type SteamOrderItem = {
   createdAt: string
   updatedAt: string
   deliveryLogs?: DeliveryLog[]
+  /** 이미 비용이 연결된 주문인지 여부 (목록 응답에서만 제공) */
+  hasExpense?: boolean
+}
+
+/** 주문 목록 조회 파라미터 */
+export type OrderListParams = {
+  status?: FulfillmentStatus | ''
+  from?: string
+  to?: string
+  receiverName?: string
+  page?: number
+  pageSize?: number
+}
+
+/** 주문 상태별 카운트 */
+export type OrderStatusCounts = {
+  total: number
+  pending: number
+  in_progress: number
+  completed: number
+  purchase_decided: number
+  manual_review: number
+  failed: number
+  returned: number
 }
 
 /** 스팀 상품 */
@@ -104,6 +128,15 @@ export type ExpenseCategory = 'game_purchase' | 'country_change' | 'review_game'
 /** 비용 결제자 */
 export type ExpensePayer = 'song_donggeon' | 'im_jeongbin'
 
+/** 비용에 연결된 주문 요약 (Expense 응답에 포함) */
+export type ExpenseSteamOrderItem = {
+  id: string
+  productOrderId: string
+  productName: string
+  receiverName: string | null
+  paidAt: string | null
+}
+
 /** 비용 항목 */
 export type Expense = {
   id: string
@@ -112,6 +145,8 @@ export type Expense = {
   payer: ExpensePayer
   amount: number
   memo: string | null
+  steamOrderItemId: string | null
+  steamOrderItem: ExpenseSteamOrderItem | null
   createdAt: string
   updatedAt: string
 }

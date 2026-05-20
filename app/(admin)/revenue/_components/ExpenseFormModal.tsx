@@ -4,8 +4,14 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { formatDateOnly, getTodayStringKST } from '@/lib/utils'
-import type { Expense, ExpenseCategory, ExpensePayer } from '@/types/domain'
+import type {
+  Expense,
+  ExpenseCategory,
+  ExpensePayer,
+  ExpenseSteamOrderItem,
+} from '@/types/domain'
 import type { ExpenseFormData } from '../_types'
+import { OrderPicker } from './OrderPicker'
 
 const CATEGORY_OPTIONS: { value: ExpenseCategory; label: string }[] = [
   { value: 'game_purchase', label: '게임 구매비' },
@@ -33,6 +39,8 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
   const [payer, setPayer] = useState<ExpensePayer>('song_donggeon')
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
+  const [linkedOrderId, setLinkedOrderId] = useState<string | null>(null)
+  const [linkedOrder, setLinkedOrder] = useState<ExpenseSteamOrderItem | null>(null)
 
   useEffect(() => {
     if (expense) {
@@ -41,14 +49,38 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
       setPayer(expense.payer)
       setAmount(String(expense.amount))
       setMemo(expense.memo ?? '')
+      setLinkedOrderId(expense.steamOrderItemId ?? null)
+      setLinkedOrder(expense.steamOrderItem ?? null)
     } else {
       setDate(getTodayStringKST())
       setCategory('game_purchase')
       setPayer('song_donggeon')
       setAmount('')
       setMemo('')
+      setLinkedOrderId(null)
+      setLinkedOrder(null)
     }
   }, [expense, isOpen])
+
+  // 분류가 게임구매에서 다른 값으로 변경되면 주문 연결 해제 (메모는 사용자가 직접 정리)
+  useEffect(() => {
+    if (category !== 'game_purchase' && linkedOrderId) {
+      setLinkedOrderId(null)
+      setLinkedOrder(null)
+    }
+  }, [category, linkedOrderId])
+
+  const handleOrderChange = (order: ExpenseSteamOrderItem | null) => {
+    if (order) {
+      setLinkedOrderId(order.id)
+      setLinkedOrder(order)
+      const buyerName = order.receiverName ?? '(수신자 미상)'
+      setMemo(`${buyerName} - ${order.productName}`)
+    } else {
+      setLinkedOrderId(null)
+      setLinkedOrder(null)
+    }
+  }
 
   const handleSubmit = () => {
     const parsedAmount = parseInt(amount, 10)
@@ -59,6 +91,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
       payer,
       amount: parsedAmount,
       memo: memo || undefined,
+      steamOrderItemId: category === 'game_purchase' ? linkedOrderId : null,
     })
   }
 
@@ -127,6 +160,18 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
             className="mt-1 w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-body-md text-text-primary focus:border-brand focus:outline-none"
           />
         </div>
+        {category === 'game_purchase' ? (
+          <div>
+            <label className="text-body-md text-text-secondary">연결 주문</label>
+            <div className="mt-1">
+              <OrderPicker
+                selectedOrderId={linkedOrderId}
+                selectedOrderSummary={linkedOrder}
+                onChange={handleOrderChange}
+              />
+            </div>
+          </div>
+        ) : null}
         <div>
           <label className="text-body-md text-text-secondary">메모 (선택)</label>
           <input

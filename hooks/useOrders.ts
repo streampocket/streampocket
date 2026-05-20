@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { QUERY_KEYS } from '@/constants/queryKeys'
-import type { OrderListParams, OrderListResponse } from '../_types'
+import type { OrderListParams, OrderStatusCounts, SteamOrderItem } from '@/types/domain'
+import type { PaginatedResponse } from '@/types/api'
+
+export type OrderListResponse = PaginatedResponse<SteamOrderItem> & {
+  counts: OrderStatusCounts
+}
 
 export function useOrders(params: OrderListParams = {}) {
   const { status, from, to, receiverName, page = 1, pageSize = 20 } = params

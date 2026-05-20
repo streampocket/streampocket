@@ -14,6 +14,7 @@ export type ExpenseFormData = {
   payer: ExpensePayer
   amount: number
   memo?: string
+  steamOrderItemId?: string | null
 }
 
 export type ExpenseSummaryParams = {

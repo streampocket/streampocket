@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { useExpenses } from '../_hooks/useExpenses'
 import { useCreateExpense } from '../_hooks/useCreateExpense'
 import { useUpdateExpense } from '../_hooks/useUpdateExpense'
@@ -172,8 +173,15 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                         <td className="px-3 py-2.5 text-right text-text-muted">
                           {fmt(Math.round(item.amount / 2))}
                         </td>
-                        <td className="max-w-48 truncate px-3 py-2.5 text-text-muted">
-                          {item.memo ?? '-'}
+                        <td className="max-w-48 px-3 py-2.5 text-text-muted">
+                          <div className="flex items-center gap-1.5">
+                            {item.steamOrderItemId ? (
+                              <Badge variant="indigo" className="shrink-0">
+                                주문연결
+                              </Badge>
+                            ) : null}
+                            <span className="truncate">{item.memo ?? '-'}</span>
+                          </div>
                         </td>
                         <td className="px-3 py-2.5 text-center">
                           <button
@@ -216,13 +224,20 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                         (인당 {fmt(Math.round(item.amount / 2))}원)
                       </span>
                     </p>
-                    <div className="mt-1 flex items-center justify-between">
-                      <span className="text-caption-md text-text-secondary">
+                    <div className="mt-1 flex items-center justify-between gap-2">
+                      <span className="text-caption-md shrink-0 text-text-secondary">
                         {PAYER_LABELS[item.payer]}
                       </span>
-                      <span className="text-caption-md truncate text-text-muted">
-                        {item.memo ?? '-'}
-                      </span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        {item.steamOrderItemId ? (
+                          <Badge variant="indigo" className="shrink-0">
+                            주문연결
+                          </Badge>
+                        ) : null}
+                        <span className="text-caption-md truncate text-text-muted">
+                          {item.memo ?? '-'}
+                        </span>
+                      </div>
                     </div>
                     <div className="mt-2 flex gap-3 border-t border-border pt-2">
                       <button

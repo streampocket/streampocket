@@ -4,9 +4,8 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { PAGE_SIZE } from '@/constants/app'
-import type { FulfillmentStatus } from '@/types/domain'
-import { useOrders } from '../_hooks/useOrders'
-import type { OrderStatusCounts } from '../_types'
+import type { FulfillmentStatus, OrderStatusCounts } from '@/types/domain'
+import { useOrders } from '@/hooks/useOrders'
 
 const STATUS_OPTIONS: {
   value: FulfillmentStatus | ''
