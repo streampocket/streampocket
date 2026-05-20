@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { formatDate } from '@/lib/utils'
 import { useOrders } from '@/hooks/useOrders'
+import { EXPENSE_ORDER_LINK_SINCE } from '@/constants/app'
 import type { ExpenseSteamOrderItem } from '@/types/domain'
 
 type OrderPickerProps = {
@@ -27,6 +28,7 @@ export function OrderPicker({ selectedOrderId, selectedOrderSummary, onChange }:
   const queryParams = useMemo(
     () => ({
       receiverName: debouncedTerm || undefined,
+      from: EXPENSE_ORDER_LINK_SINCE,
       page: 1,
       pageSize: 20,
     }),
