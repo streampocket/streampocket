@@ -118,12 +118,23 @@ function TrackResult({ productOrderId, data }: TrackResultProps) {
             )}
             <OrderStepIndicator currentStep={view.step} done={view.done} />
             <p className="mt-5 text-center text-body-md font-semibold text-text-primary">
-              {view.done
-                ? '처리가 완료되었습니다.'
-                : view.step === 1
-                  ? '주문이 접수되어 처리를 기다리고 있어요.'
-                  : '주문을 처리하고 있어요. 잠시만 기다려 주세요.'}
+              {view.done ? (
+                '처리가 완료되었습니다.'
+              ) : view.step === 1 ? (
+                <>
+                  스팀 국가 변경을 위해 저렴한 게임을 결제 후 환불하는 과정이니,
+                  <br />
+                  모르는 결제 내역이 보이더라도 안심하셔도 됩니다.
+                </>
+              ) : (
+                '게임 선물을 전송하고 있어요. 잠시만 기다려 주세요.'
+              )}
             </p>
+            {view.done && (
+              <p className="mt-1 text-center text-body-md font-semibold text-text-primary">
+                꼭 구매확정 부탁드리겠습니다!
+              </p>
+            )}
             {view.done && reviewGameCount !== null && (
               <div className="mt-4 flex gap-2">
                 <a

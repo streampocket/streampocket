@@ -8,8 +8,8 @@ type OrderStepIndicatorProps = {
 }
 
 const STEPS = [
-  { step: 1, label: '접수중' },
-  { step: 2, label: '진행중' },
+  { step: 1, label: '국가변경 작업중' },
+  { step: 2, label: '게임선물 전송중' },
   { step: 3, label: '완료' },
 ] as const
 
