@@ -34,6 +34,8 @@ export function OrderPicker({ selectedOrderId, selectedOrderSummary, onChange }:
       from: EXPENSE_ORDER_LINK_SINCE,
       excludeStatuses: [...EXPENSE_ORDER_LINK_EXCLUDE_STATUSES],
       excludeWithExpense: true,
+      // 비용 연결은 네이버 주문 전용 — 수동 주문은 순수익이 이미 확정이라 비용 연결 시 이중차감됨
+      source: 'naver' as const,
       page: 1,
       pageSize: 20,
     }),

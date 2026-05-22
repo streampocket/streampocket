@@ -16,6 +16,7 @@ export function useOrders(params: OrderListParams = {}) {
     receiverName,
     excludeStatuses,
     excludeWithExpense,
+    source,
     page = 1,
     pageSize = 20,
   } = params
@@ -31,6 +32,7 @@ export function useOrders(params: OrderListParams = {}) {
     searchParams.set('excludeStatuses', excludeStatuses.join(','))
   }
   if (excludeWithExpense) searchParams.set('excludeWithExpense', 'true')
+  if (source) searchParams.set('source', source)
 
   return useQuery({
     queryKey: QUERY_KEYS.orders.list(params),

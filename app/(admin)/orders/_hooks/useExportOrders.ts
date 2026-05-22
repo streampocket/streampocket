@@ -7,6 +7,7 @@ type ExportOrdersParams = {
   status?: string
   from?: string
   to?: string
+  source?: string
 }
 
 function buildFilename(): string {
@@ -24,6 +25,7 @@ export function useExportOrders(): {
       if (params.status) qs.set('status', params.status)
       if (params.from) qs.set('from', params.from)
       if (params.to) qs.set('to', params.to)
+      if (params.source) qs.set('source', params.source)
       const query = qs.toString()
       return api.download(
         `/steam/admin/orders/export${query ? `?${query}` : ''}`,

@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import { ExportButton } from './ExportButton'
 import { OrderDetailModal } from './OrderDetailModal'
+import { ManualOrderCreateModal } from './ManualOrderCreateModal'
+import { ManualOrderDetailModal } from './ManualOrderDetailModal'
 import { useOrders } from '@/hooks/useOrders'
 import { formatDate } from '@/lib/utils'
 import { PAGE_SIZE } from '@/constants/app'
-import type { FulfillmentStatus } from '@/types/domain'
+import type { FulfillmentStatus, OrderSource, SteamOrderItem } from '@/types/domain'
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '대기', variant: 'yellow' },
@@ -23,9 +25,26 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   returned: { label: '반품', variant: 'purple' },
 }
 
+type SelectedOrder = { id: string; source: OrderSource }
+
+// 상품주문번호 — 수동 주문은 카카오 브랜드 노란색으로 구분
+function ProductOrderId({ order }: { order: SteamOrderItem }) {
+  if (order.source === 'manual') {
+    return (
+      <span className="inline-block rounded bg-[#FEE500] px-1.5 py-0.5 font-mono text-caption-sm font-semibold text-[#3C1E1E]">
+        {order.productOrderId}
+      </span>
+    )
+  }
+  return (
+    <span className="font-mono text-caption-md text-text-secondary">{order.productOrderId}</span>
+  )
+}
+
 export function OrdersTable() {
   const searchParams = useSearchParams()
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [selected, setSelected] = useState<SelectedOrder | null>(null)
+  const [createOpen, setCreateOpen] = useState(false)
 
   const status = (searchParams.get('status') as FulfillmentStatus) || undefined
   const from = searchParams.get('from') || undefined
@@ -42,7 +61,12 @@ export function OrdersTable() {
           <p className="text-caption-md text-text-secondary">
             총 <strong className="text-text-primary">{data?.total ?? 0}</strong>건
           </p>
-          <ExportButton status={status} from={from} to={to} />
+          <div className="flex items-center gap-2">
+            <Button variant="primary" size="sm" onClick={() => setCreateOpen(true)}>
+              + 수동 주문 생성
+            </Button>
+            <ExportButton status={status} from={from} to={to} />
+          </div>
         </div>
 
         <CardBody className="p-0">
@@ -82,9 +106,7 @@ export function OrdersTable() {
                         className="border-b border-border last:border-0 hover:bg-gray-50"
                       >
                         <td className="px-5 py-3">
-                          <span className="font-mono text-caption-md text-text-secondary">
-                            {order.productOrderId}
-                          </span>
+                          <ProductOrderId order={order} />
                         </td>
                         <td className="text-body-md max-w-40 truncate px-5 py-3 text-text-primary">
                           {order.productName}
@@ -114,7 +136,7 @@ export function OrdersTable() {
                           <Button
                             variant="secondary"
                             size="xs"
-                            onClick={() => setSelectedOrderId(order.id)}
+                            onClick={() => setSelected({ id: order.id, source: order.source })}
                           >
                             상세
                           </Button>
@@ -140,7 +162,7 @@ export function OrdersTable() {
                   <button
                     key={order.id}
                     type="button"
-                    onClick={() => setSelectedOrderId(order.id)}
+                    onClick={() => setSelected({ id: order.id, source: order.source })}
                     className="w-full rounded-lg border border-border bg-card-bg p-4 text-left transition-colors hover:bg-gray-50"
                   >
                     <div className="mb-2 flex items-center justify-between">
@@ -169,9 +191,9 @@ export function OrdersTable() {
                         {order.paidAt ? formatDate(order.paidAt) : '-'}
                       </span>
                     </div>
-                    <p className="text-caption-sm mt-1 font-mono text-text-muted">
-                      {order.productOrderId}
-                    </p>
+                    <div className="mt-1">
+                      <ProductOrderId order={order} />
+                    </div>
                   </button>
                 )
               })
@@ -214,7 +236,15 @@ export function OrdersTable() {
         )}
       </Card>
 
-      <OrderDetailModal orderId={selectedOrderId} onClose={() => setSelectedOrderId(null)} />
+      {/* 출처에 따라 상세 모달 분기 */}
+      {selected?.source === 'naver' && (
+        <OrderDetailModal orderId={selected.id} onClose={() => setSelected(null)} />
+      )}
+      {selected?.source === 'manual' && (
+        <ManualOrderDetailModal orderId={selected.id} onClose={() => setSelected(null)} />
+      )}
+
+      <ManualOrderCreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   )
 }

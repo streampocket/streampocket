@@ -23,9 +23,11 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
 
 export function RecentOrdersTable() {
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.orders.list({ page: 1, pageSize: 5 }),
+    queryKey: QUERY_KEYS.orders.list({ page: 1, pageSize: 5, source: 'naver' }),
     queryFn: () =>
-      api.get<PaginatedResponse<SteamOrderItem>>('/steam/admin/orders?page=1&pageSize=5'),
+      api.get<PaginatedResponse<SteamOrderItem>>(
+        '/steam/admin/orders?page=1&pageSize=5&source=naver',
+      ),
   })
 
   return (
