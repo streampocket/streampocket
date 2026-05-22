@@ -8,6 +8,9 @@ export type FulfillmentStatus =
   | 'failed'
   | 'returned'
 
+/** 주문 출처 (Prisma OrderSource 기준) — naver: 스마트스토어 자동 / manual: 수동 등록 */
+export type OrderSource = 'naver' | 'manual'
+
 /** 계정 상태 (Prisma AccountStatus 기준) */
 export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled' | 'manual'
 
@@ -40,6 +43,7 @@ export type SteamOrderItem = {
   id: string
   productOrderId: string
   naverOrderId: string
+  source: OrderSource
   productId: string | null
   accountId: string | null
   productName: string
@@ -77,6 +81,7 @@ export type OrderListParams = {
   receiverName?: string
   excludeStatuses?: FulfillmentStatus[]
   excludeWithExpense?: boolean
+  source?: OrderSource | ''
   page?: number
   pageSize?: number
 }

@@ -7,9 +7,10 @@ type Props = {
   status?: string
   from?: string
   to?: string
+  source?: string
 }
 
-export function ExportButton({ status, from, to }: Props) {
+export function ExportButton({ status, from, to, source }: Props) {
   const { exportOrders, isExporting } = useExportOrders()
 
   return (
@@ -17,7 +18,7 @@ export function ExportButton({ status, from, to }: Props) {
       variant="secondary"
       size="sm"
       loading={isExporting}
-      onClick={() => exportOrders({ status, from, to })}
+      onClick={() => exportOrders({ status, from, to, source })}
     >
       ⬇ 엑셀 추출
     </Button>
