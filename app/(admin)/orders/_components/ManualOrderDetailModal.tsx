@@ -10,6 +10,7 @@ import { cn, formatDate } from '@/lib/utils'
 import type { FulfillmentStatus } from '@/types/domain'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useMarkInProgress } from '../_hooks/useMarkInProgress'
+import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { GiftSection } from './GiftSection'
@@ -32,6 +33,7 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
 export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
   const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
+  const { mutate: extendTime, isPending: isExtendingTime } = useExtendOrderTime()
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
 
@@ -43,6 +45,8 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
 
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
   const canMarkInProgress = order?.fulfillmentStatus === 'pending'
+  const canExtendTime =
+    order?.fulfillmentStatus === 'in_progress' && order.estimatedCompletedAt !== null
   const canComplete =
     order != null &&
     order.completedAt === null &&
@@ -93,6 +97,19 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
               }}
             >
               진행중으로 전환
+            </Button>
+          )}
+          {canExtendTime && (
+            <Button
+              variant="secondary"
+              loading={isExtendingTime}
+              onClick={() => {
+                if (order && window.confirm('예상 완료시각을 10분 연장하시겠습니까?')) {
+                  extendTime(order.id)
+                }
+              }}
+            >
+              +10분
             </Button>
           )}
           {canComplete && (
