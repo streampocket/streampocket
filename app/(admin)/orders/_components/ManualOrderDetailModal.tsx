@@ -14,6 +14,7 @@ import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { GiftSection } from './GiftSection'
+import { AutoFriendLinkSection } from './AutoFriendLinkSection'
 
 type ManualOrderDetailModalProps = {
   orderId: string | null
@@ -37,7 +38,7 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
 
-  const [activeTab, setActiveTab] = useState<'input' | 'status'>('input')
+  const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink'>('input')
 
   useEffect(() => {
     setActiveTab('input')
@@ -148,6 +149,7 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
               [
                 { v: 'input', l: '입력/저장' },
                 { v: 'status', l: '상태' },
+                { v: 'autolink', l: '친구링크 자동' },
               ] as const
             ).map((t) => (
               <button
@@ -169,6 +171,11 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
           {/* 입력/저장 — 네이버 상세 모달과 동일 (전화번호 없어 알림톡 버튼 제외) */}
           <div className={cn(activeTab !== 'input' && 'hidden')}>
             <GiftSection order={order} title="선물 처리" showOrderStatusAlimtalk={false} />
+          </div>
+
+          {/* 친구링크 자동 가져오기 */}
+          <div className={cn(activeTab !== 'autolink' && 'hidden')}>
+            <AutoFriendLinkSection order={order} />
           </div>
 
           {/* 상태 — 수동 주문 정보만 표시 */}
