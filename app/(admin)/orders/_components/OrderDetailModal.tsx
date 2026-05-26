@@ -17,6 +17,7 @@ import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useSendReviewGame } from '../_hooks/useSendReviewGame'
 import { GiftSection } from './GiftSection'
+import { AutoFriendLinkSection } from './AutoFriendLinkSection'
 import { SteamRegistrationSection } from './SteamRegistrationSection'
 
 type OrderDetailModalProps = {
@@ -109,7 +110,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: sendReviewGame, isPending: isSendingReviewGame } = useSendReviewGame()
 
-  const [activeTab, setActiveTab] = useState<'input' | 'status'>('input')
+  const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink'>('input')
 
   useEffect(() => {
     setActiveTab('input')
@@ -264,6 +265,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                 [
                   { v: 'input', l: '입력/저장' },
                   { v: 'status', l: '상태' },
+                  { v: 'autolink', l: '친구링크 자동' },
                 ] as const
               ).map((t) => (
                 <button
@@ -286,6 +288,12 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
           {showTabs && (
             <div className={cn(activeTab !== 'input' && 'hidden')}>
               <GiftSection order={order} />
+            </div>
+          )}
+
+          {showTabs && (
+            <div className={cn(activeTab !== 'autolink' && 'hidden')}>
+              <AutoFriendLinkSection order={order} />
             </div>
           )}
 
