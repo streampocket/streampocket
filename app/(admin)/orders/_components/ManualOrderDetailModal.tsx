@@ -13,6 +13,7 @@ import { useMarkInProgress } from '../_hooks/useMarkInProgress'
 import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
+import { useDeleteManualOrder } from '../_hooks/useDeleteManualOrder'
 import { GiftSection } from './GiftSection'
 import { AutoFriendLinkSection } from './AutoFriendLinkSection'
 
@@ -37,6 +38,7 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
   const { mutate: extendTime, isPending: isExtendingTime } = useExtendOrderTime()
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
+  const { mutate: deleteOrder, isPending: isDeleting } = useDeleteManualOrder()
 
   const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink'>('input')
 
@@ -71,6 +73,23 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
       title="수동 주문 상세"
       footer={
         <>
+          <Button
+            variant="danger"
+            className="mr-auto"
+            loading={isDeleting}
+            onClick={() => {
+              if (
+                order &&
+                window.confirm('이 수동 주문을 삭제하시겠습니까?\n복구할 수 없습니다.')
+              ) {
+                deleteOrder(order.id, {
+                  onSuccess: () => onClose(),
+                })
+              }
+            }}
+          >
+            주문 삭제
+          </Button>
           <Button variant="secondary" onClick={onClose}>
             닫기
           </Button>
