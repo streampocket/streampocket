@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import { BRAND_NAME } from '@/constants/app'
 import { TrackClient } from './_components/TrackClient'
 
@@ -36,9 +35,7 @@ export default function TrackPage() {
             상품주문번호를 입력하면 처리 단계를 확인할 수 있어요.
           </p>
         </header>
-        <Suspense>
-          <TrackClient />
-        </Suspense>
+        <TrackClient />
       </main>
     </div>
   )

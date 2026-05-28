@@ -7,10 +7,8 @@ export const QUERY_KEYS = {
   orderTracking: {
     detail: (productOrderId: string) => ['orderTracking', productOrderId] as const,
   },
+  // 자동 친구링크 폼의 자격증명 프리필에 사용
   steamRegistrations: {
-    all: () => ['steamRegistrations'] as const,
-    list: (params?: Record<string, unknown>) => ['steamRegistrations', 'list', params] as const,
-    detail: (id: string) => ['steamRegistrations', id] as const,
     byOrder: (orderItemId: string) => ['steamRegistrations', 'byOrder', orderItemId] as const,
   },
   products: {
@@ -29,9 +27,6 @@ export const QUERY_KEYS = {
   },
   settings: {
     system: () => ['settings', 'system'] as const,
-  },
-  chatbotMenu: {
-    all: () => ['chatbotMenu'] as const,
   },
   alimtalk: {
     settings: () => ['alimtalk', 'settings'] as const,
