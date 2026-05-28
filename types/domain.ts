@@ -261,33 +261,6 @@ export type SystemSettings = {
   defaultDurationMinutes: number
 }
 
-// ───────────────────────── 카카오 챗봇 메뉴 ─────────────────────────
-
-/** 챗봇 메뉴 항목 응답에 붙는 외부링크 버튼 */
-export type ChatbotMenuButton = {
-  label: string
-  url: string
-}
-
-/** 카카오 챗봇 메뉴 항목 */
-export type ChatbotMenuItem = {
-  id: string
-  label: string
-  body: string
-  imageUrl: string | null
-  buttons: ChatbotMenuButton[]
-  sortOrder: number
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-/** 챗봇 메뉴 전체 조회 응답 — 웰컴 인사말 + 항목 목록 */
-export type ChatbotMenuOverview = {
-  welcomeMessage: string | null
-  items: ChatbotMenuItem[]
-}
-
 // ───────────────────────── 인증 (OTTALL) ─────────────────────────
 
 /** 가입 방식 */
