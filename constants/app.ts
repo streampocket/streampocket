@@ -1,5 +1,8 @@
 export const STOCK_THRESHOLD_WARN = 2;
 export const STOCK_THRESHOLD_CRITICAL = 0;
+
+/** 상품 카드 "수동가격" = 판매가에서 이 비율만큼 할인한 금액 (현재 5%) */
+export const MANUAL_PRICE_DISCOUNT_RATE = 0.05;
 export const PAGE_SIZE = 20;
 export const PRODUCTS_PAGE_SIZE = 100;
 export const ORDER_POLL_INTERVAL_SECONDS = 300;

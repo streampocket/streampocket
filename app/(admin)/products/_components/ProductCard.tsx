@@ -3,7 +3,11 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { SteamProduct, ProductStatus } from '@/types/domain'
-import { STOCK_THRESHOLD_WARN, STOCK_THRESHOLD_CRITICAL } from '@/constants/app'
+import {
+  STOCK_THRESHOLD_WARN,
+  STOCK_THRESHOLD_CRITICAL,
+  MANUAL_PRICE_DISCOUNT_RATE,
+} from '@/constants/app'
 
 type ProductCardProps = {
   product: SteamProduct
@@ -50,6 +54,14 @@ export function ProductCard({ product, onEdit }: ProductCardProps) {
               {product.price != null ? `${product.price.toLocaleString()}원` : '-'}
             </span>
           </div>
+          {product.price != null && (
+            <div className="flex items-center justify-between">
+              <span className="text-caption-md text-text-muted">수동가격</span>
+              <span className="text-caption-md font-semibold text-text-primary">
+                {`${Math.round(product.price * (1 - MANUAL_PRICE_DISCOUNT_RATE)).toLocaleString()}원`}
+              </span>
+            </div>
+          )}
           {(() => {
             const pc = product.discountPricePc
             const mobile = product.discountPriceMobile
