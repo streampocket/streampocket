@@ -36,7 +36,7 @@ export function Modal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 max-sm:p-0"
       style={{
         backgroundColor: "rgba(15, 23, 42, 0.5)",
         backdropFilter: "blur(2px)",
@@ -53,6 +53,8 @@ export function Modal({
           "w-full max-w-130 rounded-xl bg-card-bg",
           "shadow-[0_4px_6px_-1px_rgba(0,0,0,.1),0_2px_4px_-1px_rgba(0,0,0,.06)]",
           "flex max-h-[90vh] flex-col",
+          // 모바일(640px 미만): 폰 전체를 덮는 전체화면 (상세페이지처럼)
+          "max-sm:h-full max-sm:max-h-none max-sm:max-w-none max-sm:rounded-none",
           className,
         )}
         onClick={(e) => e.stopPropagation()}
