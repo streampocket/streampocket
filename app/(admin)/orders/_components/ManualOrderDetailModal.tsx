@@ -14,6 +14,7 @@ import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useDeleteManualOrder } from '../_hooks/useDeleteManualOrder'
+import { useUpdateManualOrderNetProfit } from '../_hooks/useUpdateManualOrderNetProfit'
 import { GiftSection } from './GiftSection'
 import { AutoFriendLinkSection } from './AutoFriendLinkSection'
 
@@ -21,6 +22,12 @@ type ManualOrderDetailModalProps = {
   orderId: string | null
   onClose: () => void
 }
+
+const netProfitInputClass = cn(
+  'w-32 rounded-lg border border-border bg-white px-2 py-1',
+  'text-caption-md text-text-primary',
+  'outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand-light',
+)
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '처리 대기', variant: 'yellow' },
@@ -39,14 +46,33 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: deleteOrder, isPending: isDeleting } = useDeleteManualOrder()
+  const { mutate: updateNetProfit, isPending: isSavingNetProfit } = useUpdateManualOrderNetProfit()
 
   const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink'>('input')
+  const [netProfitInput, setNetProfitInput] = useState('')
 
   useEffect(() => {
     setActiveTab('input')
   }, [orderId])
 
+  // order 로드/변경 시 입력값을 현재 순수익(settlementAmount)으로 동기화
+  useEffect(() => {
+    setNetProfitInput(order?.settlementAmount != null ? String(order.settlementAmount) : '')
+  }, [order?.settlementAmount])
+
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
+
+  // 순수익 인라인 편집 — 0 이상의 정수만 허용, 현재 값과 다를 때만 저장 활성
+  const trimmedNetProfit = netProfitInput.trim()
+  const parsedNetProfit = Number(trimmedNetProfit)
+  const isNetProfitValid =
+    trimmedNetProfit !== '' && Number.isInteger(parsedNetProfit) && parsedNetProfit >= 0
+  const isNetProfitDirty = isNetProfitValid && parsedNetProfit !== (order?.settlementAmount ?? null)
+
+  const handleSaveNetProfit = () => {
+    if (!order || !isNetProfitValid) return
+    updateNetProfit({ id: order.id, netProfit: parsedNetProfit })
+  }
   const canMarkInProgress = order?.fulfillmentStatus === 'pending'
   const canExtendTime =
     order?.fulfillmentStatus === 'in_progress' && order.estimatedCompletedAt !== null
@@ -227,8 +253,24 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
               </div>
               <div>
                 <dt className="text-caption-md text-text-muted">순수익</dt>
-                <dd className="mt-0.5 text-caption-md text-text-primary">
-                  {(order.settlementAmount ?? 0).toLocaleString()}원
+                <dd className="mt-0.5 flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    value={netProfitInput}
+                    onChange={(e) => setNetProfitInput(e.target.value)}
+                    className={netProfitInputClass}
+                  />
+                  <span className="text-caption-md text-text-muted">원</span>
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    disabled={!isNetProfitDirty}
+                    loading={isSavingNetProfit}
+                    onClick={handleSaveNetProfit}
+                  >
+                    저장
+                  </Button>
                 </dd>
               </div>
               <div>
