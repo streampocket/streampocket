@@ -10,7 +10,7 @@ export function RevenueSettings() {
       </CardHeader>
       <CardBody>
         <p className="text-caption-sm text-text-muted">
-          네이버 수수료는 구매확정 시 네이버가 자동 계산하여 정산금에 반영됩니다.
+          네이버 수수료는 6.63%로 고정 적용되어 정산금·순이익에 반영됩니다.
         </p>
       </CardBody>
     </Card>
