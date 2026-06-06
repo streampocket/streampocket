@@ -5,6 +5,12 @@ export const STOCK_THRESHOLD_CRITICAL = 0;
 export const MANUAL_PRICE_DISCOUNT_RATE = 0.05;
 export const PAGE_SIZE = 20;
 export const PRODUCTS_PAGE_SIZE = 100;
+
+/** 멀티스토어 — 상품관리 스토어 필터 옵션 (value는 Prisma Store enum과 일치) */
+export const STORES = [
+  { value: "streampocket", label: "스트림포켓" },
+  { value: "pokemon_steam", label: "포켓몬스팀" },
+] as const;
 export const ORDER_POLL_INTERVAL_SECONDS = 300;
 export const INITIAL_LOOKBACK_MINUTES = 10;
 

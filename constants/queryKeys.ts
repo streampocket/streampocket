@@ -16,6 +16,10 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['products', params] as const,
     detail: (id: string) => ['products', id] as const,
   },
+  games: {
+    all: () => ['games'] as const,
+    list: (params?: Record<string, unknown>) => ['games', params] as const,
+  },
   accounts: {
     all: () => ['accounts'] as const,
     list: (params?: Record<string, unknown>) => ['accounts', params] as const,
