@@ -7,7 +7,7 @@ import type { BadgeVariant } from '@/components/ui/Badge'
 import { useOrders } from '@/hooks/useOrders'
 import { formatDate } from '@/lib/utils'
 import type { SteamOrderItem, FulfillmentStatus, Store } from '@/types/domain'
-import { useStoreParam } from '../_hooks/useStoreParam'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '대기', variant: 'yellow' },

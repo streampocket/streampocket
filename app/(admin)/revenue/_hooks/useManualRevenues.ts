@@ -18,6 +18,7 @@ export function useManualRevenues(params: ManualRevenueListParams) {
   const queryParams = new URLSearchParams()
   if (params.yearMonth) queryParams.set('yearMonth', params.yearMonth)
   if (params.dateOrder) queryParams.set('dateOrder', params.dateOrder)
+  if (params.store) queryParams.set('store', params.store)
   if (params.page) queryParams.set('page', String(params.page))
   if (params.pageSize) queryParams.set('pageSize', String(params.pageSize))
 

@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { useDashboardExtras } from '../_hooks/useDashboardExtras'
-import { useStoreParam } from '../_hooks/useStoreParam'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 function formatCurrency(value: number): string {
   return `${value.toLocaleString('ko-KR')}원`

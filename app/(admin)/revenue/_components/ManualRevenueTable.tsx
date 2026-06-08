@@ -9,18 +9,29 @@ import { useUpdateManualRevenue } from '../_hooks/useUpdateManualRevenue'
 import { useDeleteManualRevenue } from '../_hooks/useDeleteManualRevenue'
 import { ManualRevenueFormModal } from './ManualRevenueFormModal'
 import { formatMonthDay } from '@/lib/utils'
-import type { ManualRevenue } from '@/types/domain'
+import type { ManualRevenue, Store } from '@/types/domain'
 import type { ManualRevenueFormData, ManualRevenueListParams } from '../_types'
 
 function fmt(n: number): string {
   return n.toLocaleString('ko-KR')
 }
 
-type ManualRevenueTableProps = {
-  yearMonth: string
+// 행 왼쪽 색띠로 사업 귀속 구분 — 스트림포켓=파랑, 포켓몬스팀=빨강, 공통(null)=회색.
+// (Tailwind JIT 때문에 클래스 문자열은 리터럴로 둠)
+const ROW_ACCENT: Record<Store, string> = {
+  streampocket: 'border-l-[#3b82f6]',
+  pokemon_steam: 'border-l-[#ef4444]',
+}
+function rowAccentClass(store: Store | null): string {
+  return `border-l-4 ${store ? ROW_ACCENT[store] : 'border-l-[#9ca3af]'}`
 }
 
-export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
+type ManualRevenueTableProps = {
+  yearMonth: string
+  store: string
+}
+
+export function ManualRevenueTable({ yearMonth, store }: ManualRevenueTableProps) {
   const [page, setPage] = useState(1)
   const pageSize = 20
 
@@ -29,6 +40,7 @@ export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
     dateOrder: 'desc',
     page,
     pageSize,
+    ...(store === 'streampocket' || store === 'pokemon_steam' ? { store } : {}),
   }
 
   const { data, isLoading } = useManualRevenues(params)
@@ -106,7 +118,7 @@ export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
                   <tbody>
                     {items.map((item) => (
                       <tr key={item.id} className="border-b border-border last:border-0">
-                        <td className="px-3 py-2.5 text-text-primary">
+                        <td className={`px-3 py-2.5 text-text-primary ${rowAccentClass(item.store)}`}>
                           {formatMonthDay(item.date)}
                         </td>
                         <td className="px-3 py-2.5 text-right text-text-primary">
@@ -140,7 +152,7 @@ export function ManualRevenueTable({ yearMonth }: ManualRevenueTableProps) {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="rounded-lg border border-border bg-card-bg p-4"
+                    className={`rounded-lg border border-border bg-card-bg p-4 ${rowAccentClass(item.store)}`}
                   >
                     <div className="mb-1 flex items-center justify-between">
                       <span className="text-caption-md text-text-muted">

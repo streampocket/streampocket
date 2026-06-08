@@ -6,14 +6,15 @@ import { useExpenseSummary } from '../_hooks/useExpenseSummary'
 
 type RevenueSummaryProps = {
   yearMonth: string
+  store: string
 }
 
 function fmt(n: number): string {
   return `${n.toLocaleString('ko-KR')}원`
 }
 
-export function RevenueSummary({ yearMonth }: RevenueSummaryProps) {
-  const { data, isLoading } = useExpenseSummary(yearMonth)
+export function RevenueSummary({ yearMonth, store }: RevenueSummaryProps) {
+  const { data, isLoading } = useExpenseSummary(yearMonth, store)
 
   const loading = isLoading || !data
 

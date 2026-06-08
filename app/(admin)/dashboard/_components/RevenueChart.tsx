@@ -15,7 +15,7 @@ import type { NameType, ValueType } from 'recharts/types/component/DefaultToolti
 import type { TooltipContentProps } from 'recharts'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { useRevenueChart } from '../_hooks/useRevenueChart'
-import { useStoreParam } from '../_hooks/useStoreParam'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 type Days = 7 | 30 | 90
 

@@ -10,7 +10,7 @@ import { useUpdateExpense } from '../_hooks/useUpdateExpense'
 import { useDeleteExpense } from '../_hooks/useDeleteExpense'
 import { ExpenseFormModal } from './ExpenseFormModal'
 import { formatMonthDay } from '@/lib/utils'
-import type { Expense, ExpenseCategory, ExpensePayer } from '@/types/domain'
+import type { Expense, ExpenseCategory, ExpensePayer, Store } from '@/types/domain'
 import type { ExpenseFormData, ExpenseListParams } from '../_types'
 
 const CATEGORY_LABELS: Record<ExpenseCategory, string> = {
@@ -37,12 +37,23 @@ function fmt(n: number): string {
   return n.toLocaleString('ko-KR')
 }
 
+// 행 왼쪽 색띠로 사업 귀속 구분 — 스트림포켓=파랑, 포켓몬스팀=빨강, 공통(null)=회색.
+// (Tailwind JIT 때문에 클래스 문자열은 리터럴로 둠)
+const ROW_ACCENT: Record<Store, string> = {
+  streampocket: 'border-l-[#3b82f6]',
+  pokemon_steam: 'border-l-[#ef4444]',
+}
+function rowAccentClass(store: Store | null): string {
+  return `border-l-4 ${store ? ROW_ACCENT[store] : 'border-l-[#9ca3af]'}`
+}
+
 type ExpenseTableProps = {
   yearMonth: string
+  store: string
   onYearMonthChange: (ym: string) => void
 }
 
-export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps) {
+export function ExpenseTable({ yearMonth, store, onYearMonthChange }: ExpenseTableProps) {
   const [category, setCategory] = useState<ExpenseCategory | ''>('')
   const [page, setPage] = useState(1)
   const pageSize = 20
@@ -53,6 +64,7 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
     page,
     pageSize,
     ...(category ? { category } : {}),
+    ...(store === 'streampocket' || store === 'pokemon_steam' ? { store } : {}),
   }
 
   const { data, isLoading } = useExpenses(params)
@@ -158,7 +170,7 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                   <tbody>
                     {items.map((item) => (
                       <tr key={item.id} className="border-b border-border last:border-0">
-                        <td className="px-3 py-2.5 text-text-primary">
+                        <td className={`px-3 py-2.5 text-text-primary ${rowAccentClass(item.store)}`}>
                           {formatMonthDay(item.date)}
                         </td>
                         <td className="px-3 py-2.5 text-text-primary">
@@ -208,7 +220,7 @@ export function ExpenseTable({ yearMonth, onYearMonthChange }: ExpenseTableProps
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="rounded-lg border border-border bg-card-bg p-4"
+                    className={`rounded-lg border border-border bg-card-bg p-4 ${rowAccentClass(item.store)}`}
                   >
                     <div className="mb-1 flex items-center justify-between">
                       <span className="text-caption-md font-medium text-text-primary">

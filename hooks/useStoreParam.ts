@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation'
 
-/** 대시보드 위젯들이 공유하는 `?store=` 필터 값. 빈 문자열 = 전체(공통 포함). */
+/** URL `?store=` 필터 값을 읽는 공통 훅. 빈 문자열 = 전체(공통 포함). 대시보드·매출 페이지 공유. */
 export function useStoreParam(): string {
   const searchParams = useSearchParams()
   return searchParams.get('store') ?? ''

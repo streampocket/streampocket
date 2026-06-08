@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { StatCard } from '@/components/ui/StatCard'
 import { useDashboardStats } from '../_hooks/useDashboardStats'
-import { useStoreParam } from '../_hooks/useStoreParam'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 type Period = 'today' | 'week' | 'month' | 'all'
 

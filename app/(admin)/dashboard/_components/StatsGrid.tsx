@@ -2,7 +2,7 @@
 
 import { StatCard } from '@/components/ui/StatCard'
 import { useDashboardStats } from '../_hooks/useDashboardStats'
-import { useStoreParam } from '../_hooks/useStoreParam'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 export function StatsGrid() {
   const store = useStoreParam()

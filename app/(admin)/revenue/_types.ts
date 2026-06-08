@@ -4,6 +4,7 @@ export type ExpenseListParams = {
   category?: ExpenseCategory
   yearMonth?: string
   dateOrder?: 'asc' | 'desc'
+  store?: Store
   page?: number
   pageSize?: number
 }
@@ -21,11 +22,13 @@ export type ExpenseFormData = {
 
 export type ExpenseSummaryParams = {
   yearMonth?: string
+  store?: Store
 }
 
 export type ManualRevenueListParams = {
   yearMonth?: string
   dateOrder?: 'asc' | 'desc'
+  store?: Store
   page?: number
   pageSize?: number
 }
