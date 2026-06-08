@@ -35,7 +35,8 @@ const ROW_ACCENT: Record<'manual' | Store, string> = {
   pokemon_steam: 'border-l-[#ef4444]',
 }
 function rowAccentClass(order: SteamOrderItem): string {
-  const key = order.source === 'manual' ? 'manual' : order.store
+  // 수동=노랑. 네이버는 항상 store 값이 있으나 타입(Store|null) 충족 위해 streampocket 폴백.
+  const key = order.source === 'manual' ? 'manual' : order.store ?? 'streampocket'
   return `border-l-4 ${ROW_ACCENT[key]}`
 }
 

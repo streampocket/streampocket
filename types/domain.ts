@@ -50,7 +50,8 @@ export type SteamOrderItem = {
   productOrderId: string
   naverOrderId: string
   source: OrderSource
-  store: Store
+  // 수동주문은 스토어 무귀속(null). 네이버 주문은 항상 store 값 보유.
+  store: Store | null
   productId: string | null
   accountId: string | null
   productName: string

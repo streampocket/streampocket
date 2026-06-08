@@ -26,7 +26,8 @@ const ROW_ACCENT: Record<Store, string> = {
   pokemon_steam: 'border-l-[#ef4444]',
 }
 function rowAccentClass(order: SteamOrderItem): string {
-  return `border-l-4 ${ROW_ACCENT[order.store]}`
+  // 최근주문은 네이버 전용(항상 store 보유)이나 타입(Store|null) 충족 위해 streampocket 폴백.
+  return `border-l-4 ${ROW_ACCENT[order.store ?? 'streampocket']}`
 }
 
 export function RecentOrdersTable() {
