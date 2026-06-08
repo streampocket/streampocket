@@ -25,9 +25,10 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['accounts', params] as const,
   },
   dashboard: {
-    stats: (period?: string) => ['dashboard', 'stats', period] as const,
-    revenueChart: (days?: number) => ['dashboard', 'revenueChart', days] as const,
-    extras: () => ['dashboard', 'extras'] as const,
+    stats: (period?: string, store?: string) => ['dashboard', 'stats', period, store] as const,
+    revenueChart: (days?: number, store?: string) =>
+      ['dashboard', 'revenueChart', days, store] as const,
+    extras: (store?: string) => ['dashboard', 'extras', store] as const,
   },
   settings: {
     system: () => ['settings', 'system'] as const,

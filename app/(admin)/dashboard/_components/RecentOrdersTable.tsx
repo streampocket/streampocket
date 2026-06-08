@@ -4,12 +4,10 @@ import Link from 'next/link'
 import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import type { BadgeVariant } from '@/components/ui/Badge'
-import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
-import { QUERY_KEYS } from '@/constants/queryKeys'
+import { useOrders } from '@/hooks/useOrders'
 import { formatDate } from '@/lib/utils'
-import type { SteamOrderItem, FulfillmentStatus } from '@/types/domain'
-import type { PaginatedResponse } from '@/types/api'
+import type { SteamOrderItem, FulfillmentStatus, Store } from '@/types/domain'
+import { useStoreParam } from '../_hooks/useStoreParam'
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '대기', variant: 'yellow' },
@@ -21,14 +19,21 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   returned: { label: '반품', variant: 'purple' },
 }
 
+// 행 왼쪽 색띠로 스토어 한눈에 구분 — 스트림포켓=파랑, 포켓몬스팀=빨강 (최근주문은 네이버 전용).
+// (Tailwind JIT 때문에 클래스 문자열은 리터럴로 둠)
+const ROW_ACCENT: Record<Store, string> = {
+  streampocket: 'border-l-[#3b82f6]',
+  pokemon_steam: 'border-l-[#ef4444]',
+}
+function rowAccentClass(order: SteamOrderItem): string {
+  return `border-l-4 ${ROW_ACCENT[order.store]}`
+}
+
 export function RecentOrdersTable() {
-  const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.orders.list({ page: 1, pageSize: 5, source: 'naver' }),
-    queryFn: () =>
-      api.get<PaginatedResponse<SteamOrderItem>>(
-        '/steam/admin/orders?page=1&pageSize=5&source=naver',
-      ),
-  })
+  const storeParam = useStoreParam()
+  const store: Store | undefined =
+    storeParam === 'streampocket' || storeParam === 'pokemon_steam' ? storeParam : undefined
+  const { data, isLoading } = useOrders({ page: 1, pageSize: 5, source: 'naver', store })
 
   return (
     <Card>
@@ -68,7 +73,7 @@ export function RecentOrdersTable() {
                   const status = STATUS_MAP[order.fulfillmentStatus]
                   return (
                     <tr key={order.id} className="border-b border-border last:border-0 hover:bg-gray-50">
-                      <td className="px-5 py-3">
+                      <td className={`px-5 py-3 ${rowAccentClass(order)}`}>
                         <span className="font-mono text-caption-md text-text-secondary">
                           {order.productOrderId}
                         </span>
@@ -100,7 +105,7 @@ export function RecentOrdersTable() {
               return (
                 <div
                   key={order.id}
-                  className="rounded-lg border border-border bg-card-bg p-4"
+                  className={`rounded-lg border border-border bg-card-bg p-4 ${rowAccentClass(order)}`}
                 >
                   <div className="mb-1 flex items-center justify-between">
                     <span className="text-body-md font-medium text-text-primary">

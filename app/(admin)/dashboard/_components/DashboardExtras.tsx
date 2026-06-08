@@ -2,13 +2,15 @@
 
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { useDashboardExtras } from '../_hooks/useDashboardExtras'
+import { useStoreParam } from '../_hooks/useStoreParam'
 
 function formatCurrency(value: number): string {
   return `${value.toLocaleString('ko-KR')}원`
 }
 
 export function DashboardExtras() {
-  const { data, isLoading } = useDashboardExtras()
+  const store = useStoreParam()
+  const { data, isLoading } = useDashboardExtras(store)
 
   const ranking = data?.productRanking ?? []
   const maxRevenue = ranking.length > 0 ? ranking[0].totalRevenue : 0

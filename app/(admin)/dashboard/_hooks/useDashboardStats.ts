@@ -24,12 +24,12 @@ function mapResponse(raw: DashboardStatsResponse): DashboardStats {
   }
 }
 
-export function useDashboardStats(period: string = 'today') {
+export function useDashboardStats(period: string = 'today', store: string = '') {
   return useQuery({
-    queryKey: QUERY_KEYS.dashboard.stats(period),
+    queryKey: QUERY_KEYS.dashboard.stats(period, store),
     queryFn: () =>
       api.get<ApiResponse<DashboardStatsResponse>>(
-        `/steam/admin/dashboard/stats?period=${period}`,
+        `/steam/admin/dashboard/stats?period=${period}${store ? `&store=${store}` : ''}`,
       ),
     select: (res) => mapResponse(res.data),
     refetchInterval: 60_000,

@@ -15,6 +15,7 @@ import type { NameType, ValueType } from 'recharts/types/component/DefaultToolti
 import type { TooltipContentProps } from 'recharts'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { useRevenueChart } from '../_hooks/useRevenueChart'
+import { useStoreParam } from '../_hooks/useStoreParam'
 
 type Days = 7 | 30 | 90
 
@@ -52,7 +53,8 @@ function CustomTooltip({ active, payload, label }: TooltipContentProps<ValueType
 
 export function RevenueChart() {
   const [days, setDays] = useState<Days>(30)
-  const { data, isLoading } = useRevenueChart(days)
+  const store = useStoreParam()
+  const { data, isLoading } = useRevenueChart(days, store)
 
   return (
     <Card>

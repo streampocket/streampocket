@@ -187,6 +187,7 @@ export type Expense = {
   memo: string | null
   steamOrderItemId: string | null
   steamOrderItem: ExpenseSteamOrderItem | null
+  store: Store | null
   createdAt: string
   updatedAt: string
 }
@@ -217,6 +218,7 @@ export type ManualRevenue = {
   date: string
   amount: number
   memo: string | null
+  store: Store | null
   createdAt: string
   updatedAt: string
 }

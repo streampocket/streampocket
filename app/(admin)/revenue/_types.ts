@@ -1,4 +1,4 @@
-import type { ExpenseCategory, ExpensePayer } from '@/types/domain'
+import type { ExpenseCategory, ExpensePayer, Store } from '@/types/domain'
 
 export type ExpenseListParams = {
   category?: ExpenseCategory
@@ -15,6 +15,8 @@ export type ExpenseFormData = {
   amount: number
   memo?: string
   steamOrderItemId?: string | null
+  // 사업 귀속. null = 공통(전사). 주문연동 시 서버가 주문 store로 덮어씀.
+  store?: Store | null
 }
 
 export type ExpenseSummaryParams = {
@@ -32,4 +34,6 @@ export type ManualRevenueFormData = {
   date: string
   amount: number
   memo?: string
+  // 사업 귀속. null = 공통(전사).
+  store?: Store | null
 }

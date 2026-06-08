@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { formatDateOnly, getTodayStringKST } from '@/lib/utils'
-import type { ManualRevenue } from '@/types/domain'
+import { STORE_FORM_OPTIONS } from '@/constants/app'
+import type { ManualRevenue, Store } from '@/types/domain'
 import type { ManualRevenueFormData } from '../_types'
 
 type ManualRevenueFormModalProps = {
@@ -19,16 +20,19 @@ export function ManualRevenueFormModal({ isOpen, onClose, onSubmit, isPending, i
   const [date, setDate] = useState(getTodayStringKST())
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
+  const [store, setStore] = useState<'' | Store>('')
 
   useEffect(() => {
     if (item) {
       setDate(formatDateOnly(item.date))
       setAmount(String(item.amount))
       setMemo(item.memo ?? '')
+      setStore(item.store ?? '')
     } else {
       setDate(getTodayStringKST())
       setAmount('')
       setMemo('')
+      setStore('')
     }
   }, [item, isOpen])
 
@@ -39,6 +43,7 @@ export function ManualRevenueFormModal({ isOpen, onClose, onSubmit, isPending, i
       date,
       amount: parsedAmount,
       memo: memo || undefined,
+      store: store === '' ? null : store,
     })
   }
 
@@ -78,6 +83,26 @@ export function ManualRevenueFormModal({ isOpen, onClose, onSubmit, isPending, i
             placeholder="예: 50000"
             className="mt-1 w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-body-md text-text-primary focus:border-brand focus:outline-none"
           />
+        </div>
+        <div>
+          <label className="text-body-md text-text-secondary">스토어 (사업 귀속)</label>
+          <select
+            value={store}
+            onChange={(e) =>
+              setStore(
+                e.target.value === 'streampocket' || e.target.value === 'pokemon_steam'
+                  ? e.target.value
+                  : '',
+              )
+            }
+            className="mt-1 w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-body-md text-text-primary focus:border-brand focus:outline-none"
+          >
+            {STORE_FORM_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="text-body-md text-text-secondary">메모 (선택)</label>

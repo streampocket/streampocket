@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { formatDateOnly, getTodayStringKST } from '@/lib/utils'
+import { STORE_FORM_OPTIONS } from '@/constants/app'
 import type {
   Expense,
   ExpenseCategory,
   ExpensePayer,
   ExpenseSteamOrderItem,
+  Store,
 } from '@/types/domain'
 import type { ExpenseFormData } from '../_types'
 import { OrderPicker } from './OrderPicker'
@@ -39,6 +41,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
   const [payer, setPayer] = useState<ExpensePayer>('song_donggeon')
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
+  const [store, setStore] = useState<'' | Store>('')
   const [linkedOrderId, setLinkedOrderId] = useState<string | null>(null)
   const [linkedOrder, setLinkedOrder] = useState<ExpenseSteamOrderItem | null>(null)
 
@@ -49,6 +52,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
       setPayer(expense.payer)
       setAmount(String(expense.amount))
       setMemo(expense.memo ?? '')
+      setStore(expense.store ?? '')
       setLinkedOrderId(expense.steamOrderItemId ?? null)
       setLinkedOrder(expense.steamOrderItem ?? null)
     } else {
@@ -57,6 +61,7 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
       setPayer('song_donggeon')
       setAmount('')
       setMemo('')
+      setStore('')
       setLinkedOrderId(null)
       setLinkedOrder(null)
     }
@@ -82,6 +87,8 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
     }
   }
 
+  const isLinked = category === 'game_purchase' && linkedOrderId !== null
+
   const handleSubmit = () => {
     const parsedAmount = parseInt(amount, 10)
     if (isNaN(parsedAmount) || parsedAmount < 0) return
@@ -92,6 +99,8 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
       amount: parsedAmount,
       memo: memo || undefined,
       steamOrderItemId: category === 'game_purchase' ? linkedOrderId : null,
+      // 주문연동 비용은 서버가 주문 store로 결정하므로 null 전송. 독립 비용만 선택값('' = 공통 → null).
+      store: isLinked ? null : store === '' ? null : store,
     })
   }
 
@@ -172,6 +181,32 @@ export function ExpenseFormModal({ isOpen, onClose, onSubmit, isPending, expense
             </div>
           </div>
         ) : null}
+        {isLinked ? (
+          <p className="text-caption-md text-text-muted">
+            연결된 주문의 스토어로 자동 분류됩니다.
+          </p>
+        ) : (
+          <div>
+            <label className="text-body-md text-text-secondary">스토어 (사업 귀속)</label>
+            <select
+              value={store}
+              onChange={(e) =>
+                setStore(
+                  e.target.value === 'streampocket' || e.target.value === 'pokemon_steam'
+                    ? e.target.value
+                    : '',
+                )
+              }
+              className="mt-1 w-full rounded-lg border border-border bg-card-bg px-3 py-2 text-body-md text-text-primary focus:border-brand focus:outline-none"
+            >
+              {STORE_FORM_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div>
           <label className="text-body-md text-text-secondary">메모 (선택)</label>
           <input

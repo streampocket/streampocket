@@ -17,6 +17,13 @@ export const STORE_META = {
   streampocket: { label: "스트림포켓", badgeVariant: "blue" },
   pokemon_steam: { label: "포켓몬스팀", badgeVariant: "red" },
 } as const;
+
+/** 비용/수동매출 입력 폼의 사업 귀속 선택 옵션. value "" = 공통(전사). */
+export const STORE_FORM_OPTIONS = [
+  { value: "", label: "공통(전사)" },
+  { value: "streampocket", label: "스트림포켓" },
+  { value: "pokemon_steam", label: "포켓몬스팀" },
+] as const;
 export const ORDER_POLL_INTERVAL_SECONDS = 300;
 export const INITIAL_LOOKBACK_MINUTES = 10;
 
