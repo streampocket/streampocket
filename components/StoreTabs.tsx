@@ -2,24 +2,32 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import type { GameStoreCounts } from '../_types'
+import { STORE_META } from '@/constants/app'
+
+/** 스토어 필터 카운트 (선택). 페이지마다 제공 여부가 다름. */
+export type StoreTabCounts = {
+  total?: number
+  streampocket?: number
+  pokemon_steam?: number
+}
 
 type StoreTab = {
   value: '' | 'streampocket' | 'pokemon_steam'
   label: string
-  countKey: keyof GameStoreCounts
+  countKey: keyof StoreTabCounts
 }
 
 const TABS: StoreTab[] = [
   { value: '', label: '전체', countKey: 'total' },
-  { value: 'streampocket', label: '스트림포켓', countKey: 'streampocket' },
-  { value: 'pokemon_steam', label: '포켓몬스팀', countKey: 'pokemon_steam' },
+  { value: 'streampocket', label: STORE_META.streampocket.label, countKey: 'streampocket' },
+  { value: 'pokemon_steam', label: STORE_META.pokemon_steam.label, countKey: 'pokemon_steam' },
 ]
 
 type StoreTabsProps = {
-  counts?: GameStoreCounts
+  counts?: StoreTabCounts
 }
 
+/** 멀티스토어 공통 필터 탭 — URL `?store=` 쿼리로 동작. 주문/상품/대시보드/매출에서 재사용. */
 export function StoreTabs({ counts }: StoreTabsProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -45,9 +53,7 @@ export function StoreTabs({ counts }: StoreTabsProps) {
             onClick={() => handleSelect(tab.value)}
             className={cn(
               'text-caption-md rounded-lg px-3 py-1.5 font-semibold transition-colors',
-              isActive
-                ? 'bg-brand text-white'
-                : 'bg-card-bg text-text-secondary hover:bg-gray-100',
+              isActive ? 'bg-brand text-white' : 'bg-card-bg text-text-secondary hover:bg-gray-100',
             )}
           >
             {tab.label}

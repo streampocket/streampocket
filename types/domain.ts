@@ -50,6 +50,7 @@ export type SteamOrderItem = {
   productOrderId: string
   naverOrderId: string
   source: OrderSource
+  store: Store
   productId: string | null
   accountId: string | null
   productName: string
@@ -88,6 +89,7 @@ export type OrderListParams = {
   excludeStatuses?: FulfillmentStatus[]
   excludeWithExpense?: boolean
   source?: OrderSource | ''
+  store?: Store | ''
   page?: number
   pageSize?: number
 }

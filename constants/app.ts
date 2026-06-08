@@ -11,6 +11,12 @@ export const STORES = [
   { value: "streampocket", label: "스트림포켓" },
   { value: "pokemon_steam", label: "포켓몬스팀" },
 ] as const;
+
+/** 스토어별 라벨 + 뱃지 색 (스트림포켓=파랑, 포켓몬스팀=빨강). 뱃지/탭 공통 사용. */
+export const STORE_META = {
+  streampocket: { label: "스트림포켓", badgeVariant: "blue" },
+  pokemon_steam: { label: "포켓몬스팀", badgeVariant: "red" },
+} as const;
 export const ORDER_POLL_INTERVAL_SECONDS = 300;
 export const INITIAL_LOOKBACK_MINUTES = 10;
 
