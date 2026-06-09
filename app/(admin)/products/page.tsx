@@ -7,6 +7,7 @@ import { PRODUCTS_PAGE_SIZE, STORES } from '@/constants/app'
 import { StoreTabs } from '@/components/StoreTabs'
 import { GameCard } from './_components/GameCard'
 import { GameEditModal } from './_components/GameEditModal'
+import { GameMergeModal } from './_components/GameMergeModal'
 import { useGames } from './_hooks/useGames'
 import { useSyncGames } from './_hooks/useSyncGames'
 import type { SteamGame, Store } from '@/types/domain'
@@ -20,6 +21,7 @@ function GamesContent() {
   const router = useRouter()
   const pathname = usePathname()
   const [editingGame, setEditingGame] = useState<SteamGame | null>(null)
+  const [mergingGame, setMergingGame] = useState<SteamGame | null>(null)
   const [search, setSearch] = useState(searchParams.get('search') ?? '')
 
   const storeParam = searchParams.get('store') ?? ''
@@ -80,7 +82,12 @@ function GamesContent() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {data?.data.map((game) => (
-            <GameCard key={game.id} game={game} onEdit={setEditingGame} />
+            <GameCard
+              key={game.id}
+              game={game}
+              onEdit={setEditingGame}
+              onMerge={setMergingGame}
+            />
           ))}
         </div>
       )}
@@ -111,6 +118,10 @@ function GamesContent() {
 
       {editingGame && (
         <GameEditModal game={editingGame} onClose={() => setEditingGame(null)} />
+      )}
+
+      {mergingGame && (
+        <GameMergeModal source={mergingGame} onClose={() => setMergingGame(null)} />
       )}
     </>
   )
