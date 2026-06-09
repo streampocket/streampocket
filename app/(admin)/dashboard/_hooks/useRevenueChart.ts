@@ -4,12 +4,12 @@ import { QUERY_KEYS } from '@/constants/queryKeys'
 import type { RevenueChartItem } from '@/types/domain'
 import type { ApiResponse } from '@/types/api'
 
-export function useRevenueChart(days: number = 30) {
+export function useRevenueChart(days: number = 30, store: string = '') {
   return useQuery({
-    queryKey: QUERY_KEYS.dashboard.revenueChart(days),
+    queryKey: QUERY_KEYS.dashboard.revenueChart(days, store),
     queryFn: () =>
       api.get<ApiResponse<RevenueChartItem[]>>(
-        `/steam/admin/dashboard/revenue-chart?days=${days}`,
+        `/steam/admin/dashboard/revenue-chart?days=${days}${store ? `&store=${store}` : ''}`,
       ),
     select: (res) => res.data,
     refetchInterval: 300_000,

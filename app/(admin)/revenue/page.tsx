@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { RevenuePageClient } from './_components/RevenuePageClient'
 
 export const metadata: Metadata = {
@@ -6,5 +7,9 @@ export const metadata: Metadata = {
 }
 
 export default function RevenuePage() {
-  return <RevenuePageClient />
+  return (
+    <Suspense>
+      <RevenuePageClient />
+    </Suspense>
+  )
 }

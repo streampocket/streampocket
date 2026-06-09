@@ -17,6 +17,12 @@ export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled' | 'ma
 /** 상품 상태 (Prisma ProductStatus 기준) */
 export type ProductStatus = 'draft' | 'active' | 'inactive'
 
+/** 스토어 구분 (Prisma Store 기준) */
+export type Store = 'streampocket' | 'pokemon_steam'
+
+/** 상품 타입 (Prisma SteamProductType 기준) */
+export type SteamProductType = 'AA' | 'NA' | 'BG'
+
 /** 발송 채널 */
 export type DeliveryChannel = 'alimtalk'
 
@@ -44,6 +50,8 @@ export type SteamOrderItem = {
   productOrderId: string
   naverOrderId: string
   source: OrderSource
+  // 수동주문은 스토어 무귀속(null). 네이버 주문은 항상 store 값 보유.
+  store: Store | null
   productId: string | null
   accountId: string | null
   productName: string
@@ -82,6 +90,7 @@ export type OrderListParams = {
   excludeStatuses?: FulfillmentStatus[]
   excludeWithExpense?: boolean
   source?: OrderSource | ''
+  store?: Store | ''
   page?: number
   pageSize?: number
 }
@@ -98,7 +107,7 @@ export type OrderStatusCounts = {
   returned: number
 }
 
-/** 스팀 상품 */
+/** 스팀 상품 (레거시 — 계정관리 페이지에서 사용) */
 export type SteamProduct = {
   id: string
   name: string
@@ -108,6 +117,31 @@ export type SteamProduct = {
   discountPriceMobile: number | null
   status: ProductStatus
   stockCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+/** 스토어별 리스팅 (한 게임의 스토어별 네이버 상품) */
+export type StoreListing = {
+  id: string
+  store: Store
+  gameId: string
+  naverProductId: string
+  price: number | null
+  discountPricePc: number | null
+  discountPriceMobile: number | null
+  status: ProductStatus
+  createdAt: string
+  updatedAt: string
+}
+
+/** 게임 마스터 (멀티스토어 공통 단위, 공유 재고) */
+export type SteamGame = {
+  id: string
+  name: string
+  productType: SteamProductType
+  stockCount: number
+  listings: StoreListing[]
   createdAt: string
   updatedAt: string
 }
@@ -154,6 +188,7 @@ export type Expense = {
   memo: string | null
   steamOrderItemId: string | null
   steamOrderItem: ExpenseSteamOrderItem | null
+  store: Store | null
   createdAt: string
   updatedAt: string
 }
@@ -184,6 +219,7 @@ export type ManualRevenue = {
   date: string
   amount: number
   memo: string | null
+  store: Store | null
   createdAt: string
   updatedAt: string
 }

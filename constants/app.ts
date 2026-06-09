@@ -5,6 +5,25 @@ export const STOCK_THRESHOLD_CRITICAL = 0;
 export const MANUAL_PRICE_DISCOUNT_RATE = 0.05;
 export const PAGE_SIZE = 20;
 export const PRODUCTS_PAGE_SIZE = 100;
+
+/** 멀티스토어 — 상품관리 스토어 필터 옵션 (value는 Prisma Store enum과 일치) */
+export const STORES = [
+  { value: "streampocket", label: "스트림포켓" },
+  { value: "pokemon_steam", label: "포켓몬스팀" },
+] as const;
+
+/** 스토어별 라벨 + 뱃지 색 (스트림포켓=파랑, 포켓몬스팀=빨강). 뱃지/탭 공통 사용. */
+export const STORE_META = {
+  streampocket: { label: "스트림포켓", badgeVariant: "blue" },
+  pokemon_steam: { label: "포켓몬스팀", badgeVariant: "red" },
+} as const;
+
+/** 비용/수동매출 입력 폼의 사업 귀속 선택 옵션. value "" = 공통(전사). */
+export const STORE_FORM_OPTIONS = [
+  { value: "", label: "공통(전사)" },
+  { value: "streampocket", label: "스트림포켓" },
+  { value: "pokemon_steam", label: "포켓몬스팀" },
+] as const;
 export const ORDER_POLL_INTERVAL_SECONDS = 300;
 export const INITIAL_LOOKBACK_MINUTES = 10;
 

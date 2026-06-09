@@ -2,9 +2,11 @@
 
 import { StatCard } from '@/components/ui/StatCard'
 import { useDashboardStats } from '../_hooks/useDashboardStats'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 export function StatsGrid() {
-  const { data, isLoading } = useDashboardStats()
+  const store = useStoreParam()
+  const { data, isLoading } = useDashboardStats('today', store)
 
   const stats = [
     {

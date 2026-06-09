@@ -3,9 +3,17 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { PAGE_SIZE } from '@/constants/app'
-import type { FulfillmentStatus, OrderStatusCounts } from '@/types/domain'
+import { PAGE_SIZE, STORE_META } from '@/constants/app'
+import type { FulfillmentStatus, OrderSource, OrderStatusCounts, Store } from '@/types/domain'
 import { useOrders } from '@/hooks/useOrders'
+
+// 출처/스토어 통합 필터 탭 — 색띠(수동=노랑, 스트림=파랑, 포켓=빨강)와 1:1.
+const VIEW_TABS: { key: string; label: string; store: '' | Store; source: '' | OrderSource }[] = [
+  { key: 'all', label: '전체', store: '', source: '' },
+  { key: 'streampocket', label: STORE_META.streampocket.label, store: 'streampocket', source: 'naver' },
+  { key: 'pokemon_steam', label: STORE_META.pokemon_steam.label, store: 'pokemon_steam', source: 'naver' },
+  { key: 'manual', label: '수동', store: '', source: 'manual' },
+]
 
 const STATUS_OPTIONS: {
   value: FulfillmentStatus | ''
@@ -56,14 +64,27 @@ export function OrdersFilterBar() {
   const currentTo = searchParams.get('to') ?? ''
   const currentStatus = searchParams.get('status') ?? ''
   const currentReceiverName = searchParams.get('receiverName') ?? ''
+  const currentStore = searchParams.get('store') ?? ''
+  const currentSource = searchParams.get('source') ?? ''
   const currentPage = Number(searchParams.get('page') ?? 1)
   const [nameInput, setNameInput] = useState(currentReceiverName)
+
+  const currentView =
+    currentSource === 'manual'
+      ? 'manual'
+      : currentStore === 'streampocket'
+        ? 'streampocket'
+        : currentStore === 'pokemon_steam'
+          ? 'pokemon_steam'
+          : 'all'
 
   const { data } = useOrders({
     status: (currentStatus as FulfillmentStatus) || undefined,
     from: currentFrom || undefined,
     to: currentTo || undefined,
     receiverName: currentReceiverName || undefined,
+    store: (currentStore as Store) || undefined,
+    source: (currentSource as OrderSource) || undefined,
     page: currentPage,
     pageSize: PAGE_SIZE,
   })
@@ -100,7 +121,24 @@ export function OrdersFilterBar() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card-bg p-4">
+    <div className="space-y-3 rounded-xl border border-border bg-card-bg p-4">
+      <nav className="flex flex-wrap gap-2">
+        {VIEW_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => updateParams({ store: tab.store, source: tab.source })}
+            className={`text-caption-md rounded-lg px-3 py-1.5 font-semibold transition-colors ${
+              currentView === tab.key
+                ? 'bg-brand text-white'
+                : 'bg-card-bg text-text-secondary hover:bg-gray-100'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+      <div className="flex flex-wrap items-center gap-3">
       <div className="flex flex-wrap items-center gap-1.5">
         {STATUS_OPTIONS.map((opt) => (
           <button
@@ -162,6 +200,7 @@ export function OrdersFilterBar() {
           초기화
         </Button>
       )}
+      </div>
     </div>
   )
 }

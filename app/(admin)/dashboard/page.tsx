@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
+import { StoreTabs } from '@/components/StoreTabs'
 import { StatsGrid } from './_components/StatsGrid'
 import { RevenueStats } from './_components/RevenueStats'
 import { RevenueChart } from './_components/RevenueChart'
@@ -12,15 +14,29 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <div className="space-y-6">
-      <RevenueStats />
+      <Suspense>
+        <StoreTabs />
+      </Suspense>
 
-      <StatsGrid />
+      <Suspense>
+        <RevenueStats />
+      </Suspense>
 
-      <RevenueChart />
+      <Suspense>
+        <StatsGrid />
+      </Suspense>
 
-      <DashboardExtras />
+      <Suspense>
+        <RevenueChart />
+      </Suspense>
 
-      <RecentOrdersTable />
+      <Suspense>
+        <DashboardExtras />
+      </Suspense>
+
+      <Suspense>
+        <RecentOrdersTable />
+      </Suspense>
     </div>
   )
 }

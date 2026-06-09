@@ -13,7 +13,7 @@ import { ManualOrderDetailModal } from './ManualOrderDetailModal'
 import { useOrders } from '@/hooks/useOrders'
 import { formatDate } from '@/lib/utils'
 import { PAGE_SIZE } from '@/constants/app'
-import type { FulfillmentStatus, OrderSource, SteamOrderItem } from '@/types/domain'
+import type { FulfillmentStatus, OrderSource, SteamOrderItem, Store } from '@/types/domain'
 
 const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVariant }> = {
   pending: { label: '대기', variant: 'yellow' },
@@ -26,6 +26,19 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
 }
 
 type SelectedOrder = { id: string; source: OrderSource }
+
+// 행 왼쪽 색띠로 출처/스토어 한눈에 구분 — 수동=노랑, 스트림포켓=파랑, 포켓몬스팀=빨강.
+// (Tailwind JIT 때문에 클래스 문자열은 리터럴로 둠)
+const ROW_ACCENT: Record<'manual' | Store, string> = {
+  manual: 'border-l-[#FEE500]',
+  streampocket: 'border-l-[#3b82f6]',
+  pokemon_steam: 'border-l-[#ef4444]',
+}
+function rowAccentClass(order: SteamOrderItem): string {
+  // 수동=노랑. 네이버는 항상 store 값이 있으나 타입(Store|null) 충족 위해 streampocket 폴백.
+  const key = order.source === 'manual' ? 'manual' : order.store ?? 'streampocket'
+  return `border-l-4 ${ROW_ACCENT[key]}`
+}
 
 // 상품주문번호 — 수동 주문은 카카오 브랜드 노란색으로 구분
 function ProductOrderId({ order }: { order: SteamOrderItem }) {
@@ -50,9 +63,11 @@ export function OrdersTable() {
   const from = searchParams.get('from') || undefined
   const to = searchParams.get('to') || undefined
   const receiverName = searchParams.get('receiverName') || undefined
+  const store = (searchParams.get('store') as Store) || undefined
+  const source = (searchParams.get('source') as OrderSource) || undefined
   const page = Number(searchParams.get('page') ?? 1)
 
-  const { data, isLoading } = useOrders({ status, from, to, receiverName, page, pageSize: PAGE_SIZE })
+  const { data, isLoading } = useOrders({ status, from, to, receiverName, store, source, page, pageSize: PAGE_SIZE })
 
   return (
     <>
@@ -105,7 +120,7 @@ export function OrdersTable() {
                         key={order.id}
                         className="border-b border-border last:border-0 hover:bg-gray-50"
                       >
-                        <td className="px-5 py-3">
+                        <td className={`px-5 py-3 ${rowAccentClass(order)}`}>
                           <ProductOrderId order={order} />
                         </td>
                         <td className="text-body-md max-w-40 truncate px-5 py-3 text-text-primary">
@@ -163,10 +178,10 @@ export function OrdersTable() {
                     key={order.id}
                     type="button"
                     onClick={() => setSelected({ id: order.id, source: order.source })}
-                    className="w-full rounded-lg border border-border bg-card-bg p-4 text-left transition-colors hover:bg-gray-50"
+                    className={`w-full rounded-lg border border-border ${rowAccentClass(order)} bg-card-bg p-4 text-left transition-colors hover:bg-gray-50`}
                   >
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="text-body-md font-medium text-text-primary">
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <span className="text-body-md flex-1 truncate font-medium text-text-primary">
                         {order.productName}
                       </span>
                       <Badge variant={orderStatus.variant}>{orderStatus.label}</Badge>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { StatCard } from '@/components/ui/StatCard'
 import { useDashboardStats } from '../_hooks/useDashboardStats'
+import { useStoreParam } from '@/hooks/useStoreParam'
 
 type Period = 'today' | 'week' | 'month' | 'all'
 
@@ -21,7 +22,8 @@ function formatCurrency(value: number): string {
 
 export function RevenueStats() {
   const [period, setPeriod] = useState<Period>('all')
-  const { data, isLoading } = useDashboardStats(period)
+  const store = useStoreParam()
+  const { data, isLoading } = useDashboardStats(period, store)
 
   const revenue = data?.revenue
 
