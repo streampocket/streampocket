@@ -37,14 +37,14 @@ function fmt(n: number): string {
   return n.toLocaleString('ko-KR')
 }
 
-// 행 왼쪽 색띠로 사업 귀속 구분 — 스트림포켓=파랑, 포켓몬스팀=빨강, 공통(null)=회색.
+// 행 왼쪽 색띠로 사업 귀속 구분 — 공통(null)=노랑, 스트림포켓=파랑, 포켓몬스팀=빨강.
 // (Tailwind JIT 때문에 클래스 문자열은 리터럴로 둠)
 const ROW_ACCENT: Record<Store, string> = {
   streampocket: 'border-l-[#3b82f6]',
   pokemon_steam: 'border-l-[#ef4444]',
 }
 function rowAccentClass(store: Store | null): string {
-  return `border-l-4 ${store ? ROW_ACCENT[store] : 'border-l-[#9ca3af]'}`
+  return `border-l-4 ${store ? ROW_ACCENT[store] : 'border-l-[#FEE500]'}`
 }
 
 type ExpenseTableProps = {
