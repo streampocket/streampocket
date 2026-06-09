@@ -131,6 +131,8 @@ export type StoreListing = {
   discountPricePc: number | null
   discountPriceMobile: number | null
   status: ProductStatus
+  // 네이버 실제 판매상태(statusType: SALE/OUTOFSTOCK/SUSPENSION/WAIT/CLOSE 등). null = 미동기화.
+  naverSaleStatus: string | null
   createdAt: string
   updatedAt: string
 }

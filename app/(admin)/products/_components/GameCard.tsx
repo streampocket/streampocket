@@ -1,24 +1,39 @@
+'use client'
+
 import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
-import type { SteamGame, StoreListing, ProductStatus, SteamProductType } from '@/types/domain'
+import type { SteamGame, StoreListing, SteamProductType } from '@/types/domain'
 import {
   STOCK_THRESHOLD_WARN,
   STOCK_THRESHOLD_CRITICAL,
   MANUAL_PRICE_DISCOUNT_RATE,
   STORES,
 } from '@/constants/app'
+import { useSplitListing } from '../_hooks/useSplitListing'
 
 type GameCardProps = {
   game: SteamGame
   onEdit: (game: SteamGame) => void
+  onMerge: (game: SteamGame) => void
 }
 
-const STATUS_MAP: Record<ProductStatus, { label: string; variant: BadgeVariant }> = {
-  active: { label: '판매 중', variant: 'green' },
-  draft: { label: '임시저장', variant: 'gray' },
-  inactive: { label: '판매 중지', variant: 'red' },
+// 네이버 실제 판매상태(statusType) → 뱃지. 미정의 값은 원문 노출, null은 상태미상.
+const SALE_STATUS_MAP: Record<string, { label: string; variant: BadgeVariant }> = {
+  SALE: { label: '판매중', variant: 'green' },
+  OUTOFSTOCK: { label: '품절', variant: 'yellow' },
+  SUSPENSION: { label: '판매중지', variant: 'red' },
+  WAIT: { label: '판매대기', variant: 'gray' },
+  CLOSE: { label: '판매종료', variant: 'gray' },
+  PROHIBITION: { label: '판매금지', variant: 'red' },
+  UNADMISSION: { label: '승인대기', variant: 'gray' },
+  REJECTION: { label: '승인거부', variant: 'red' },
+}
+
+function saleStatusBadge(status: string | null): { label: string; variant: BadgeVariant } {
+  if (!status) return { label: '상태미상', variant: 'gray' }
+  return SALE_STATUS_MAP[status] ?? { label: status, variant: 'gray' }
 }
 
 const TYPE_MAP: Record<SteamProductType, { label: string; variant: BadgeVariant }> = {
@@ -45,8 +60,18 @@ function discountText(listing: StoreListing): string | null {
   return parts.join(' · ')
 }
 
-function ListingRow({ listing }: { listing: StoreListing }) {
-  const status = STATUS_MAP[listing.status]
+function ListingRow({
+  listing,
+  canSplit,
+  onSplit,
+  splitting,
+}: {
+  listing: StoreListing
+  canSplit: boolean
+  onSplit: (listingId: string) => void
+  splitting: boolean
+}) {
+  const status = saleStatusBadge(listing.naverSaleStatus)
   const manualPrice =
     listing.price != null
       ? Math.round(listing.price * (1 - MANUAL_PRICE_DISCOUNT_RATE))
@@ -59,7 +84,19 @@ function ListingRow({ listing }: { listing: StoreListing }) {
         <span className="text-caption-md font-semibold text-text-primary">
           {STORE_LABEL[listing.store] ?? listing.store}
         </span>
-        <Badge variant={status.variant}>{status.label}</Badge>
+        <div className="flex items-center gap-1.5">
+          <Badge variant={status.variant}>{status.label}</Badge>
+          {canSplit && (
+            <button
+              type="button"
+              disabled={splitting}
+              onClick={() => onSplit(listing.id)}
+              className="text-caption-sm text-text-muted hover:text-danger disabled:opacity-50"
+            >
+              분리
+            </button>
+          )}
+        </div>
       </div>
       <div className="text-caption-md text-text-secondary">
         판매가 {formatWon(listing.price)}
@@ -73,7 +110,9 @@ function ListingRow({ listing }: { listing: StoreListing }) {
   )
 }
 
-export function GameCard({ game, onEdit }: GameCardProps) {
+export function GameCard({ game, onEdit, onMerge }: GameCardProps) {
+  const split = useSplitListing()
+  const canSplit = game.listings.length >= 2
   const type = TYPE_MAP[game.productType]
   const isStockType = game.productType === 'NA'
   const stockVariant: BadgeVariant =
@@ -106,7 +145,13 @@ export function GameCard({ game, onEdit }: GameCardProps) {
 
         <div className="mb-4 space-y-2">
           {game.listings.map((listing) => (
-            <ListingRow key={listing.id} listing={listing} />
+            <ListingRow
+              key={listing.id}
+              listing={listing}
+              canSplit={canSplit}
+              onSplit={(id) => split.mutate(id)}
+              splitting={split.isPending}
+            />
           ))}
           {missingStores.map((s) => (
             <div
@@ -118,14 +163,24 @@ export function GameCard({ game, onEdit }: GameCardProps) {
           ))}
         </div>
 
-        <Button
-          variant="secondary"
-          size="sm"
-          className="mt-auto w-full"
-          onClick={() => onEdit(game)}
-        >
-          게임 수정
-        </Button>
+        <div className="mt-auto flex gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex-1"
+            onClick={() => onEdit(game)}
+          >
+            게임 수정
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex-1"
+            onClick={() => onMerge(game)}
+          >
+            합치기
+          </Button>
+        </div>
       </CardBody>
     </Card>
   )
