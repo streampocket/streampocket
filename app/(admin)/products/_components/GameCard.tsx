@@ -2,7 +2,7 @@ import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
-import type { SteamGame, StoreListing, ProductStatus, SteamProductType } from '@/types/domain'
+import type { SteamGame, StoreListing, SteamProductType } from '@/types/domain'
 import {
   STOCK_THRESHOLD_WARN,
   STOCK_THRESHOLD_CRITICAL,
@@ -15,10 +15,21 @@ type GameCardProps = {
   onEdit: (game: SteamGame) => void
 }
 
-const STATUS_MAP: Record<ProductStatus, { label: string; variant: BadgeVariant }> = {
-  active: { label: '판매 중', variant: 'green' },
-  draft: { label: '임시저장', variant: 'gray' },
-  inactive: { label: '판매 중지', variant: 'red' },
+// 네이버 실제 판매상태(statusType) → 뱃지. 미정의 값은 원문 노출, null은 상태미상.
+const SALE_STATUS_MAP: Record<string, { label: string; variant: BadgeVariant }> = {
+  SALE: { label: '판매중', variant: 'green' },
+  OUTOFSTOCK: { label: '품절', variant: 'yellow' },
+  SUSPENSION: { label: '판매중지', variant: 'red' },
+  WAIT: { label: '판매대기', variant: 'gray' },
+  CLOSE: { label: '판매종료', variant: 'gray' },
+  PROHIBITION: { label: '판매금지', variant: 'red' },
+  UNADMISSION: { label: '승인대기', variant: 'gray' },
+  REJECTION: { label: '승인거부', variant: 'red' },
+}
+
+function saleStatusBadge(status: string | null): { label: string; variant: BadgeVariant } {
+  if (!status) return { label: '상태미상', variant: 'gray' }
+  return SALE_STATUS_MAP[status] ?? { label: status, variant: 'gray' }
 }
 
 const TYPE_MAP: Record<SteamProductType, { label: string; variant: BadgeVariant }> = {
@@ -46,7 +57,7 @@ function discountText(listing: StoreListing): string | null {
 }
 
 function ListingRow({ listing }: { listing: StoreListing }) {
-  const status = STATUS_MAP[listing.status]
+  const status = saleStatusBadge(listing.naverSaleStatus)
   const manualPrice =
     listing.price != null
       ? Math.round(listing.price * (1 - MANUAL_PRICE_DISCOUNT_RATE))
