@@ -143,7 +143,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
     order?.fulfillmentStatus === 'manual_review' ||
     order?.fulfillmentStatus === 'failed'
 
-  const reviewGameCount = order ? parseReviewGameCount(order.productName) : null
+  const reviewGameCount = order ? parseReviewGameCount(order.productName, order.store) : null
   const canSendReviewGame =
     order?.fulfillmentStatus === 'purchase_decided' &&
     order.reviewGameSentAt === null &&

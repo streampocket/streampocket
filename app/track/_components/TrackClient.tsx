@@ -6,7 +6,6 @@ import { Card, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { KAKAO_OPEN_CHAT_URL, NAVER_PAY_HISTORY_URL } from '@/constants/app'
 import { formatDate } from '@/lib/utils'
-import { parseReviewGameCount } from '@/lib/productType'
 import { useOrderTracking } from '../_hooks/useOrderTracking'
 import { resolveTrackView } from '../_types'
 import type { OrderTracking } from '../_types'
@@ -81,7 +80,7 @@ type TrackResultProps = {
 
 function TrackResult({ productOrderId, data }: TrackResultProps) {
   const view = resolveTrackView(data.fulfillmentStatus, data.completedAt)
-  const reviewGameCount = parseReviewGameCount(data.productName)
+  const reviewGameCount = data.reviewGameCount
 
   return (
     <Card>

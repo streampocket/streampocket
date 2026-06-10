@@ -10,6 +10,8 @@ export type OrderTracking = {
   estimatedCompletedAt: string | null
   /** 관리자/시스템이 발송완료 처리한 시각. 진행사항 완료(3단계) 판정 기준. */
   completedAt: string | null
+  /** 상품명에서 파싱한 리뷰게임 발송 개수 (스토어별 패턴은 백엔드가 판정). 없으면 null. */
+  reviewGameCount: number | null
 }
 
 /** 주문 상태를 구매자 화면 표현으로 변환한 결과 */
