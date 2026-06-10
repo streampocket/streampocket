@@ -4,19 +4,13 @@ import Link from "next/link";
 import { CopyFormButton } from "./_components/CopyFormButton";
 
 export const metadata: Metadata = {
-  title: "스팀 등록 안내 가이드 | 스트림포켓",
+  title: "스팀 등록 안내 가이드",
   description: "스팀 게임 코드 등록 전 필수 확인 안내입니다.",
 };
 
 export default function GuidePage() {
   return (
     <>
-      <header className="border-b bg-white px-4 py-4">
-        <div className="max-w-3xl mx-auto">
-          <span className="text-lg font-bold text-brand">스트림포켓</span>
-        </div>
-      </header>
-
       <main className="max-w-3xl mx-auto px-4 py-8 md:py-12 space-y-10">
         {/* 1. 히어로 */}
         <section>
@@ -408,7 +402,7 @@ export default function GuidePage() {
             보내드립니다.
           </div>
           <p className="text-xs text-gray-400 text-center">
-            스트림포켓 · 등록 전 필수 확인 안내
+            등록 전 필수 확인 안내
           </p>
         </div>
       </footer>
