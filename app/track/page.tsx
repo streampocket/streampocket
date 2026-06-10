@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { BRAND_NAME } from '@/constants/app'
 import { TrackClient } from './_components/TrackClient'
 
 const PAGE_TITLE = '주문 진행상황 조회'
@@ -7,14 +6,13 @@ const PAGE_DESCRIPTION =
   '상품주문번호를 입력하면 주문 처리 진행 상황을 실시간으로 확인할 수 있습니다.'
 
 export const metadata: Metadata = {
-  title: `${PAGE_TITLE} | ${BRAND_NAME}`,
+  title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,
   robots: { index: false, follow: false },
   openGraph: {
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
     url: '/track',
-    siteName: BRAND_NAME,
     type: 'website',
     locale: 'ko_KR',
   },
