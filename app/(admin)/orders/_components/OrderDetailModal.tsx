@@ -12,6 +12,7 @@ import { useAlimtalkTemplates } from '@/hooks/useAlimtalkTemplates'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useRetryOrder } from '../_hooks/useRetryOrder'
 import { useMarkInProgress } from '../_hooks/useMarkInProgress'
+import { useSyncNaverStatus } from '../_hooks/useSyncNaverStatus'
 import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
@@ -104,6 +105,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: alimtalkTemplates } = useAlimtalkTemplates()
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
   const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
+  const { mutate: syncNaverStatus, isPending: isSyncingNaverStatus } = useSyncNaverStatus()
   const { mutate: extendTime, isPending: isExtendingTime } = useExtendOrderTime()
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
@@ -247,6 +249,16 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
           <div className="flex items-center gap-2">
             <span className="text-body-md font-semibold text-text-primary">{order.productName}</span>
             {status && <Badge variant={status.variant}>{status.label}</Badge>}
+            {order.source === 'naver' && (
+              <Button
+                variant="secondary"
+                size="xs"
+                loading={isSyncingNaverStatus}
+                onClick={() => syncNaverStatus(order.id)}
+              >
+                네이버 재조회
+              </Button>
+            )}
           </div>
 
           {order.fulfillmentStatus === 'in_progress' && order.estimatedCompletedAt && (
