@@ -102,7 +102,8 @@ function DeliveryLogItem({
 
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
-  const { data: alimtalkTemplates } = useAlimtalkTemplates()
+  // 주문 스토어의 템플릿 목록으로 매칭해야 포켓몬스팀 주문도 템플릿명이 표시된다
+  const { data: alimtalkTemplates } = useAlimtalkTemplates(order?.store)
   const { mutate: retry, isPending: isRetrying } = useRetryOrder()
   const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
   const { mutate: syncNaverStatus, isPending: isSyncingNaverStatus } = useSyncNaverStatus()
