@@ -265,6 +265,7 @@ export type AlimtalkTemplate = {
 }
 
 export type AlimtalkSettings = {
+  store: Store
   enabled: boolean
   runtime: {
     apiKeyConfigured: boolean

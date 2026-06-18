@@ -34,7 +34,7 @@ export const QUERY_KEYS = {
     system: () => ['settings', 'system'] as const,
   },
   alimtalk: {
-    settings: () => ['alimtalk', 'settings'] as const,
+    settings: (store?: string) => ['alimtalk', 'settings', store] as const,
   },
   reviewCodes: {
     all: () => ['reviewCodes'] as const,
