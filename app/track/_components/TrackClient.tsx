@@ -11,6 +11,8 @@ import { resolveTrackView } from '../_types'
 import type { OrderTracking } from '../_types'
 import { OrderStepIndicator } from './OrderStepIndicator'
 import { EstimatedTimeCountdown } from './EstimatedTimeCountdown'
+import { CountryChangePromo } from './CountryChangePromo'
+import { GiftDeliveryPromo } from './GiftDeliveryPromo'
 
 export function TrackClient() {
   const [input, setInput] = useState('')
@@ -108,23 +110,32 @@ function TrackResult({ productOrderId, data }: TrackResultProps) {
 
         {view.kind === 'step' && (
           <>
+            {view.step === 1 && !view.done && (
+              <div className="mb-4 rounded-lg bg-brand-light px-4 py-3 text-center">
+                <p className="text-body-md font-semibold text-brand md:text-base">
+                  국가 변경은 대략 20분 정도 소요됩니다
+                </p>
+              </div>
+            )}
             {view.step === 2 && !view.done && data.estimatedCompletedAt && (
               <EstimatedTimeCountdown estimatedCompletedAt={data.estimatedCompletedAt} />
             )}
             <OrderStepIndicator currentStep={view.step} done={view.done} />
-            <p className="mt-5 text-center text-body-md font-semibold text-text-primary">
-              {view.done ? (
-                '처리가 완료되었습니다.'
-              ) : view.step === 1 ? (
-                <>
-                  스팀 국가 변경을 위해 저렴한 게임을 결제 후 환불하는 과정이니,
-                  <br />
-                  모르는 결제 내역이 보이더라도 안심하셔도 됩니다.
-                </>
-              ) : (
-                '게임 선물을 전송하고 있어요. 잠시만 기다려 주세요.'
-              )}
-            </p>
+            {(view.done || view.step === 1) && (
+              <p className="mt-5 text-center text-body-md font-semibold text-text-primary">
+                {view.done ? (
+                  '처리가 완료되었습니다.'
+                ) : (
+                  <>
+                    스팀 국가 변경을 위해 저렴한 게임을 결제 후 환불하는 과정이니,
+                    <br />
+                    모르는 결제 내역이 보이더라도 안심하셔도 됩니다.
+                  </>
+                )}
+              </p>
+            )}
+            {!view.done && view.step === 1 && <CountryChangePromo />}
+            {!view.done && view.step === 2 && <GiftDeliveryPromo />}
             {view.done && (
               <p className="mt-1 text-center text-body-md font-semibold text-text-primary">
                 꼭 구매확정 부탁드리겠습니다!
