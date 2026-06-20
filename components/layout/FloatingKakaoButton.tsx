@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { ADMIN_PATH_PREFIXES, KAKAO_PAYMENT_CHAT_URL } from '@/constants/app'
+import { ADMIN_PATH_PREFIXES, KAKAO_PAYMENT_CHAT_URL, TRACK_PATH } from '@/constants/app'
 import { KakaoTalkIcon } from '@/components/icons/KakaoTalkIcon'
 
 function isAdminPath(pathname: string | null): boolean {
@@ -15,6 +15,7 @@ export function FloatingKakaoButton() {
   const pathname = usePathname()
 
   if (isAdminPath(pathname)) return null
+  if (pathname === TRACK_PATH || pathname?.startsWith(`${TRACK_PATH}/`)) return null
 
   return (
     <a
