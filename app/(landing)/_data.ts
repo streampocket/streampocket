@@ -32,7 +32,7 @@ export const LANDING_STEPS: LandingStep[] = [
     id: 'browse',
     title: '1. 파티 둘러보기',
     description:
-      '드라마박스, 웨이브, 비글루 등 원하는 OTT의 모집 중인 파티를 확인하세요.',
+      '드라마박스, 드라마웨이브, 비글루 등 원하는 OTT의 모집 중인 파티를 확인하세요.',
   },
   {
     id: 'signup',
@@ -86,7 +86,7 @@ export const LANDING_FAQS: LandingFaq[] = [
     id: 'what-is-ottall',
     question: 'OTTALL은 어떤 서비스인가요?',
     answer:
-      'OTT 서비스를 함께 이용할 파티원을 매칭해주는 플랫폼입니다. 파티장이 파티를 개설하고 파티원을 모집하면, OTTALL이 안전하게 매칭을 도와드립니다.',
+      'OTTALL(오티티올)은 드라마박스, 드라마웨이브, 비글루, 릴숏, 넷숏 등 OTT멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게 이용하도록 파티원을 매칭해주는 플랫폼입니다. 파티장이 파티를 개설하고 파티원을 모집하면, OTTALL이 안전하게 매칭을 도와드립니다.',
   },
   {
     id: 'difference-faq',
