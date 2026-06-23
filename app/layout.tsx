@@ -9,7 +9,7 @@ const SITE_URL = 'https://ottall.com'
 
 export const metadata: Metadata = {
   title: { template: '%s | OTTALL', default: 'OTTALL' },
-  description: 'OTTALL(오티티올) - 쇼츠 드라마 OTT 공유 플랫폼',
+  description: 'OTTALL(오티티올)에서 드라마박스, 드라마웨이브, 비글루, 릴숏, 넷숏 등 OTT멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.',
   metadataBase: new URL(SITE_URL),
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? '',
