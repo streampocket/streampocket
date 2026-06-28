@@ -22,7 +22,7 @@ export function PopularProductsSection({
           </div>
           <Link
             href="/party"
-            className="text-sm font-bold text-brand transition-colors hover:text-brand-dark"
+            className="text-base font-bold text-brand transition-colors hover:text-brand-dark"
           >
             전체 파티 보기 →
           </Link>
