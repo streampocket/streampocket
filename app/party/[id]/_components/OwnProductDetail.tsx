@@ -24,7 +24,7 @@ import type { BadgeVariant } from '@/components/ui/Badge'
 
 const STATUS_MAP: Record<OwnProductStatus, { label: string; variant: BadgeVariant }> = {
   recruiting: { label: '모집중', variant: 'green' },
-  closed: { label: '닫힘', variant: 'red' },
+  closed: { label: '모집완료', variant: 'blue' },
   expired: { label: '만료', variant: 'gray' },
 }
 
