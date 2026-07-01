@@ -25,7 +25,7 @@ export function ApplyCompletedModal({
         <p className="text-body-md text-text-secondary">
           아래 카카오 채널로 결제 안내를 받아주세요.
           <br />
-          입금 확인 후 관리자가 승인하면 파티 참여가 확정됩니다.
+          입금 확인 후 관리자가 승인하면 파티 참여가 최종 확정됩니다.
         </p>
 
         <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-50 p-3 text-center">
@@ -47,6 +47,15 @@ export function ApplyCompletedModal({
               {totalAmount.toLocaleString()}원
             </p>
           </div>
+        </div>
+
+        <div className="space-y-2 rounded-lg border border-border bg-gray-50 p-3">
+          <p className="text-body-md font-semibold text-text-primary">
+            결제 및 상담 시간: <span className="text-brand">매일 오전 10:30 ~ 23:59</span>
+          </p>
+          <p className="text-caption-md text-text-muted">
+            상담 시간 외에도 담당자가 확인하는 대로 최대한 빠르게 처리해 드리니 편하게 문의 남겨주세요!
+          </p>
         </div>
 
         <a
