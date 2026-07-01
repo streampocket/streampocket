@@ -10,7 +10,7 @@ import { useAdminPartyDetail } from '../_hooks/useAdminPartyDetail'
 import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdatePartyStatus } from '../_hooks/useUpdatePartyStatus'
 import { PartyEditForm } from './PartyEditForm'
-import { PARTY_TYPE_META } from '@/constants/app'
+import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 
 type PartyDetailModalProps = {
   partyId: string | null
@@ -101,6 +101,12 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
               <span className="text-body-md w-20 shrink-0 text-text-muted">타입</span>
               <Badge variant={(PARTY_TYPE_META[party.partyType] ?? PARTY_TYPE_META.shared).variant}>
                 {(PARTY_TYPE_META[party.partyType] ?? PARTY_TYPE_META.shared).label}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-body-md w-20 shrink-0 text-text-muted">기간 방식</span>
+              <Badge variant={(PARTY_DURATION_MODE_META[party.durationMode] ?? PARTY_DURATION_MODE_META.countdown).variant}>
+                {(PARTY_DURATION_MODE_META[party.durationMode] ?? PARTY_DURATION_MODE_META.countdown).label}
               </Badge>
             </div>
             <InfoRow label="가격" value={`${formatPrice(party.price)}원`} />

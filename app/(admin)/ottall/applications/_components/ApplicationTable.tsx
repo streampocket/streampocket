@@ -6,7 +6,7 @@ import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { PartyApplicationStatus } from '@/types/domain'
 import type { AdminApplicationListItem } from '../_types'
-import { PARTY_TYPE_META } from '@/constants/app'
+import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 
 type ApplicationTableProps = {
   applications: AdminApplicationListItem[]
@@ -78,6 +78,7 @@ export function ApplicationTable({
               {applications.map((app) => {
                 const badge = STATUS_BADGE[app.status]
                 const typeBadge = PARTY_TYPE_META[app.product.partyType] ?? PARTY_TYPE_META.shared
+                const durationBadge = PARTY_DURATION_MODE_META[app.product.durationMode] ?? PARTY_DURATION_MODE_META.countdown
                 return (
                   <tr
                     key={app.id}
@@ -92,6 +93,7 @@ export function ApplicationTable({
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       <span className="inline-flex items-center gap-1.5">
                         <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                        <Badge variant={durationBadge.variant}>{durationBadge.label}</Badge>
                         {app.product.name}
                       </span>
                     </td>
@@ -125,6 +127,7 @@ export function ApplicationTable({
           {applications.map((app) => {
             const badge = STATUS_BADGE[app.status]
             const typeBadge = PARTY_TYPE_META[app.product.partyType] ?? PARTY_TYPE_META.shared
+            const durationBadge = PARTY_DURATION_MODE_META[app.product.durationMode] ?? PARTY_DURATION_MODE_META.countdown
             return (
               <button
                 key={app.id}
@@ -136,8 +139,9 @@ export function ApplicationTable({
                   <span className="text-body-md font-medium text-text-primary">{app.user.name}</span>
                   <Badge variant={badge.variant}>{badge.label}</Badge>
                 </div>
-                <p className="text-caption-md flex items-center gap-1.5 text-text-secondary">
+                <p className="text-caption-md flex flex-wrap items-center gap-1.5 text-text-secondary">
                   <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                  <Badge variant={durationBadge.variant}>{durationBadge.label}</Badge>
                   {app.product.name}
                 </p>
                 <p className="text-caption-md mt-1 text-text-secondary">

@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { QUERY_KEYS } from '@/constants/queryKeys'
-import type { OwnProduct, PartyType } from '@/types/domain'
+import type { OwnProduct, PartyType, PartyDurationMode } from '@/types/domain'
 
 export type UpdateAdminPartyInput = {
   name?: string
@@ -12,6 +12,7 @@ export type UpdateAdminPartyInput = {
   dailyDiscount?: number
   totalSlots?: number
   partyType?: PartyType
+  durationMode?: PartyDurationMode
   imagePath?: string | null
   notes?: string | null
   accountId?: string | null

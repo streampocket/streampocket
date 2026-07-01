@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
-import type { AdminPartyDetail, PartyType } from '@/types/domain'
+import type { AdminPartyDetail, PartyType, PartyDurationMode } from '@/types/domain'
 import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdateAdminParty } from '../_hooks/useUpdateAdminParty'
 import type { UpdateAdminPartyInput } from '../_hooks/useUpdateAdminParty'
 import { ImageSelector } from './ImageSelector'
-import { PARTY_TYPE_META } from '@/constants/app'
+import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
+import { cn } from '@/lib/utils'
 
 type PartyEditFormProps = {
   party: AdminPartyDetail
@@ -24,6 +25,7 @@ type FormState = {
   dailyDiscount: string
   totalSlots: string
   partyType: PartyType
+  durationMode: PartyDurationMode
   imagePath: string | null
   notes: string
   accountId: string
@@ -39,6 +41,7 @@ function buildInitial(party: AdminPartyDetail, accountId: string, accountPasswor
     dailyDiscount: String(party.dailyDiscount),
     totalSlots: String(party.totalSlots),
     partyType: party.partyType,
+    durationMode: party.durationMode,
     imagePath: party.imagePath,
     notes: party.notes ?? '',
     accountId,
@@ -109,6 +112,7 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
     if (dailyDiscount !== party.dailyDiscount) dirty.dailyDiscount = dailyDiscount
     if (totalSlots !== party.totalSlots) dirty.totalSlots = totalSlots
     if (form.partyType !== party.partyType) dirty.partyType = form.partyType
+    if (form.durationMode !== party.durationMode) dirty.durationMode = form.durationMode
     if (form.imagePath !== party.imagePath) dirty.imagePath = form.imagePath
     if (trimmedNotes !== (party.notes ?? '')) dirty.notes = trimmedNotes || null
     if (trimmedAccountId !== (credentials?.accountId ?? ''))
@@ -184,6 +188,29 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
           <option value="shared">{PARTY_TYPE_META.shared.label}</option>
           <option value="personal">{PARTY_TYPE_META.personal.label}</option>
         </select>
+      </Field>
+
+      <Field label="기간 방식" required>
+        <div className="flex gap-2">
+          {(['countdown', 'fixed'] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setForm((prev) => ({ ...prev, durationMode: mode }))}
+              className={cn(
+                'flex-1 rounded-full px-4 py-2 text-body-md font-medium transition-colors',
+                form.durationMode === mode
+                  ? 'bg-brand text-white'
+                  : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+              )}
+            >
+              {PARTY_DURATION_MODE_META[mode].label}
+            </button>
+          ))}
+        </div>
+        <span className="block text-caption-sm text-text-muted">
+          {PARTY_DURATION_MODE_META[form.durationMode].description}
+        </span>
       </Field>
 
       <div className="grid grid-cols-2 gap-3">

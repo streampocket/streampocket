@@ -1,5 +1,5 @@
 import type { BadgeVariant } from "@/components/ui/Badge";
-import type { PartyType } from "@/types/domain";
+import type { PartyType, PartyDurationMode } from "@/types/domain";
 
 export const STOCK_THRESHOLD_WARN = 2;
 export const STOCK_THRESHOLD_CRITICAL = 0;
@@ -74,6 +74,23 @@ export const DURATION_OPTIONS = [
 export const PARTY_TYPE_META: Record<PartyType, { label: string; variant: BadgeVariant }> = {
   personal: { label: "개인형", variant: "purple" },
   shared: { label: "공유형", variant: "indigo" },
+};
+
+/** 파티 기간 방식별 라벨 + 설명 + 뱃지 색 (관리자 전용). 차감형=orange, 유지형=teal. */
+export const PARTY_DURATION_MODE_META: Record<
+  PartyDurationMode,
+  { label: string; description: string; variant: BadgeVariant }
+> = {
+  countdown: {
+    label: "기간 차감형",
+    variant: "orange",
+    description: "첫 참여자부터 공유 만료일이 시작되고 매일 가격이 내려갑니다.",
+  },
+  fixed: {
+    label: "기간 유지형",
+    variant: "teal",
+    description: "참여일 기준으로 각자 전체 기간을 보장하고 가격이 고정됩니다.",
+  },
 };
 
 export const PARTY_DEFAULT_RULES = [

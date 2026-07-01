@@ -9,7 +9,7 @@ import { useAdminApplicationDetail } from '../_hooks/useAdminApplicationDetail'
 import { useApproveApplication } from '../_hooks/useApproveApplication'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
 import type { AdminAlimtalkLog } from '../_types'
-import { PARTY_TYPE_META } from '@/constants/app'
+import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 
 type ApplicationDetailModalProps = {
   applicationId: string | null
@@ -87,6 +87,12 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
               <span className="text-body-md w-20 shrink-0 text-text-muted">타입</span>
               <Badge variant={(PARTY_TYPE_META[detail.product.partyType] ?? PARTY_TYPE_META.shared).variant}>
                 {(PARTY_TYPE_META[detail.product.partyType] ?? PARTY_TYPE_META.shared).label}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-body-md w-20 shrink-0 text-text-muted">기간 방식</span>
+              <Badge variant={(PARTY_DURATION_MODE_META[detail.product.durationMode] ?? PARTY_DURATION_MODE_META.countdown).variant}>
+                {(PARTY_DURATION_MODE_META[detail.product.durationMode] ?? PARTY_DURATION_MODE_META.countdown).label}
               </Badge>
             </div>
             <InfoRow label="카테고리" value={detail.product.category.name} />

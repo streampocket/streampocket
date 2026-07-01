@@ -1,4 +1,4 @@
-import type { PartyApplicationStatus, PartyType } from '@/types/domain'
+import type { PartyApplicationStatus, PartyType, PartyDurationMode } from '@/types/domain'
 
 export type ApplicationTabStatus = PartyApplicationStatus | 'all'
 
@@ -22,6 +22,7 @@ export type AdminApplicationListItem = {
     name: string
     durationDays: number
     partyType: PartyType
+    durationMode: PartyDurationMode
     category: { id: string; name: string }
   }
 }

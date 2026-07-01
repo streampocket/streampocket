@@ -313,6 +313,9 @@ export type OwnProductStatus = 'recruiting' | 'closed' | 'expired'
 /** OTT 파티 타입 (개인형/공유형) */
 export type PartyType = 'personal' | 'shared'
 
+/** OTT 파티 기간 방식 (차감형/유지형) — 관리자 전용 */
+export type PartyDurationMode = 'countdown' | 'fixed'
+
 /** OTT 카테고리 */
 export type OwnCategory = {
   id: string
@@ -338,6 +341,7 @@ export type OwnProduct = {
   hasCredentials: boolean
   status: OwnProductStatus
   partyType: PartyType
+  durationMode: PartyDurationMode
   startedAt: string | null
   leaderName: string
   currentPrice: number

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { OwnProduct, OwnProductStatus } from '@/types/domain'
-import { PARTY_TYPE_META } from '@/constants/app'
+import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 
 type PartyTableProps = {
   parties: OwnProduct[]
@@ -66,6 +66,7 @@ export function PartyTable({
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">파티명</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">카테고리</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">타입</th>
+                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">기간</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">파티장</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가격</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">모집 현황</th>
@@ -78,6 +79,7 @@ export function PartyTable({
               {parties.map((party) => {
                 const badge = STATUS_BADGE[party.status]
                 const typeBadge = PARTY_TYPE_META[party.partyType] ?? PARTY_TYPE_META.shared
+                const durationBadge = PARTY_DURATION_MODE_META[party.durationMode] ?? PARTY_DURATION_MODE_META.countdown
                 return (
                   <tr
                     key={party.id}
@@ -91,6 +93,9 @@ export function PartyTable({
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={durationBadge.variant}>{durationBadge.label}</Badge>
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       {party.leaderName}
@@ -136,6 +141,7 @@ export function PartyTable({
           {parties.map((party) => {
             const badge = STATUS_BADGE[party.status]
             const typeBadge = PARTY_TYPE_META[party.partyType] ?? PARTY_TYPE_META.shared
+            const durationBadge = PARTY_DURATION_MODE_META[party.durationMode] ?? PARTY_DURATION_MODE_META.countdown
             return (
               <button
                 key={party.id}
@@ -145,8 +151,9 @@ export function PartyTable({
               >
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <span className="text-body-md font-medium text-text-primary">{party.name}</span>
-                  <div className="flex shrink-0 items-center gap-1">
+                  <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
                     <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                    <Badge variant={durationBadge.variant}>{durationBadge.label}</Badge>
                     <Badge variant={badge.variant}>{badge.label}</Badge>
                   </div>
                 </div>
