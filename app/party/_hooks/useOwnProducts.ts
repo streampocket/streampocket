@@ -14,6 +14,7 @@ export function useOwnProducts(params: ProductListParams = {}) {
   const searchParams = new URLSearchParams()
   if (params.categoryId) searchParams.set('categoryId', params.categoryId)
   if (params.status) searchParams.set('status', params.status)
+  if (params.sort) searchParams.set('sort', params.sort)
   const qs = searchParams.toString()
 
   return useQuery({

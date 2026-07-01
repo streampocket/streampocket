@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import { OwnProductCard } from './OwnProductCard'
+import { SortDropdown } from './SortDropdown'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
 import { cn } from '@/lib/utils'
 import type { OwnProductStatus } from '@/types/domain'
+import type { ProductSort } from '../_types'
 
 type StatusFilter = OwnProductStatus | 'all'
 
@@ -17,9 +19,11 @@ const STATUS_TABS: { value: StatusFilter; label: string }[] = [
 export function OwnProductList() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('recruiting')
+  const [sort, setSort] = useState<ProductSort | undefined>()
   const { data: products, isLoading: productsLoading } = useOwnProducts({
     categoryId: selectedCategoryId,
     status: statusFilter === 'all' ? undefined : statusFilter,
+    sort,
   })
   const { data: categories } = useOwnCategories()
 
@@ -30,23 +34,26 @@ export function OwnProductList() {
         <h1 className="text-heading-lg text-text-primary">파티 모집</h1>
       </div>
 
-      {/* 상태 필터 */}
-      <div className="flex gap-2">
-        {STATUS_TABS.map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            onClick={() => setStatusFilter(tab.value)}
-            className={cn(
-              'rounded-full px-4 py-1.5 text-body-md font-medium transition-colors',
-              statusFilter === tab.value
-                ? 'bg-brand text-white'
-                : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* 상태 필터 + 정렬 */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex gap-2">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setStatusFilter(tab.value)}
+              className={cn(
+                'rounded-full px-4 py-1.5 text-body-md font-medium transition-colors',
+                statusFilter === tab.value
+                  ? 'bg-brand text-white'
+                  : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <SortDropdown value={sort} onChange={setSort} />
       </div>
 
       {/* 카테고리 필터 */}
