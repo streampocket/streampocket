@@ -12,7 +12,7 @@ import { useApplyParty } from '../_hooks/useApplyParty'
 import { useCheckApplied } from '../_hooks/useCheckApplied'
 import { ApplyCompletedModal } from './ApplyCompletedModal'
 import { getUserInfo } from '@/lib/userAuth'
-import { PARTY_DEFAULT_RULES, USER_LOGIN_PATH } from '@/constants/app'
+import { PARTY_DEFAULT_RULES, PARTY_TYPE_META, USER_LOGIN_PATH } from '@/constants/app'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
@@ -74,6 +74,7 @@ export function OwnProductDetail() {
   }
 
   const status = STATUS_MAP[product.status]
+  const partyType = PARTY_TYPE_META[product.partyType] ?? PARTY_TYPE_META.shared
   const progress = product.totalSlots > 0
     ? Math.round((product.filledSlots / product.totalSlots) * 100)
     : 0
@@ -108,6 +109,7 @@ export function OwnProductDetail() {
               <h1 className="text-heading-lg text-text-primary">{product.name}</h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Badge variant="blue">{product.category.name}</Badge>
+                <Badge variant={partyType.variant}>{partyType.label}</Badge>
                 <Badge variant={status.variant}>{status.label}</Badge>
               </div>
             </div>

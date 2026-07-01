@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
-import type { AdminPartyDetail } from '@/types/domain'
+import type { AdminPartyDetail, PartyType } from '@/types/domain'
 import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdateAdminParty } from '../_hooks/useUpdateAdminParty'
 import type { UpdateAdminPartyInput } from '../_hooks/useUpdateAdminParty'
 import { ImageSelector } from './ImageSelector'
+import { PARTY_TYPE_META } from '@/constants/app'
 
 type PartyEditFormProps = {
   party: AdminPartyDetail
@@ -22,6 +23,7 @@ type FormState = {
   price: string
   dailyDiscount: string
   totalSlots: string
+  partyType: PartyType
   imagePath: string | null
   notes: string
   accountId: string
@@ -36,6 +38,7 @@ function buildInitial(party: AdminPartyDetail, accountId: string, accountPasswor
     price: String(party.price),
     dailyDiscount: String(party.dailyDiscount),
     totalSlots: String(party.totalSlots),
+    partyType: party.partyType,
     imagePath: party.imagePath,
     notes: party.notes ?? '',
     accountId,
@@ -105,6 +108,7 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
     if (price !== party.price) dirty.price = price
     if (dailyDiscount !== party.dailyDiscount) dirty.dailyDiscount = dailyDiscount
     if (totalSlots !== party.totalSlots) dirty.totalSlots = totalSlots
+    if (form.partyType !== party.partyType) dirty.partyType = form.partyType
     if (form.imagePath !== party.imagePath) dirty.imagePath = form.imagePath
     if (trimmedNotes !== (party.notes ?? '')) dirty.notes = trimmedNotes || null
     if (trimmedAccountId !== (credentials?.accountId ?? ''))
@@ -164,6 +168,22 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
           maxLength={100}
           className={INPUT_CLASS}
         />
+      </Field>
+
+      <Field label="파티 타입" required>
+        <select
+          value={form.partyType}
+          onChange={(e) => {
+            const value = e.target.value
+            if (value === 'personal' || value === 'shared') {
+              setForm((prev) => ({ ...prev, partyType: value }))
+            }
+          }}
+          className={INPUT_CLASS}
+        >
+          <option value="shared">{PARTY_TYPE_META.shared.label}</option>
+          <option value="personal">{PARTY_TYPE_META.personal.label}</option>
+        </select>
       </Field>
 
       <div className="grid grid-cols-2 gap-3">

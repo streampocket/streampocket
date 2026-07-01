@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { useCreateAdminParty } from '../_hooks/useCreateAdminParty'
 import { ImageSelector } from './ImageSelector'
+import type { PartyType } from '@/types/domain'
+import { PARTY_TYPE_META } from '@/constants/app'
 
 type PartyCreateModalProps = {
   isOpen: boolean
@@ -19,6 +21,7 @@ type FormState = {
   price: string
   dailyDiscount: string
   totalSlots: string
+  partyType: PartyType
   imagePath: string | null
   notes: string
   accountId: string
@@ -32,6 +35,7 @@ const INITIAL_FORM: FormState = {
   price: '',
   dailyDiscount: '0',
   totalSlots: '4',
+  partyType: 'shared',
   imagePath: null,
   notes: '',
   accountId: '',
@@ -86,6 +90,7 @@ export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
         price,
         dailyDiscount,
         totalSlots,
+        partyType: form.partyType,
         imagePath: form.imagePath,
         notes: form.notes.trim() || null,
         accountId: form.accountId.trim() || null,
@@ -146,6 +151,22 @@ export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
             maxLength={100}
             className={INPUT_CLASS}
           />
+        </Field>
+
+        <Field label="파티 타입" required>
+          <select
+            value={form.partyType}
+            onChange={(e) => {
+              const value = e.target.value
+              if (value === 'personal' || value === 'shared') {
+                setForm((prev) => ({ ...prev, partyType: value }))
+              }
+            }}
+            className={INPUT_CLASS}
+          >
+            <option value="shared">{PARTY_TYPE_META.shared.label}</option>
+            <option value="personal">{PARTY_TYPE_META.personal.label}</option>
+          </select>
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
