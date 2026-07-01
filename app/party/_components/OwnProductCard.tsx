@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import type { OwnProduct, OwnProductStatus } from '@/types/domain'
 import type { BadgeVariant } from '@/components/ui/Badge'
+import { PARTY_TYPE_META } from '@/constants/app'
 import { cn } from '@/lib/utils'
 
 type OwnProductCardProps = {
@@ -20,6 +21,7 @@ const STATUS_MAP: Record<OwnProductStatus, { label: string; variant: BadgeVarian
 
 export function OwnProductCard({ product }: OwnProductCardProps) {
   const status = STATUS_MAP[product.status]
+  const partyType = PARTY_TYPE_META[product.partyType] ?? PARTY_TYPE_META.shared
   const progress = product.totalSlots > 0
     ? Math.round((product.filledSlots / product.totalSlots) * 100)
     : 0
@@ -56,6 +58,7 @@ export function OwnProductCard({ product }: OwnProductCardProps) {
         <div className="space-y-2 p-4">
           <div className="flex items-center gap-2">
             <Badge variant="blue">{product.category.name}</Badge>
+            <Badge variant={partyType.variant}>{partyType.label}</Badge>
             <Badge variant={status.variant}>{status.label}</Badge>
           </div>
 

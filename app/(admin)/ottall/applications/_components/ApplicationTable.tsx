@@ -6,6 +6,7 @@ import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { PartyApplicationStatus } from '@/types/domain'
 import type { AdminApplicationListItem } from '../_types'
+import { PARTY_TYPE_META } from '@/constants/app'
 
 type ApplicationTableProps = {
   applications: AdminApplicationListItem[]
@@ -76,6 +77,7 @@ export function ApplicationTable({
             <tbody>
               {applications.map((app) => {
                 const badge = STATUS_BADGE[app.status]
+                const typeBadge = PARTY_TYPE_META[app.product.partyType] ?? PARTY_TYPE_META.shared
                 return (
                   <tr
                     key={app.id}
@@ -88,7 +90,10 @@ export function ApplicationTable({
                       {app.user.phone}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {app.product.name}
+                      <span className="inline-flex items-center gap-1.5">
+                        <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                        {app.product.name}
+                      </span>
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       {formatPrice(app.totalAmount)}원
@@ -119,6 +124,7 @@ export function ApplicationTable({
         <div className="space-y-3 p-4 md:hidden">
           {applications.map((app) => {
             const badge = STATUS_BADGE[app.status]
+            const typeBadge = PARTY_TYPE_META[app.product.partyType] ?? PARTY_TYPE_META.shared
             return (
               <button
                 key={app.id}
@@ -130,7 +136,10 @@ export function ApplicationTable({
                   <span className="text-body-md font-medium text-text-primary">{app.user.name}</span>
                   <Badge variant={badge.variant}>{badge.label}</Badge>
                 </div>
-                <p className="text-caption-md text-text-secondary">{app.product.name}</p>
+                <p className="text-caption-md flex items-center gap-1.5 text-text-secondary">
+                  <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                  {app.product.name}
+                </p>
                 <p className="text-caption-md mt-1 text-text-secondary">
                   {app.user.phone} · {formatPrice(app.totalAmount)}원
                 </p>

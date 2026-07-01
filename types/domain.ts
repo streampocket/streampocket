@@ -310,6 +310,9 @@ export type AuthProvider = 'local' | 'kakao' | 'google'
 /** OTT 상품 상태 */
 export type OwnProductStatus = 'recruiting' | 'closed' | 'expired'
 
+/** OTT 파티 타입 (개인형/공유형) */
+export type PartyType = 'personal' | 'shared'
+
 /** OTT 카테고리 */
 export type OwnCategory = {
   id: string
@@ -334,6 +337,7 @@ export type OwnProduct = {
   notes: string | null
   hasCredentials: boolean
   status: OwnProductStatus
+  partyType: PartyType
   startedAt: string | null
   leaderName: string
   currentPrice: number

@@ -10,6 +10,7 @@ import { useAdminPartyDetail } from '../_hooks/useAdminPartyDetail'
 import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdatePartyStatus } from '../_hooks/useUpdatePartyStatus'
 import { PartyEditForm } from './PartyEditForm'
+import { PARTY_TYPE_META } from '@/constants/app'
 
 type PartyDetailModalProps = {
   partyId: string | null
@@ -96,6 +97,12 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
             <h3 className="text-body-md font-semibold text-text-primary">기본 정보</h3>
             <InfoRow label="파티명" value={party.name} />
             <InfoRow label="카테고리" value={party.category.name} />
+            <div className="flex items-center gap-3">
+              <span className="text-body-md w-20 shrink-0 text-text-muted">타입</span>
+              <Badge variant={(PARTY_TYPE_META[party.partyType] ?? PARTY_TYPE_META.shared).variant}>
+                {(PARTY_TYPE_META[party.partyType] ?? PARTY_TYPE_META.shared).label}
+              </Badge>
+            </div>
             <InfoRow label="가격" value={`${formatPrice(party.price)}원`} />
             {party.dailyDiscount > 0 && (
               <InfoRow label="하루할인" value={`${formatPrice(party.dailyDiscount)}원/일`} />

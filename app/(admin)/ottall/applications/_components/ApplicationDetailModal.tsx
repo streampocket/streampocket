@@ -9,6 +9,7 @@ import { useAdminApplicationDetail } from '../_hooks/useAdminApplicationDetail'
 import { useApproveApplication } from '../_hooks/useApproveApplication'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
 import type { AdminAlimtalkLog } from '../_types'
+import { PARTY_TYPE_META } from '@/constants/app'
 
 type ApplicationDetailModalProps = {
   applicationId: string | null
@@ -82,6 +83,12 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
           <section className="space-y-2">
             <h3 className="text-body-md font-semibold text-text-primary">파티 정보</h3>
             <InfoRow label="파티명" value={detail.product.name} />
+            <div className="flex items-center gap-3">
+              <span className="text-body-md w-20 shrink-0 text-text-muted">타입</span>
+              <Badge variant={(PARTY_TYPE_META[detail.product.partyType] ?? PARTY_TYPE_META.shared).variant}>
+                {(PARTY_TYPE_META[detail.product.partyType] ?? PARTY_TYPE_META.shared).label}
+              </Badge>
+            </div>
             <InfoRow label="카테고리" value={detail.product.category.name} />
             <InfoRow label="이용 기간" value={`${detail.product.durationDays}일`} />
             <InfoRow
