@@ -7,7 +7,7 @@ import type { BadgeVariant } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { cn, formatDate } from '@/lib/utils'
-import type { FulfillmentStatus } from '@/types/domain'
+import type { FulfillmentStatus, OrderSource } from '@/types/domain'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useMarkInProgress } from '../_hooks/useMarkInProgress'
 import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
@@ -21,6 +21,8 @@ import { AutoFriendLinkSection } from './AutoFriendLinkSection'
 type ManualOrderDetailModalProps = {
   orderId: string | null
   onClose: () => void
+  // 수동·파티 주문이 이 모달을 공유한다. 제목 표기용(기본 manual).
+  source?: OrderSource
 }
 
 const netProfitInputClass = cn(
@@ -39,7 +41,11 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
   returned: { label: '반품', variant: 'purple' },
 }
 
-export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailModalProps) {
+export function ManualOrderDetailModal({
+  orderId,
+  onClose,
+  source = 'manual',
+}: ManualOrderDetailModalProps) {
   const { data: order, isLoading } = useOrderDetail(orderId)
   const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
   const { mutate: extendTime, isPending: isExtendingTime } = useExtendOrderTime()
@@ -96,7 +102,7 @@ export function ManualOrderDetailModal({ orderId, onClose }: ManualOrderDetailMo
     <Modal
       isOpen={orderId !== null}
       onClose={onClose}
-      title="수동 주문 상세"
+      title={source === 'party' ? '파티 주문 상세' : '수동 주문 상세'}
       footer={
         <>
           <Button
