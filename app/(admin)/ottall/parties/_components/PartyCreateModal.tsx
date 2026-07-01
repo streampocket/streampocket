@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { useCreateAdminParty } from '../_hooks/useCreateAdminParty'
 import { ImageSelector } from './ImageSelector'
-import type { PartyType } from '@/types/domain'
-import { PARTY_TYPE_META } from '@/constants/app'
+import type { PartyType, PartyDurationMode } from '@/types/domain'
+import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
+import { cn } from '@/lib/utils'
 
 type PartyCreateModalProps = {
   isOpen: boolean
@@ -22,6 +23,7 @@ type FormState = {
   dailyDiscount: string
   totalSlots: string
   partyType: PartyType
+  durationMode: PartyDurationMode
   imagePath: string | null
   notes: string
   accountId: string
@@ -36,6 +38,7 @@ const INITIAL_FORM: FormState = {
   dailyDiscount: '0',
   totalSlots: '4',
   partyType: 'shared',
+  durationMode: 'countdown',
   imagePath: null,
   notes: '',
   accountId: '',
@@ -91,6 +94,7 @@ export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
         dailyDiscount,
         totalSlots,
         partyType: form.partyType,
+        durationMode: form.durationMode,
         imagePath: form.imagePath,
         notes: form.notes.trim() || null,
         accountId: form.accountId.trim() || null,
@@ -167,6 +171,29 @@ export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
             <option value="shared">{PARTY_TYPE_META.shared.label}</option>
             <option value="personal">{PARTY_TYPE_META.personal.label}</option>
           </select>
+        </Field>
+
+        <Field label="기간 방식" required>
+          <div className="flex gap-2">
+            {(['countdown', 'fixed'] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setForm((prev) => ({ ...prev, durationMode: mode }))}
+                className={cn(
+                  'flex-1 rounded-full px-4 py-2 text-body-md font-medium transition-colors',
+                  form.durationMode === mode
+                    ? 'bg-brand text-white'
+                    : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+                )}
+              >
+                {PARTY_DURATION_MODE_META[mode].label}
+              </button>
+            ))}
+          </div>
+          <span className="block text-caption-sm text-text-muted">
+            {PARTY_DURATION_MODE_META[form.durationMode].description}
+          </span>
         </Field>
 
         <div className="grid grid-cols-2 gap-3">

@@ -9,6 +9,8 @@ export type BadgeVariant =
   | 'purple'
   | 'indigo'
   | 'pink'
+  | 'teal'
+  | 'orange'
 
 type BadgeProps = {
   variant: BadgeVariant
@@ -25,6 +27,8 @@ const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   purple: 'bg-badge-purple-bg text-badge-purple-text',
   indigo: 'bg-badge-indigo-bg text-badge-indigo-text',
   pink: 'bg-badge-pink-bg text-badge-pink-text',
+  teal: 'bg-badge-teal-bg text-badge-teal-text',
+  orange: 'bg-badge-orange-bg text-badge-orange-text',
 }
 
 export function Badge({ variant, children, className }: BadgeProps) {
