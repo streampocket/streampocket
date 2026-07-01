@@ -8,8 +8,8 @@ export type FulfillmentStatus =
   | 'failed'
   | 'returned'
 
-/** 주문 출처 (Prisma OrderSource 기준) — naver: 스마트스토어 자동 / manual: 수동 등록 */
-export type OrderSource = 'naver' | 'manual'
+/** 주문 출처 (Prisma OrderSource 기준) — naver: 스마트스토어 자동 / manual: 수동 등록 / party: OTTALL 파티 승인 자동 생성 */
+export type OrderSource = 'naver' | 'manual' | 'party'
 
 /** 계정 상태 (Prisma AccountStatus 기준) */
 export type AccountStatus = 'available' | 'reserved' | 'sent' | 'disabled' | 'manual'
@@ -211,6 +211,7 @@ export type RevenueData = {
   costs: RevenueCosts
   totalCosts: number
   netProfit: number
+  partyOrderProfit: number
   pendingSettlement: number
   alimtalkCount: number
 }

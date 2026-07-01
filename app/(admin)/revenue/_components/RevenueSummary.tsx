@@ -52,6 +52,10 @@ export function RevenueSummary({ yearMonth, store }: RevenueSummaryProps) {
             label="인당 수익"
             value={loading ? '-' : fmt(Math.round(data.netProfit / 2))}
           />
+          <StatCard
+            label="파티 순수익"
+            value={loading ? '-' : fmt(data.partyOrderProfit)}
+          />
         </div>
 
         {!loading && data.pendingSettlement > 0 && (

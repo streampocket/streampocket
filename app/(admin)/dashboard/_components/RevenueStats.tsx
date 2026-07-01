@@ -78,6 +78,10 @@ export function RevenueStats() {
             label="인당 수익"
             value={isLoading ? '-' : formatCurrency(Math.round((revenue?.netProfit ?? 0) / 2))}
           />
+          <StatCard
+            label="파티 순수익"
+            value={isLoading ? '-' : formatCurrency(revenue?.partyOrderProfit ?? 0)}
+          />
         </div>
 
         {!isLoading && (revenue?.pendingSettlement ?? 0) > 0 && (

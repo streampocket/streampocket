@@ -27,21 +27,34 @@ const STATUS_MAP: Record<FulfillmentStatus, { label: string; variant: BadgeVaria
 
 type SelectedOrder = { id: string; source: OrderSource }
 
-// 행 왼쪽 색띠로 출처/스토어 한눈에 구분 — 수동=노랑, 스트림포켓=파랑, 포켓몬스팀=빨강.
+// 행 왼쪽 색띠로 출처/스토어 한눈에 구분 — 수동=노랑, 파티=보라, 스트림포켓=파랑, 포켓몬스팀=빨강.
 // (Tailwind JIT 때문에 클래스 문자열은 리터럴로 둠)
-const ROW_ACCENT: Record<'manual' | Store, string> = {
+const ROW_ACCENT: Record<'manual' | 'party' | Store, string> = {
   manual: 'border-l-[#FEE500]',
+  party: 'border-l-[#a855f7]',
   streampocket: 'border-l-[#3b82f6]',
   pokemon_steam: 'border-l-[#ef4444]',
 }
 function rowAccentClass(order: SteamOrderItem): string {
-  // 수동=노랑. 네이버는 항상 store 값이 있으나 타입(Store|null) 충족 위해 streampocket 폴백.
-  const key = order.source === 'manual' ? 'manual' : order.store ?? 'streampocket'
+  // 수동=노랑, 파티=보라. 네이버는 항상 store 값이 있으나 타입(Store|null) 충족 위해 streampocket 폴백.
+  const key =
+    order.source === 'manual'
+      ? 'manual'
+      : order.source === 'party'
+        ? 'party'
+        : order.store ?? 'streampocket'
   return `border-l-4 ${ROW_ACCENT[key]}`
 }
 
-// 상품주문번호 — 수동 주문은 카카오 브랜드 노란색으로 구분
+// 상품주문번호 — 수동 주문은 카카오 노란색, 파티 주문은 보라색 배지로 구분
 function ProductOrderId({ order }: { order: SteamOrderItem }) {
+  if (order.source === 'party') {
+    return (
+      <span className="inline-block rounded bg-[#a855f7] px-1.5 py-0.5 font-mono text-caption-sm font-semibold text-white">
+        {order.productOrderId}
+      </span>
+    )
+  }
   if (order.source === 'manual') {
     return (
       <span className="inline-block rounded bg-[#FEE500] px-1.5 py-0.5 font-mono text-caption-sm font-semibold text-[#3C1E1E]">
@@ -251,12 +264,16 @@ export function OrdersTable() {
         )}
       </Card>
 
-      {/* 출처에 따라 상세 모달 분기 */}
+      {/* 출처에 따라 상세 모달 분기 — 수동·파티 주문은 동일 모달(순수익 편집·삭제) 재사용 */}
       {selected?.source === 'naver' && (
         <OrderDetailModal orderId={selected.id} onClose={() => setSelected(null)} />
       )}
-      {selected?.source === 'manual' && (
-        <ManualOrderDetailModal orderId={selected.id} onClose={() => setSelected(null)} />
+      {(selected?.source === 'manual' || selected?.source === 'party') && (
+        <ManualOrderDetailModal
+          orderId={selected.id}
+          source={selected.source}
+          onClose={() => setSelected(null)}
+        />
       )}
 
       <ManualOrderCreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} />
