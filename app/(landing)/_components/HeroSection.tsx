@@ -23,7 +23,7 @@ export function HeroSection() {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
-              href={`#${LANDING_SECTION_IDS.products}`}
+              href="/party"
               className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-white px-5 text-sm font-bold text-text-primary transition-colors hover:bg-gray-50"
             >
               파티 둘러보기
