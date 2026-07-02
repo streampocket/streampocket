@@ -51,7 +51,7 @@ export function ApplyCompletedModal({
 
         <div className="space-y-2 rounded-lg border border-border bg-gray-50 p-3">
           <p className="text-body-md font-semibold text-text-primary">
-            결제 및 상담 시간: <span className="text-brand">매일 오전 10:30 ~ 23:59</span>
+            결제 및 상담 시간: <span className="text-brand">매일 오전 10:00 ~ 다음날 새벽 02:00</span>
           </p>
           <p className="text-caption-md text-text-muted">
             상담 시간 외에도 담당자가 확인하는 대로 최대한 빠르게 처리해 드리니 편하게 문의 남겨주세요!
