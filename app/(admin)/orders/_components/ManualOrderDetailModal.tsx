@@ -12,6 +12,7 @@ import { useOrderDetail } from '../_hooks/useOrderDetail'
 import { useMarkInProgress } from '../_hooks/useMarkInProgress'
 import { useExtendOrderTime } from '../_hooks/useExtendOrderTime'
 import { useCompleteOrder } from '../_hooks/useCompleteOrder'
+import { usePurchaseDecideOrder } from '../_hooks/usePurchaseDecideOrder'
 import { useManualReturn } from '../_hooks/useManualReturn'
 import { useDeleteManualOrder } from '../_hooks/useDeleteManualOrder'
 import { useUpdateManualOrderNetProfit } from '../_hooks/useUpdateManualOrderNetProfit'
@@ -50,6 +51,7 @@ export function ManualOrderDetailModal({
   const { mutate: markInProgress, isPending: isMarkingInProgress } = useMarkInProgress()
   const { mutate: extendTime, isPending: isExtendingTime } = useExtendOrderTime()
   const { mutate: complete, isPending: isCompleting } = useCompleteOrder()
+  const { mutate: purchaseDecide, isPending: isPurchaseDeciding } = usePurchaseDecideOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: deleteOrder, isPending: isDeleting } = useDeleteManualOrder()
   const { mutate: updateNetProfit, isPending: isSavingNetProfit } = useUpdateManualOrderNetProfit()
@@ -87,6 +89,10 @@ export function ManualOrderDetailModal({
     order.completedAt === null &&
     (order.fulfillmentStatus === 'pending' || order.fulfillmentStatus === 'in_progress')
   const canReturn = order != null && order.fulfillmentStatus !== 'returned'
+  // 파티 주문 전용 — 생성 직후(completed) 상태에서 순수익 입력 후 구매확정으로 전환
+  const canPurchaseDecide =
+    order != null && order.source === 'party' && order.fulfillmentStatus === 'completed'
+  const purchaseDecideBlocked = (order?.settlementAmount ?? 0) <= 0
 
   const handleCopyOrderId = async () => {
     if (!order) return
@@ -176,6 +182,27 @@ export function ManualOrderDetailModal({
             >
               완료 처리
             </Button>
+          )}
+          {canPurchaseDecide && (
+            <div className="flex items-center gap-2">
+              {purchaseDecideBlocked && (
+                <span className="text-caption-sm text-text-muted">
+                  순수익 입력 후 구매확정할 수 있습니다.
+                </span>
+              )}
+              <Button
+                variant="primary"
+                loading={isPurchaseDeciding}
+                disabled={purchaseDecideBlocked}
+                onClick={() => {
+                  if (order && window.confirm('이 파티 주문을 구매확정 처리하시겠습니까?')) {
+                    purchaseDecide(order.id)
+                  }
+                }}
+              >
+                구매확정
+              </Button>
+            </div>
           )}
         </>
       }
