@@ -8,6 +8,7 @@ import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdateAdminParty } from '../_hooks/useUpdateAdminParty'
 import type { UpdateAdminPartyInput } from '../_hooks/useUpdateAdminParty'
 import { ImageSelector } from './ImageSelector'
+import { RuleTemplateSelect } from './RuleTemplateSelect'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 import { cn } from '@/lib/utils'
 
@@ -260,6 +261,10 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
       </div>
 
       <Field label="파티 규칙/메모">
+        <RuleTemplateSelect
+          currentValue={form.notes}
+          onApply={(content) => setForm((prev) => ({ ...prev, notes: content }))}
+        />
         <textarea
           value={form.notes}
           onChange={updateField('notes')}

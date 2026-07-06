@@ -72,6 +72,10 @@ export const QUERY_KEYS = {
     detail: (id: string) => ['adminParties', id] as const,
     credentials: (id: string) => ['adminParties', id, 'credentials'] as const,
   },
+  ownRuleTemplates: {
+    all: () => ['ownRuleTemplates'] as const,
+    list: () => ['ownRuleTemplates', 'list'] as const,
+  },
   adminApplications: {
     all: () => ['adminApplications'] as const,
     list: (params?: Record<string, unknown>) => ['adminApplications', 'list', params] as const,

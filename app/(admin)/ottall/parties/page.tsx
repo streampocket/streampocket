@@ -7,6 +7,7 @@ import { PartyFilterBar } from './_components/PartyFilterBar'
 import { PartyTable } from './_components/PartyTable'
 import { PartyDetailModal } from './_components/PartyDetailModal'
 import { PartyCreateModal } from './_components/PartyCreateModal'
+import { RuleTemplateManageModal } from './_components/RuleTemplateManageModal'
 import { useAdminParties } from './_hooks/useAdminParties'
 import type { PartyTabStatus } from './_types'
 
@@ -16,6 +17,7 @@ export default function PartiesPage() {
   const [page, setPage] = useState(1)
   const [detailId, setDetailId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
+  const [ruleTemplateOpen, setRuleTemplateOpen] = useState(false)
 
   const queryStatus = activeTab === 'all' ? undefined : activeTab
   const { data, isLoading } = useAdminParties({
@@ -37,7 +39,10 @@ export default function PartiesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-2">
+        <Button variant="secondary" size="sm" onClick={() => setRuleTemplateOpen(true)}>
+          📋 규칙 템플릿 관리
+        </Button>
         <Button variant="primary" size="sm" onClick={() => setCreateOpen(true)}>
           + 파티 생성하기
         </Button>
@@ -67,6 +72,7 @@ export default function PartiesPage() {
 
       <PartyDetailModal partyId={detailId} onClose={() => setDetailId(null)} />
       <PartyCreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} />
+      <RuleTemplateManageModal isOpen={ruleTemplateOpen} onClose={() => setRuleTemplateOpen(false)} />
     </div>
   )
 }

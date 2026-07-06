@@ -8,3 +8,11 @@ export type AdminPartyListParams = {
   page?: number
   pageSize?: number
 }
+
+export type RuleTemplate = {
+  id: string
+  name: string
+  content: string
+  createdAt: string
+  updatedAt: string
+}
