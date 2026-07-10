@@ -27,9 +27,3 @@ export type MyApplication = {
   createdAt: string
   product: MyApplicationProduct
 }
-
-export type ApplicationCredentials = {
-  productName: string
-  accountId: string | null
-  accountPassword: string | null
-}

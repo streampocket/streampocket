@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import type { AdminPartyDetail, PartyType, PartyDurationMode } from '@/types/domain'
-import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdateAdminParty } from '../_hooks/useUpdateAdminParty'
 import type { UpdateAdminPartyInput } from '../_hooks/useUpdateAdminParty'
 import { ImageSelector } from './ImageSelector'
@@ -29,11 +28,9 @@ type FormState = {
   durationMode: PartyDurationMode
   imagePath: string | null
   notes: string
-  accountId: string
-  accountPassword: string
 }
 
-function buildInitial(party: AdminPartyDetail, accountId: string, accountPassword: string): FormState {
+function buildInitial(party: AdminPartyDetail): FormState {
   return {
     name: party.name,
     leaderName: party.leaderName,
@@ -45,25 +42,13 @@ function buildInitial(party: AdminPartyDetail, accountId: string, accountPasswor
     durationMode: party.durationMode,
     imagePath: party.imagePath,
     notes: party.notes ?? '',
-    accountId,
-    accountPassword,
   }
 }
 
 export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps) {
-  const { data: credentials, isLoading: credLoading } = useAdminPartyCredentials(party.id, true)
   const updateMutation = useUpdateAdminParty()
-  const [showPassword, setShowPassword] = useState(false)
 
-  const [form, setForm] = useState<FormState>(() => buildInitial(party, '', ''))
-  const [didInit, setDidInit] = useState(false)
-
-  useEffect(() => {
-    if (didInit) return
-    if (credLoading) return
-    setForm(buildInitial(party, credentials?.accountId ?? '', credentials?.accountPassword ?? ''))
-    setDidInit(true)
-  }, [didInit, credLoading, credentials, party])
+  const [form, setForm] = useState<FormState>(() => buildInitial(party))
 
   const updateField =
     (key: keyof FormState) =>
@@ -103,8 +88,6 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
     const trimmedName = form.name.trim()
     const trimmedLeader = form.leaderName.trim()
     const trimmedNotes = form.notes.trim()
-    const trimmedAccountId = form.accountId.trim()
-    const trimmedPassword = form.accountPassword.trim()
 
     if (trimmedName !== party.name) dirty.name = trimmedName
     if (trimmedLeader !== party.leaderName) dirty.leaderName = trimmedLeader
@@ -116,10 +99,6 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
     if (form.durationMode !== party.durationMode) dirty.durationMode = form.durationMode
     if (form.imagePath !== party.imagePath) dirty.imagePath = form.imagePath
     if (trimmedNotes !== (party.notes ?? '')) dirty.notes = trimmedNotes || null
-    if (trimmedAccountId !== (credentials?.accountId ?? ''))
-      dirty.accountId = trimmedAccountId || null
-    if (trimmedPassword !== (credentials?.accountPassword ?? ''))
-      dirty.accountPassword = trimmedPassword || null
 
     if (Object.keys(dirty).length === 0) {
       toast.info('변경된 내용이 없습니다.')
@@ -137,14 +116,6 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
           toast.error(err.message ?? '파티 수정에 실패했습니다.')
         },
       },
-    )
-  }
-
-  if (credLoading && !didInit) {
-    return (
-      <div className="py-10 text-center">
-        <p className="text-body-md text-text-muted">계정 정보 로딩 중...</p>
-      </div>
     )
   }
 
@@ -272,37 +243,6 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
           className={INPUT_CLASS}
         />
       </Field>
-
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="계정 ID">
-          <input
-            type="text"
-            value={form.accountId}
-            onChange={updateField('accountId')}
-            autoComplete="off"
-            className={INPUT_CLASS}
-          />
-        </Field>
-        <Field label="계정 비밀번호">
-          <div className="flex gap-2">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={form.accountPassword}
-              onChange={updateField('accountPassword')}
-              autoComplete="off"
-              className={INPUT_CLASS}
-            />
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setShowPassword((v) => !v)}
-            >
-              {showPassword ? '숨김' : '보기'}
-            </Button>
-          </div>
-        </Field>
-      </div>
 
       <div className="flex justify-end gap-2 pt-2">
         <Button

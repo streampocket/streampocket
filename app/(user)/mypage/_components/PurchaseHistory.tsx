@@ -1,11 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
 import { useMyApplications } from '../_hooks/useMyApplications'
-import { CredentialsModal } from './CredentialsModal'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { MyApplication } from '../_types'
 
@@ -18,10 +15,6 @@ const APPLICATION_STATUS_MAP: Record<string, { label: string; variant: BadgeVari
 
 export function PurchaseHistory() {
   const { data: applications, isLoading, error } = useMyApplications()
-  const [credentialTarget, setCredentialTarget] = useState<{
-    applicationId: string
-    productName: string
-  } | null>(null)
 
   if (isLoading) {
     return (
@@ -48,38 +41,19 @@ export function PurchaseHistory() {
   }
 
   return (
-    <>
-      <div className="mx-auto max-w-2xl space-y-4">
-        {applications.map((app) => (
-          <ApplicationCard
-            key={app.id}
-            application={app}
-            onViewCredentials={() =>
-              setCredentialTarget({
-                applicationId: app.id,
-                productName: app.product.name,
-              })
-            }
-          />
-        ))}
-      </div>
-
-      <CredentialsModal
-        applicationId={credentialTarget?.applicationId ?? null}
-        productName={credentialTarget?.productName ?? ''}
-        isOpen={!!credentialTarget}
-        onClose={() => setCredentialTarget(null)}
-      />
-    </>
+    <div className="mx-auto max-w-2xl space-y-4">
+      {applications.map((app) => (
+        <ApplicationCard key={app.id} application={app} />
+      ))}
+    </div>
   )
 }
 
 type ApplicationCardProps = {
   application: MyApplication
-  onViewCredentials: () => void
 }
 
-function ApplicationCard({ application, onViewCredentials }: ApplicationCardProps) {
+function ApplicationCard({ application }: ApplicationCardProps) {
   const appStatus = APPLICATION_STATUS_MAP[application.status]
 
   return (
@@ -133,7 +107,7 @@ function ApplicationCard({ application, onViewCredentials }: ApplicationCardProp
             </div>
           )}
 
-          {/* 하단: 신청일 + 계정정보 버튼 */}
+          {/* 하단: 신청일 */}
           <div className="flex items-center justify-between">
             <p className="text-caption-md text-text-muted">
               {new Date(application.createdAt).toLocaleDateString('ko-KR', {
@@ -145,11 +119,6 @@ function ApplicationCard({ application, onViewCredentials }: ApplicationCardProp
             </p>
             {application.status === 'expired' && (
               <span className="text-caption-md text-text-muted">기간 만료</span>
-            )}
-            {application.status === 'confirmed' && (
-              <Button variant="primary" size="sm" onClick={onViewCredentials}>
-                계정 정보 보기
-              </Button>
             )}
           </div>
         </div>
