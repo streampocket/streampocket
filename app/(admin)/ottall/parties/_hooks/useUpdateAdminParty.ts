@@ -15,8 +15,6 @@ export type UpdateAdminPartyInput = {
   durationMode?: PartyDurationMode
   imagePath?: string | null
   notes?: string | null
-  accountId?: string | null
-  accountPassword?: string | null
   leaderName?: string
 }
 
@@ -33,7 +31,6 @@ export function useUpdateAdminParty() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.all() })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.credentials(variables.id) })
     },
   })
 }

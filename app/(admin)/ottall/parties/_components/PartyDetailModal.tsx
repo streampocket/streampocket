@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { OwnProductStatus, PartyApplicationStatus } from '@/types/domain'
 import { useAdminPartyDetail } from '../_hooks/useAdminPartyDetail'
-import { useAdminPartyCredentials } from '../_hooks/useAdminPartyCredentials'
 import { useUpdatePartyStatus } from '../_hooks/useUpdatePartyStatus'
 import { PartyEditForm } from './PartyEditForm'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
@@ -45,11 +44,6 @@ function formatPrice(amount: number): string {
 
 export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
   const { data: party, isLoading } = useAdminPartyDetail(partyId)
-  const [showCredentials, setShowCredentials] = useState(false)
-  const { data: credentials, isLoading: credLoading } = useAdminPartyCredentials(
-    partyId,
-    showCredentials,
-  )
   const statusMutation = useUpdatePartyStatus()
   const [selectedStatus, setSelectedStatus] = useState<OwnProductStatus | ''>('')
   const [mode, setMode] = useState<'view' | 'edit'>('view')
@@ -69,7 +63,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
       isOpen={!!partyId}
       onClose={() => {
         onClose()
-        setShowCredentials(false)
         setSelectedStatus('')
         setMode('view')
       }}
@@ -135,25 +128,6 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
           <section className="space-y-2">
             <h3 className="text-body-md font-semibold text-text-primary">파티장 정보</h3>
             <InfoRow label="이름" value={party.leaderName} />
-          </section>
-
-          {/* 계정 정보 */}
-          <section className="space-y-2">
-            <h3 className="text-body-md font-semibold text-text-primary">계정 정보</h3>
-            {!showCredentials ? (
-              <Button variant="secondary" size="sm" onClick={() => setShowCredentials(true)}>
-                계정 정보 보기
-              </Button>
-            ) : credLoading ? (
-              <p className="text-caption-md text-text-muted">로딩 중...</p>
-            ) : credentials ? (
-              <div className="space-y-2 rounded-lg border border-border bg-gray-50 p-3">
-                <InfoRow label="계정 ID" value={credentials.accountId ?? '미등록'} />
-                <InfoRow label="비밀번호" value={credentials.accountPassword ?? '미등록'} />
-              </div>
-            ) : (
-              <p className="text-caption-md text-text-muted">계정 정보가 없습니다.</p>
-            )}
           </section>
 
           {/* 참여자 목록 */}

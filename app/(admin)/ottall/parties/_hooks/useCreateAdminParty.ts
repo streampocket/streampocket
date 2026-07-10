@@ -15,8 +15,6 @@ export type CreateAdminPartyInput = {
   durationMode: PartyDurationMode
   imagePath?: string | null
   notes?: string | null
-  accountId?: string | null
-  accountPassword?: string | null
   leaderName: string
 }
 

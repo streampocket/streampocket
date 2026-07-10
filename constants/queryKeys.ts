@@ -64,13 +64,11 @@ export const QUERY_KEYS = {
   partyApplications: {
     check: (productId: string) => ['partyApplications', 'check', productId] as const,
     my: () => ['partyApplications', 'my'] as const,
-    credentials: (applicationId: string) => ['partyApplications', applicationId, 'credentials'] as const,
   },
   adminParties: {
     all: () => ['adminParties'] as const,
     list: (params?: Record<string, unknown>) => ['adminParties', 'list', params] as const,
     detail: (id: string) => ['adminParties', id] as const,
-    credentials: (id: string) => ['adminParties', id, 'credentials'] as const,
   },
   ownRuleTemplates: {
     all: () => ['ownRuleTemplates'] as const,

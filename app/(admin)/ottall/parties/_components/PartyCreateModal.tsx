@@ -27,8 +27,6 @@ type FormState = {
   durationMode: PartyDurationMode
   imagePath: string | null
   notes: string
-  accountId: string
-  accountPassword: string
 }
 
 const INITIAL_FORM: FormState = {
@@ -42,8 +40,6 @@ const INITIAL_FORM: FormState = {
   durationMode: 'countdown',
   imagePath: null,
   notes: '',
-  accountId: '',
-  accountPassword: '',
 }
 
 export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
@@ -98,8 +94,6 @@ export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
         durationMode: form.durationMode,
         imagePath: form.imagePath,
         notes: form.notes.trim() || null,
-        accountId: form.accountId.trim() || null,
-        accountPassword: form.accountPassword.trim() || null,
       },
       {
         onSuccess: () => {
@@ -253,26 +247,6 @@ export function PartyCreateModal({ isOpen, onClose }: PartyCreateModalProps) {
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="계정 ID(선택)">
-            <input
-              type="text"
-              value={form.accountId}
-              onChange={updateField('accountId')}
-              autoComplete="off"
-              className={INPUT_CLASS}
-            />
-          </Field>
-          <Field label="계정 비밀번호(선택)">
-            <input
-              type="text"
-              value={form.accountPassword}
-              onChange={updateField('accountPassword')}
-              autoComplete="off"
-              className={INPUT_CLASS}
-            />
-          </Field>
-        </div>
       </form>
     </Modal>
   )
