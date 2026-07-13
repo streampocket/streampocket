@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import type { BadgeVariant } from '@/components/ui/Badge'
-import type { GcoinProduct, GcoinProductStatus } from '../_types'
+import type { GcoinProduct, GcoinProductCategory, GcoinProductStatus } from '../_types'
 
 type ProductTableProps = {
   products: GcoinProduct[]
@@ -23,15 +23,32 @@ export const GCOIN_STATUS_BADGE: Record<GcoinProductStatus, { variant: BadgeVari
   sold_out: { variant: 'red', label: '품절' },
 }
 
+export const GCOIN_CATEGORY_LABEL: Record<GcoinProductCategory, string> = {
+  gcoin: '지코인',
+  item: '아이템',
+}
+
+const GCOIN_CATEGORY_BADGE: Record<GcoinProductCategory, BadgeVariant> = {
+  gcoin: 'yellow',
+  item: 'blue',
+}
+
 function formatPrice(amount: number): string {
   return amount.toLocaleString('ko-KR')
+}
+
+function formatGcoinAmount(amount: number | null): string {
+  return amount !== null ? `${formatPrice(amount)} G` : '—'
 }
 
 function PriceCell({ product }: { product: GcoinProduct }) {
   if (product.listPrice !== null && product.listPrice > product.salePrice) {
     return (
       <span>
-        <span className="text-text-muted line-through">{formatPrice(product.listPrice)}</span>{' '}
+        <span className="text-text-muted line-through">{formatPrice(product.listPrice)}</span>
+        {product.listPriceUsd !== null && (
+          <span className="text-caption-sm text-text-muted"> (${product.listPriceUsd})</span>
+        )}{' '}
         <span className="font-medium text-brand">{formatPrice(product.salePrice)}원</span>
       </span>
     )
@@ -89,6 +106,7 @@ export function ProductTable({
               <tr className="border-b border-border text-left">
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">이미지</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">상품명</th>
+                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">카테고리</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">지코인</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가격</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">구매수</th>
@@ -111,8 +129,13 @@ export function ProductTable({
                     <td className="text-body-md px-4 py-3 font-medium text-text-primary">
                       {product.name}
                     </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={GCOIN_CATEGORY_BADGE[product.category]}>
+                        {GCOIN_CATEGORY_LABEL[product.category]}
+                      </Badge>
+                    </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {formatPrice(product.gcoinAmount)} G
+                      {formatGcoinAmount(product.gcoinAmount)}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       <PriceCell product={product} />
@@ -162,7 +185,8 @@ export function ProductTable({
                   <Badge variant={badge.variant}>{badge.label}</Badge>
                 </div>
                 <p className="text-caption-md text-text-secondary">
-                  {formatPrice(product.gcoinAmount)} G · <PriceCell product={product} />
+                  {GCOIN_CATEGORY_LABEL[product.category]} · {formatGcoinAmount(product.gcoinAmount)} ·{' '}
+                  <PriceCell product={product} />
                 </p>
                 <p className="text-caption-md mt-1 text-text-secondary">
                   구매 {formatPrice(product.purchaseCount)}회 · 진열 {product.sortOrder}

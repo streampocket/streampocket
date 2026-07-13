@@ -3,13 +3,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { QUERY_KEYS } from '@/constants/queryKeys'
-import type { GcoinProduct, GcoinProductStatus } from '../_types'
+import type { GcoinProduct, GcoinProductCategory, GcoinProductStatus } from '../_types'
 
 export type UpdateGcoinProductInput = {
   name?: string
-  gcoinAmount?: number
+  category?: GcoinProductCategory
+  gcoinAmount?: number | null
   salePrice?: number
   listPrice?: number | null
+  listPriceUsd?: number | null
   description?: string | null
   imageUrl?: string | null
   sortOrder?: number
