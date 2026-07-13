@@ -22,8 +22,13 @@ import { AutoFriendLinkSection } from './AutoFriendLinkSection'
 type ManualOrderDetailModalProps = {
   orderId: string | null
   onClose: () => void
-  // 수동·파티 주문이 이 모달을 공유한다. 제목 표기용(기본 manual).
+  // 수동·파티·배그 주문이 이 모달을 공유한다. 제목 표기용(기본 manual).
   source?: OrderSource
+}
+
+const SOURCE_TITLES: Partial<Record<OrderSource, string>> = {
+  party: '파티 주문 상세',
+  gcoin: '배그 주문 상세',
 }
 
 const netProfitInputClass = cn(
@@ -58,6 +63,7 @@ export function ManualOrderDetailModal({
 
   const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink'>('input')
   const [netProfitInput, setNetProfitInput] = useState('')
+  const [receiverNameInput, setReceiverNameInput] = useState('')
 
   useEffect(() => {
     setActiveTab('input')
@@ -68,6 +74,11 @@ export function ManualOrderDetailModal({
     setNetProfitInput(order?.settlementAmount != null ? String(order.settlementAmount) : '')
   }, [order?.settlementAmount])
 
+  // 수신자명 동기화 — 배그 주문(전화번호만 수집)은 비어 있어 후입력 용도
+  useEffect(() => {
+    setReceiverNameInput(order?.receiverName ?? '')
+  }, [order?.receiverName])
+
   const status = order ? STATUS_MAP[order.fulfillmentStatus] : null
 
   // 순수익 인라인 편집 — 0 이상의 정수만 허용, 현재 값과 다를 때만 저장 활성
@@ -76,10 +87,17 @@ export function ManualOrderDetailModal({
   const isNetProfitValid =
     trimmedNetProfit !== '' && Number.isInteger(parsedNetProfit) && parsedNetProfit >= 0
   const isNetProfitDirty = isNetProfitValid && parsedNetProfit !== (order?.settlementAmount ?? null)
+  const trimmedReceiverName = receiverNameInput.trim()
+  const isReceiverNameDirty = trimmedReceiverName !== (order?.receiverName ?? '')
+  const canSaveDetail = isNetProfitValid && (isNetProfitDirty || isReceiverNameDirty)
 
   const handleSaveNetProfit = () => {
     if (!order || !isNetProfitValid) return
-    updateNetProfit({ id: order.id, netProfit: parsedNetProfit })
+    updateNetProfit({
+      id: order.id,
+      netProfit: parsedNetProfit,
+      ...(isReceiverNameDirty ? { receiverName: trimmedReceiverName } : {}),
+    })
   }
   const canMarkInProgress = order?.fulfillmentStatus === 'pending'
   const canExtendTime =
@@ -108,7 +126,7 @@ export function ManualOrderDetailModal({
     <Modal
       isOpen={orderId !== null}
       onClose={onClose}
-      title={source === 'party' ? '파티 주문 상세' : '수동 주문 상세'}
+      title={SOURCE_TITLES[source] ?? '수동 주문 상세'}
       footer={
         <>
           <Button
@@ -280,10 +298,25 @@ export function ManualOrderDetailModal({
               </div>
               <div>
                 <dt className="text-caption-md text-text-muted">수신자명</dt>
-                <dd className="mt-0.5 text-caption-md text-text-primary">
-                  {order.receiverName ?? <span className="text-danger">이름 미확인</span>}
+                <dd className="mt-0.5">
+                  <input
+                    type="text"
+                    value={receiverNameInput}
+                    onChange={(e) => setReceiverNameInput(e.target.value)}
+                    placeholder="이름 미확인"
+                    maxLength={100}
+                    className={netProfitInputClass}
+                  />
                 </dd>
               </div>
+              {order.receiverPhoneNumber && (
+                <div>
+                  <dt className="text-caption-md text-text-muted">전화번호</dt>
+                  <dd className="mt-0.5 text-caption-md text-text-primary">
+                    {order.receiverPhoneNumber}
+                  </dd>
+                </div>
+              )}
               <div>
                 <dt className="text-caption-md text-text-muted">순수익</dt>
                 <dd className="mt-0.5 flex items-center gap-2">
@@ -298,7 +331,7 @@ export function ManualOrderDetailModal({
                   <Button
                     size="sm"
                     variant="primary"
-                    disabled={!isNetProfitDirty}
+                    disabled={!canSaveDetail}
                     loading={isSavingNetProfit}
                     onClick={handleSaveNetProfit}
                   >

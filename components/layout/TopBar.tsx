@@ -13,6 +13,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/ottall/parties': '파티 관리',
   '/ottall/reviews': '리뷰 관리',
   '/gcoin/products': '배그상품 관리',
+  '/gcoin/orders': '배그주문 관리',
 }
 
 type TopBarProps = {

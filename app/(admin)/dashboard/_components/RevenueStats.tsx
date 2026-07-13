@@ -82,6 +82,10 @@ export function RevenueStats() {
             label="파티 순수익"
             value={isLoading ? '-' : formatCurrency(revenue?.partyOrderProfit ?? 0)}
           />
+          <StatCard
+            label="배그 순수익"
+            value={isLoading ? '-' : formatCurrency(revenue?.gcoinOrderProfit ?? 0)}
+          />
         </div>
 
         {!isLoading && (revenue?.pendingSettlement ?? 0) > 0 && (

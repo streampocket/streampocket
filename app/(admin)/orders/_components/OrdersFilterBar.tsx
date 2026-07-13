@@ -7,13 +7,14 @@ import { PAGE_SIZE, STORE_META } from '@/constants/app'
 import type { FulfillmentStatus, OrderSource, OrderStatusCounts, Store } from '@/types/domain'
 import { useOrders } from '@/hooks/useOrders'
 
-// 출처/스토어 통합 필터 탭 — 색띠(수동=노랑, 파티=보라, 스트림=파랑, 포켓=빨강)와 1:1.
+// 출처/스토어 통합 필터 탭 — 색띠(수동=노랑, 파티=보라, 배그=주황, 스트림=파랑, 포켓=빨강)와 1:1.
 const VIEW_TABS: { key: string; label: string; store: '' | Store; source: '' | OrderSource }[] = [
   { key: 'all', label: '전체', store: '', source: '' },
   { key: 'streampocket', label: STORE_META.streampocket.label, store: 'streampocket', source: 'naver' },
   { key: 'pokemon_steam', label: STORE_META.pokemon_steam.label, store: 'pokemon_steam', source: 'naver' },
   { key: 'manual', label: '수동', store: '', source: 'manual' },
   { key: 'party', label: '파티', store: '', source: 'party' },
+  { key: 'gcoin', label: '배그', store: '', source: 'gcoin' },
 ]
 
 const STATUS_OPTIONS: {
@@ -75,11 +76,13 @@ export function OrdersFilterBar() {
       ? 'manual'
       : currentSource === 'party'
         ? 'party'
-        : currentStore === 'streampocket'
-          ? 'streampocket'
-          : currentStore === 'pokemon_steam'
-            ? 'pokemon_steam'
-            : 'all'
+        : currentSource === 'gcoin'
+          ? 'gcoin'
+          : currentStore === 'streampocket'
+            ? 'streampocket'
+            : currentStore === 'pokemon_steam'
+              ? 'pokemon_steam'
+              : 'all'
 
   const { data } = useOrders({
     status: (currentStatus as FulfillmentStatus) || undefined,
