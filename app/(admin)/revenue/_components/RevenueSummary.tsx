@@ -56,6 +56,10 @@ export function RevenueSummary({ yearMonth, store }: RevenueSummaryProps) {
             label="파티 순수익"
             value={loading ? '-' : fmt(data.partyOrderProfit)}
           />
+          <StatCard
+            label="배그 순수익"
+            value={loading ? '-' : fmt(data.gcoinOrderProfit)}
+          />
         </div>
 
         {!loading && data.pendingSettlement > 0 && (

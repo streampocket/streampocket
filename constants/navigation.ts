@@ -39,7 +39,10 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'GCOIN',
-    items: [{ label: '배그상품 관리', href: '/gcoin/products', icon: '🪙' }],
+    items: [
+      { label: '배그상품 관리', href: '/gcoin/products', icon: '🪙' },
+      { label: '배그주문 관리', href: '/gcoin/orders', icon: '📥' },
+    ],
   },
   {
     title: '시스템',
