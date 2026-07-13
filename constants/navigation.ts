@@ -32,11 +32,12 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: '신청 관리', href: '/ottall/applications', icon: '📝' },
       { label: '리뷰 관리', href: '/ottall/reviews', icon: '⭐' },
       { label: 'OTP 발급', href: '/ottall/otp', icon: '🔐' },
+      { label: '게시글 관리', href: '/community-admin', icon: '💬' },
     ],
   },
   {
-    title: '커뮤니티',
-    items: [{ label: '게시글 관리', href: '/community-admin', icon: '📝' }],
+    title: 'GCOIN',
+    items: [{ label: '배그상품 관리', href: '/gcoin/products', icon: '🪙' }],
   },
   {
     title: '시스템',
