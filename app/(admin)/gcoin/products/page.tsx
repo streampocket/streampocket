@@ -9,18 +9,21 @@ import { ProductTable } from './_components/ProductTable'
 import { ProductFormModal } from './_components/ProductFormModal'
 import { useAdminGcoinProducts } from './_hooks/useAdminGcoinProducts'
 import { useDeleteGcoinProduct } from './_hooks/useDeleteGcoinProduct'
-import type { GcoinProduct, GcoinProductTabStatus } from './_types'
+import type { GcoinProduct, GcoinProductTabCategory, GcoinProductTabStatus } from './_types'
 
 export default function GcoinProductsPage() {
   const [activeTab, setActiveTab] = useState<GcoinProductTabStatus>('all')
+  const [activeCategory, setActiveCategory] = useState<GcoinProductTabCategory>('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [formOpen, setFormOpen] = useState(false)
   const [formProduct, setFormProduct] = useState<GcoinProduct | null>(null)
 
   const queryStatus = activeTab === 'all' ? undefined : activeTab
+  const queryCategory = activeCategory === 'all' ? undefined : activeCategory
   const { data, isLoading } = useAdminGcoinProducts({
     status: queryStatus,
+    category: queryCategory,
     search: search || undefined,
     page,
     pageSize: PAGE_SIZE,
@@ -29,6 +32,11 @@ export default function GcoinProductsPage() {
 
   const handleTabChange = (tab: GcoinProductTabStatus) => {
     setActiveTab(tab)
+    setPage(1)
+  }
+
+  const handleCategoryChange = (category: GcoinProductTabCategory) => {
+    setActiveCategory(category)
     setPage(1)
   }
 
@@ -66,6 +74,8 @@ export default function GcoinProductsPage() {
       <ProductFilterBar
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        activeCategory={activeCategory}
+        onCategoryChange={handleCategoryChange}
         search={search}
         onSearchChange={handleSearchChange}
       />

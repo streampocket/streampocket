@@ -12,12 +12,14 @@ export type NavSection = {
 export const NAV_SECTIONS: NavSection[] = [
   {
     title: '메인',
-    items: [{ label: '대시보드', href: '/dashboard', icon: '▦' }],
+    items: [
+      { label: '대시보드', href: '/dashboard', icon: '▦' },
+      { label: '주문 관리', href: '/orders', icon: '📋' },
+    ],
   },
   {
     title: '스마트스토어',
     items: [
-      { label: '주문 관리', href: '/orders', icon: '📋' },
       { label: '상품 관리', href: '/products', icon: '📦' },
       { label: '계정 관리', href: '/codes', icon: '🔑' },
       { label: '리뷰 게임 관리', href: '/review-codes', icon: '🎮' },

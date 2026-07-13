@@ -58,6 +58,7 @@ export const ADMIN_PATH_PREFIXES = [
   "/settings",
   "/community-admin",
   "/ottall",
+  "/gcoin",
   "/login",
 ] as const; // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
 

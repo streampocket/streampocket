@@ -6,12 +6,13 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { MarkdownEditor } from '@/components/ui/MarkdownEditor'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { useCreateGcoinProduct } from '../_hooks/useCreateGcoinProduct'
 import { useUpdateGcoinProduct } from '../_hooks/useUpdateGcoinProduct'
+import { useExchangeRate } from '../_hooks/useExchangeRate'
 import { uploadGcoinProductImage } from '../_hooks/uploadGcoinProductImage'
-import { GCOIN_STATUS_BADGE } from './ProductTable'
-import type { GcoinProduct, GcoinProductStatus } from '../_types'
+import { GCOIN_STATUS_BADGE, GCOIN_CATEGORY_LABEL } from './ProductTable'
+import type { GcoinProduct, GcoinProductCategory, GcoinProductStatus } from '../_types'
 
 type ProductFormModalProps = {
   isOpen: boolean
@@ -22,9 +23,11 @@ type ProductFormModalProps = {
 
 type FormState = {
   name: string
+  category: GcoinProductCategory
   gcoinAmount: string
   salePrice: string
   listPrice: string
+  listPriceUsd: string
   sortOrder: string
   status: GcoinProductStatus
   imageUrl: string | null
@@ -33,24 +36,35 @@ type FormState = {
 
 const INITIAL_FORM: FormState = {
   name: '',
+  category: 'gcoin',
   gcoinAmount: '',
   salePrice: '',
   listPrice: '',
+  listPriceUsd: '',
   sortOrder: '',
   status: 'hidden',
   imageUrl: null,
   description: '',
 }
 
+/** 달러 정가 → 원화 환산 (BE의 toKrwListPrice와 동일: 100원 단위 반올림) */
+function toKrwListPrice(usd: number, rate: number): number {
+  return Math.round((usd * rate) / 100) * 100
+}
+
 const STATUS_OPTIONS: GcoinProductStatus[] = ['on_sale', 'hidden', 'sold_out']
+const CATEGORY_OPTIONS: GcoinProductCategory[] = ['gcoin', 'item']
 
 function buildInitial(product: GcoinProduct | null): FormState {
   if (!product) return INITIAL_FORM
   return {
     name: product.name,
-    gcoinAmount: String(product.gcoinAmount),
+    category: product.category,
+    gcoinAmount: product.gcoinAmount !== null ? String(product.gcoinAmount) : '',
     salePrice: String(product.salePrice),
-    listPrice: product.listPrice !== null ? String(product.listPrice) : '',
+    // 달러 정가 상품은 listPrice가 환산값이므로 폼에는 채우지 않는다 (달러란만 프리필)
+    listPrice: product.listPriceUsd === null && product.listPrice !== null ? String(product.listPrice) : '',
+    listPriceUsd: product.listPriceUsd !== null ? String(product.listPriceUsd) : '',
     sortOrder: String(product.sortOrder),
     status: product.status,
     imageUrl: product.imageUrl,
@@ -65,6 +79,15 @@ export function ProductFormModal({ isOpen, product, onClose }: ProductFormModalP
   const fileInputRef = useRef<HTMLInputElement>(null)
   const createMutation = useCreateGcoinProduct()
   const updateMutation = useUpdateGcoinProduct()
+  const { data: fxData } = useExchangeRate()
+  const fxRate = fxData?.data?.rate ?? null
+  const fxFetchedAt = fxData?.data?.fetchedAt ?? null
+
+  // 환율 갱신 확인용 표시 — 예: "현재 환율 $1 = 1,501.33원 (2026-07-13 20:19 갱신)"
+  const fxInfo =
+    fxRate !== null
+      ? `현재 환율 $1 = ${fxRate.toLocaleString('ko-KR', { maximumFractionDigits: 2 })}원${fxFetchedAt !== null ? ` (${formatDate(fxFetchedAt)} 갱신)` : ''}`
+      : null
   const isPending = createMutation.isPending || updateMutation.isPending
 
   // 모달이 열릴 때마다 대상 상품 기준으로 폼 초기화
@@ -97,12 +120,23 @@ export function ProductFormModal({ isOpen, product, onClose }: ProductFormModalP
     }
   }
 
-  // 할인율 미리보기 (정가가 있을 때만)
+  const isGcoinCategory = form.category === 'gcoin'
+
+  // 할인율 미리보기 — 지코인: 달러 정가 × 환율(100원 단위 반올림), 아이템: 원화 정가
   const salePriceNum = Number(form.salePrice)
-  const listPriceNum = Number(form.listPrice)
+  const listPriceUsdNum = Number(form.listPriceUsd)
+  const convertedKrw =
+    isGcoinCategory && form.listPriceUsd !== '' && fxRate !== null && listPriceUsdNum > 0
+      ? toKrwListPrice(listPriceUsdNum, fxRate)
+      : null
+  const effectiveListPrice = isGcoinCategory
+    ? convertedKrw
+    : form.listPrice !== ''
+      ? Number(form.listPrice)
+      : null
   const discountRate =
-    form.listPrice !== '' && listPriceNum > salePriceNum && salePriceNum >= 0
-      ? Math.round((1 - salePriceNum / listPriceNum) * 100)
+    effectiveListPrice !== null && effectiveListPrice > salePriceNum && salePriceNum >= 0
+      ? Math.round((1 - salePriceNum / effectiveListPrice) * 100)
       : null
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,16 +144,30 @@ export function ProductFormModal({ isOpen, product, onClose }: ProductFormModalP
 
     if (!form.name.trim()) return toast.error('상품명을 입력해 주세요.')
 
-    const gcoinAmount = Number(form.gcoinAmount)
-    if (!Number.isInteger(gcoinAmount) || gcoinAmount <= 0)
-      return toast.error('지코인 수량을 올바르게 입력해 주세요.')
+    // 아이템 상품은 지코인 수량 없음 (null 전송)
+    let gcoinAmount: number | null = null
+    if (isGcoinCategory) {
+      gcoinAmount = Number(form.gcoinAmount)
+      if (!Number.isInteger(gcoinAmount) || gcoinAmount <= 0)
+        return toast.error('지코인 수량을 올바르게 입력해 주세요.')
+    }
 
     const salePrice = Number(form.salePrice)
     if (!Number.isInteger(salePrice) || salePrice < 0)
       return toast.error('판매가를 올바르게 입력해 주세요.')
 
+    // 정가 — 지코인: 달러 입력(listPriceUsd), 아이템: 원화 입력(listPrice)
     let listPrice: number | null = null
-    if (form.listPrice !== '') {
+    let listPriceUsd: number | null = null
+    if (isGcoinCategory) {
+      if (form.listPriceUsd !== '') {
+        listPriceUsd = Math.round(Number(form.listPriceUsd) * 100) / 100
+        if (!Number.isFinite(listPriceUsd) || listPriceUsd <= 0)
+          return toast.error('달러 정가를 올바르게 입력해 주세요.')
+        if (convertedKrw !== null && convertedKrw <= salePrice)
+          return toast.error('달러 정가의 원화 환산액이 판매가보다 커야 합니다.')
+      }
+    } else if (form.listPrice !== '') {
       listPrice = Number(form.listPrice)
       if (!Number.isInteger(listPrice) || listPrice < 0)
         return toast.error('정가를 올바르게 입력해 주세요.')
@@ -135,9 +183,11 @@ export function ProductFormModal({ isOpen, product, onClose }: ProductFormModalP
 
     const payload = {
       name: form.name.trim(),
+      category: form.category,
       gcoinAmount,
       salePrice,
       listPrice,
+      listPriceUsd,
       description: form.description.trim() || null,
       imageUrl: form.imageUrl,
       ...(sortOrder !== undefined ? { sortOrder } : {}),
@@ -178,27 +228,49 @@ export function ProductFormModal({ isOpen, product, onClose }: ProductFormModalP
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        <Field label="카테고리" required>
+          <div className="flex gap-2">
+            {CATEGORY_OPTIONS.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setForm((prev) => ({ ...prev, category }))}
+                className={cn(
+                  'flex-1 rounded-full px-4 py-2 text-body-md font-medium transition-colors',
+                  form.category === category
+                    ? 'bg-brand text-white'
+                    : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
+                )}
+              >
+                {GCOIN_CATEGORY_LABEL[category]}
+              </button>
+            ))}
+          </div>
+        </Field>
+
         <Field label="상품명" required>
           <input
             type="text"
             value={form.name}
             onChange={updateField('name')}
-            placeholder="예: 지코인 1,100"
+            placeholder={isGcoinCategory ? '예: 지코인 1,100' : '예: 성장형 무기 스킨'}
             maxLength={255}
             className={INPUT_CLASS}
           />
         </Field>
 
-        <Field label="지코인 수량" required>
-          <input
-            type="number"
-            min={1}
-            value={form.gcoinAmount}
-            onChange={updateField('gcoinAmount')}
-            placeholder="예: 1100"
-            className={INPUT_CLASS}
-          />
-        </Field>
+        {isGcoinCategory && (
+          <Field label="지코인 수량" required>
+            <input
+              type="number"
+              min={1}
+              value={form.gcoinAmount}
+              onChange={updateField('gcoinAmount')}
+              placeholder="예: 1100"
+              className={INPUT_CLASS}
+            />
+          </Field>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="판매가(원)" required>
@@ -211,23 +283,50 @@ export function ProductFormModal({ isOpen, product, onClose }: ProductFormModalP
               className={INPUT_CLASS}
             />
           </Field>
-          <Field
-            label="정가(원)"
-            hint={
-              discountRate !== null
-                ? `할인율 ${discountRate}% 로 표시됩니다.`
-                : '입력 시 취소선 정가 + 할인율이 표시됩니다.'
-            }
-          >
-            <input
-              type="number"
-              min={0}
-              value={form.listPrice}
-              onChange={updateField('listPrice')}
-              placeholder="할인 없으면 비워두세요"
-              className={INPUT_CLASS}
-            />
-          </Field>
+          {isGcoinCategory ? (
+            <Field
+              label="정가($)"
+              hint={
+                form.listPriceUsd === ''
+                  ? fxInfo !== null
+                    ? `${fxInfo} · 달러로 입력하면 원화로 환산되어 표시됩니다.`
+                    : '환율 정보가 아직 없습니다. 달러로 입력하면 원화로 환산되어 표시됩니다.'
+                  : fxRate === null
+                    ? '환율 정보가 아직 없어 미리보기를 표시할 수 없습니다.'
+                    : convertedKrw !== null
+                      ? `${fxInfo} · ≈ ${convertedKrw.toLocaleString('ko-KR')}원${discountRate !== null ? ` · 할인율 ${discountRate}%로 표시됩니다.` : ' — 판매가보다 커야 할인 표시됩니다.'}`
+                      : '달러 정가를 올바르게 입력해 주세요.'
+              }
+            >
+              <input
+                type="number"
+                min={0}
+                step={0.01}
+                value={form.listPriceUsd}
+                onChange={updateField('listPriceUsd')}
+                placeholder="예: 9.99 (할인 없으면 비워두세요)"
+                className={INPUT_CLASS}
+              />
+            </Field>
+          ) : (
+            <Field
+              label="정가(원)"
+              hint={
+                discountRate !== null
+                  ? `할인율 ${discountRate}% 로 표시됩니다.`
+                  : '입력 시 취소선 정가 + 할인율이 표시됩니다.'
+              }
+            >
+              <input
+                type="number"
+                min={0}
+                value={form.listPrice}
+                onChange={updateField('listPrice')}
+                placeholder="할인 없으면 비워두세요"
+                className={INPUT_CLASS}
+              />
+            </Field>
+          )}
         </div>
 
         <Field label="진열 순서" hint="비워두면 자동으로 맨 뒤에 배치됩니다. 숫자가 작을수록 앞에 진열됩니다.">
