@@ -70,6 +70,11 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, unknown>) => ['adminParties', 'list', params] as const,
     detail: (id: string) => ['adminParties', id] as const,
   },
+  adminGcoinProducts: {
+    all: () => ['adminGcoinProducts'] as const,
+    list: (params?: Record<string, unknown>) => ['adminGcoinProducts', 'list', params] as const,
+    detail: (id: string) => ['adminGcoinProducts', id] as const,
+  },
   ownRuleTemplates: {
     all: () => ['ownRuleTemplates'] as const,
     list: () => ['ownRuleTemplates', 'list'] as const,
