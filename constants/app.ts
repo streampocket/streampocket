@@ -71,9 +71,9 @@ export const DURATION_OPTIONS = [
   { label: "2시간", minutes: 120 },
 ] as const; // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
 
-/** 파티 타입별 라벨 + 뱃지 색 (개인형=보라, 공유형=인디고). 카드/상세/관리자 목록 공통 사용. */
+/** 파티 타입별 라벨 + 뱃지 색 (개인형=핑크, 공유형=인디고). 카드/상세/관리자 목록 공통 사용. */
 export const PARTY_TYPE_META: Record<PartyType, { label: string; variant: BadgeVariant }> = {
-  personal: { label: "개인형", variant: "purple" },
+  personal: { label: "개인형", variant: "pink" },
   shared: { label: "공유형", variant: "indigo" },
 };
 
