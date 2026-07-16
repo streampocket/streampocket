@@ -110,6 +110,20 @@ export const REVIEW_RATING_MAX = 5;
 export const REVIEW_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const REVIEW_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
 
+/** 회원 탈퇴 사유 선택지 — be(userWithdrawalService)의 WITHDRAWAL_REASON_LABELS와 코드 일치 필수 */
+export const WITHDRAWAL_REASONS = [
+  { code: "price", label: "가격이 비싸서" },
+  { code: "low_usage", label: "이용 빈도가 낮아서" },
+  { code: "no_party", label: "원하는 파티가 없어서" },
+  { code: "dissatisfied", label: "서비스 불만" },
+  { code: "other", label: "기타" },
+] as const; // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
+
+export type WithdrawalReasonCode = (typeof WITHDRAWAL_REASONS)[number]["code"];
+
+/** 탈퇴 회원 정보 보관 일수 (안내 문구용 — 실제 삭제는 백엔드 크론) */
+export const WITHDRAWAL_RETENTION_DAYS = 30;
+
 export const COMMUNITY_PAGE_SIZE = 20;
 export const COMMUNITY_TITLE_MAX_LENGTH = 100;
 export const COMMUNITY_CONTENT_MAX_LENGTH = 5000;

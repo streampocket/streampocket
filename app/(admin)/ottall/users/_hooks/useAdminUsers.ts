@@ -18,6 +18,7 @@ export function useAdminUsers(params: UserListParams = {}) {
   const searchParams = new URLSearchParams()
   if (params.search) searchParams.set('search', params.search)
   if (params.provider) searchParams.set('provider', params.provider)
+  if (params.status) searchParams.set('status', params.status)
   searchParams.set('page', String(params.page ?? 1))
   searchParams.set('pageSize', String(params.pageSize ?? 20))
 

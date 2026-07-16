@@ -1,11 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { clearUserAuthSession } from '@/lib/userAuth'
-import { USER_LOGIN_PATH } from '@/constants/app'
+import { USER_LOGIN_PATH, type WithdrawalReasonCode } from '@/constants/app'
 import { useUserProfile } from '@/hooks/useUserProfile'
+import { useWithdrawUser } from '../_hooks/useWithdrawUser'
+import { WithdrawModal } from './WithdrawModal'
 
 const PROVIDER_LABELS: Record<string, string> = {
   local: '이메일',
@@ -16,10 +20,28 @@ const PROVIDER_LABELS: Record<string, string> = {
 export function UserProfile() {
   const router = useRouter()
   const { data: user, isLoading, error } = useUserProfile()
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
+  const withdrawMutation = useWithdrawUser()
 
   const handleLogout = () => {
     clearUserAuthSession()
     router.replace(USER_LOGIN_PATH)
+  }
+
+  const handleWithdraw = (reason: WithdrawalReasonCode, reasonDetail?: string) => {
+    withdrawMutation.mutate(
+      { reason, reasonDetail },
+      {
+        onSuccess: () => {
+          clearUserAuthSession()
+          toast.success('탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다.')
+          router.replace('/party')
+        },
+        onError: (err: Error) => {
+          toast.error(err.message ?? '탈퇴 처리에 실패했습니다.')
+        },
+      },
+    )
   }
 
   if (isLoading) {
@@ -68,7 +90,25 @@ export function UserProfile() {
         <Button variant="secondary" onClick={handleLogout} className="w-full">
           로그아웃
         </Button>
+
+        {/* 실수 클릭 방지를 위해 눈에 덜 띄는 텍스트형 버튼 */}
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => setIsWithdrawOpen(true)}
+            className="text-caption-md text-text-muted underline underline-offset-2 transition-colors hover:text-text-secondary"
+          >
+            회원 탈퇴
+          </button>
+        </div>
       </div>
+
+      <WithdrawModal
+        isOpen={isWithdrawOpen}
+        isPending={withdrawMutation.isPending}
+        onConfirm={handleWithdraw}
+        onClose={() => setIsWithdrawOpen(false)}
+      />
     </div>
   )
 }
