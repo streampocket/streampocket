@@ -15,6 +15,7 @@ const TABS: Tab[] = [
   { value: 'local', label: '일반' },
   { value: 'kakao', label: '카카오' },
   { value: 'google', label: '구글' },
+  { value: 'withdrawn', label: '탈퇴' },
 ]
 
 type UserFilterBarProps = {

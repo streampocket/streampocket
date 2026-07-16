@@ -15,10 +15,12 @@ export default function UsersPage() {
   const [page, setPage] = useState(1)
   const [detailUserId, setDetailUserId] = useState<string | null>(null)
 
-  const queryProvider = activeTab === 'all' ? undefined : activeTab
+  const isWithdrawnView = activeTab === 'withdrawn'
+  const queryProvider = activeTab === 'all' || isWithdrawnView ? undefined : activeTab
   const { data, isLoading } = useAdminUsers({
     search: searchQuery || undefined,
     provider: queryProvider,
+    status: isWithdrawnView ? 'withdrawn' : 'active',
     page,
     pageSize: PAGE_SIZE,
   })
@@ -53,6 +55,7 @@ export default function UsersPage() {
           total={data?.total ?? 0}
           page={data?.page ?? 1}
           totalPages={data?.totalPages ?? 1}
+          isWithdrawnView={isWithdrawnView}
           onPageChange={setPage}
           onViewDetail={setDetailUserId}
         />

@@ -4,7 +4,17 @@ import type {
   PartyApplicationStatus,
 } from '@/types/domain'
 
-export type AdminUserListItem = {
+// 탈퇴 정보 (활성 회원은 전부 null/false)
+export type UserWithdrawalInfo = {
+  deletedAt: string | null
+  withdrawalReason: string | null
+  withdrawnByAdmin: boolean
+  originalEmail: string | null
+  originalPhone: string | null
+  purgeScheduledAt: string | null
+}
+
+export type AdminUserListItem = UserWithdrawalInfo & {
   id: string
   email: string
   name: string
@@ -36,7 +46,7 @@ export type AdminUserDetailApplication = {
 }
 
 export type AdminUserDetail = {
-  user: {
+  user: UserWithdrawalInfo & {
     id: string
     email: string
     name: string
@@ -55,11 +65,14 @@ export type AdminUserDetail = {
   }
 }
 
+export type UserStatusFilter = 'active' | 'withdrawn'
+
 export type UserListParams = {
   search?: string
   provider?: AuthProvider
+  status?: UserStatusFilter
   page?: number
   pageSize?: number
 }
 
-export type UserProviderFilter = 'all' | AuthProvider
+export type UserProviderFilter = 'all' | AuthProvider | 'withdrawn'

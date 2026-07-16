@@ -12,6 +12,7 @@ type UserTableProps = {
   total: number
   page: number
   totalPages: number
+  isWithdrawnView: boolean
   onPageChange: (page: number) => void
   onViewDetail: (id: string) => void
 }
@@ -36,13 +37,16 @@ export function UserTable({
   total,
   page,
   totalPages,
+  isWithdrawnView,
   onPageChange,
   onViewDetail,
 }: UserTableProps) {
   if (users.length === 0) {
     return (
       <div className="py-16 text-center">
-        <p className="text-body-md text-text-muted">회원이 없습니다.</p>
+        <p className="text-body-md text-text-muted">
+          {isWithdrawnView ? '탈퇴한 회원이 없습니다.' : '회원이 없습니다.'}
+        </p>
       </div>
     )
   }
@@ -63,8 +67,18 @@ export function UserTable({
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">이메일</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">전화번호</th>
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가입방식</th>
-                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">파티</th>
-                <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가입일</th>
+                {isWithdrawnView ? (
+                  <>
+                    <th className="text-caption-md px-4 py-3 font-medium text-text-muted">탈퇴일</th>
+                    <th className="text-caption-md px-4 py-3 font-medium text-text-muted">사유</th>
+                    <th className="text-caption-md px-4 py-3 font-medium text-text-muted">삭제 예정일</th>
+                  </>
+                ) : (
+                  <>
+                    <th className="text-caption-md px-4 py-3 font-medium text-text-muted">파티</th>
+                    <th className="text-caption-md px-4 py-3 font-medium text-text-muted">가입일</th>
+                  </>
+                )}
                 <th className="text-caption-md px-4 py-3 font-medium text-text-muted">액션</th>
               </tr>
             </thead>
@@ -79,17 +93,42 @@ export function UserTable({
                     <td className="text-body-md px-4 py-3 font-medium text-text-primary">
                       {user.name}
                     </td>
-                    <td className="text-body-md px-4 py-3 text-text-secondary">{user.email}</td>
-                    <td className="text-body-md px-4 py-3 text-text-secondary">{user.phone}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={providerBadge.variant}>{providerBadge.label}</Badge>
+                    <td className="text-body-md px-4 py-3 text-text-secondary">
+                      {isWithdrawnView ? (user.originalEmail ?? '-') : user.email}
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {user._count.partyApplications}
+                      {isWithdrawnView ? (user.originalPhone ?? '-') : user.phone}
                     </td>
-                    <td className="text-body-md px-4 py-3 text-text-muted">
-                      {formatDate(user.createdAt)}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <Badge variant={providerBadge.variant}>{providerBadge.label}</Badge>
+                        {isWithdrawnView && user.withdrawnByAdmin && (
+                          <Badge variant="red">관리자</Badge>
+                        )}
+                      </div>
                     </td>
+                    {isWithdrawnView ? (
+                      <>
+                        <td className="text-body-md px-4 py-3 text-text-muted">
+                          {user.deletedAt ? formatDate(user.deletedAt) : '-'}
+                        </td>
+                        <td className="text-body-md max-w-50 truncate px-4 py-3 text-text-secondary">
+                          {user.withdrawalReason ?? '-'}
+                        </td>
+                        <td className="text-body-md px-4 py-3 text-text-muted">
+                          {user.purgeScheduledAt ? formatDate(user.purgeScheduledAt) : '-'}
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="text-body-md px-4 py-3 text-text-secondary">
+                          {user._count.partyApplications}
+                        </td>
+                        <td className="text-body-md px-4 py-3 text-text-muted">
+                          {formatDate(user.createdAt)}
+                        </td>
+                      </>
+                    )}
                     <td className="px-4 py-3">
                       <Button
                         variant="secondary"
@@ -119,16 +158,39 @@ export function UserTable({
               >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-body-md font-medium text-text-primary">{user.name}</span>
-                  <Badge variant={providerBadge.variant}>{providerBadge.label}</Badge>
+                  <div className="flex items-center gap-1">
+                    <Badge variant={providerBadge.variant}>{providerBadge.label}</Badge>
+                    {isWithdrawnView && user.withdrawnByAdmin && (
+                      <Badge variant="red">관리자</Badge>
+                    )}
+                  </div>
                 </div>
-                <p className="text-caption-md text-text-secondary">{user.email}</p>
-                <p className="text-caption-md text-text-secondary">{user.phone}</p>
-                <div className="mt-2 flex gap-3">
-                  <span className="text-caption-md text-text-muted">
-                    파티 {user._count.partyApplications}
-                  </span>
-                </div>
-                <p className="text-caption-sm mt-1 text-text-muted">{formatDate(user.createdAt)}</p>
+                <p className="text-caption-md text-text-secondary">
+                  {isWithdrawnView ? (user.originalEmail ?? '-') : user.email}
+                </p>
+                <p className="text-caption-md text-text-secondary">
+                  {isWithdrawnView ? (user.originalPhone ?? '-') : user.phone}
+                </p>
+                {isWithdrawnView ? (
+                  <>
+                    <p className="text-caption-md mt-2 text-text-secondary">
+                      사유: {user.withdrawalReason ?? '-'}
+                    </p>
+                    <p className="text-caption-sm mt-1 text-text-muted">
+                      탈퇴 {user.deletedAt ? formatDate(user.deletedAt) : '-'} · 삭제 예정{' '}
+                      {user.purgeScheduledAt ? formatDate(user.purgeScheduledAt) : '-'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="mt-2 flex gap-3">
+                      <span className="text-caption-md text-text-muted">
+                        파티 {user._count.partyApplications}
+                      </span>
+                    </div>
+                    <p className="text-caption-sm mt-1 text-text-muted">{formatDate(user.createdAt)}</p>
+                  </>
+                )}
               </button>
             )
           })}

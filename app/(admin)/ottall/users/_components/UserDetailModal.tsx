@@ -1,13 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type {
   AuthProvider,
   PartyApplicationStatus,
 } from '@/types/domain'
 import { useAdminUserDetail } from '../_hooks/useAdminUserDetail'
+import { useAdminWithdrawUser } from '../_hooks/useAdminWithdrawUser'
+import { AdminWithdrawModal } from './AdminWithdrawModal'
 
 type UserDetailModalProps = {
   userId: string | null
@@ -53,6 +57,18 @@ function formatPrice(amount: number): string {
 
 export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
   const { data: detail, isLoading } = useAdminUserDetail(userId)
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
+  const withdrawMutation = useAdminWithdrawUser()
+
+  const isWithdrawn = !!detail?.user.deletedAt
+
+  const handleWithdraw = (reason: string) => {
+    if (!userId) return
+    withdrawMutation.mutate(
+      { userId, reason },
+      { onSuccess: () => setIsWithdrawOpen(false) },
+    )
+  }
 
   return (
     <Modal isOpen={!!userId} onClose={onClose} title="회원 상세">
@@ -64,10 +80,23 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
         <div className="space-y-6">
           {/* 기본 정보 */}
           <section className="space-y-2">
-            <h3 className="text-body-md font-semibold text-text-primary">기본 정보</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-body-md font-semibold text-text-primary">기본 정보</h3>
+              {isWithdrawn && (
+                <Badge variant="red">
+                  {detail.user.withdrawnByAdmin ? '탈퇴 (관리자 처리)' : '탈퇴'}
+                </Badge>
+              )}
+            </div>
             <InfoRow label="이름" value={detail.user.name} />
-            <InfoRow label="이메일" value={detail.user.email} />
-            <InfoRow label="전화번호" value={detail.user.phone} />
+            <InfoRow
+              label="이메일"
+              value={isWithdrawn ? (detail.user.originalEmail ?? '-') : detail.user.email}
+            />
+            <InfoRow
+              label="전화번호"
+              value={isWithdrawn ? (detail.user.originalPhone ?? '-') : detail.user.phone}
+            />
             <div className="flex items-center gap-3">
               <span className="text-body-md w-24 shrink-0 text-text-muted">인증 여부</span>
               <Badge variant={detail.user.phoneVerified ? 'green' : 'red'}>
@@ -82,6 +111,26 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
             </div>
             <InfoRow label="가입일" value={formatDateTime(detail.user.createdAt)} />
           </section>
+
+          {/* 탈퇴 정보 */}
+          {isWithdrawn && (
+            <section className="space-y-2 rounded-lg border border-red-200 bg-red-50 p-3">
+              <h3 className="text-body-md font-semibold text-red-700">탈퇴 정보</h3>
+              <InfoRow
+                label="탈퇴일"
+                value={detail.user.deletedAt ? formatDateTime(detail.user.deletedAt) : '-'}
+              />
+              <InfoRow label="사유" value={detail.user.withdrawalReason ?? '-'} />
+              <InfoRow
+                label="삭제 예정일"
+                value={
+                  detail.user.purgeScheduledAt
+                    ? formatDateTime(detail.user.purgeScheduledAt)
+                    : '-'
+                }
+              />
+            </section>
+          )}
 
           {/* 통계 요약 */}
           <section className="space-y-2">
@@ -146,8 +195,33 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
               ))}
             </section>
           )}
+
+          {/* 관리자 강제 탈퇴 — 활성 회원만 */}
+          {!isWithdrawn && (
+            <section className="border-t border-border pt-4">
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => setIsWithdrawOpen(true)}
+              >
+                회원 탈퇴 처리
+              </Button>
+              <p className="text-caption-sm mt-2 text-text-muted">
+                탈퇴 처리 시 30일 보관 후 완전 삭제됩니다. 진행 중/대기 중 파티가 있으면 처리할 수
+                없습니다.
+              </p>
+            </section>
+          )}
         </div>
       )}
+
+      <AdminWithdrawModal
+        isOpen={isWithdrawOpen}
+        userName={detail?.user.name ?? ''}
+        isPending={withdrawMutation.isPending}
+        onConfirm={handleWithdraw}
+        onClose={() => setIsWithdrawOpen(false)}
+      />
     </Modal>
   )
 }
