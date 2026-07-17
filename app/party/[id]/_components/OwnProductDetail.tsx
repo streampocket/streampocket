@@ -12,7 +12,7 @@ import { useApplyParty } from '../_hooks/useApplyParty'
 import { useCheckApplied } from '../_hooks/useCheckApplied'
 import { ApplyCompletedModal } from './ApplyCompletedModal'
 import { getUserInfo } from '@/lib/userAuth'
-import { PARTY_DEFAULT_RULES, PARTY_TYPE_META, USER_LOGIN_PATH } from '@/constants/app'
+import { KAKAO_CHAT_URL, PARTY_DEFAULT_RULES, PARTY_TYPE_META, USER_LOGIN_PATH } from '@/constants/app'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
@@ -223,7 +223,7 @@ export function OwnProductDetail() {
                 파티 참여가 확정되었습니다.
               </p>
               <a
-                href="https://pf.kakao.com/_MkxalX"
+                href={KAKAO_CHAT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1 inline-flex items-center gap-1 rounded-lg bg-[#FEE500] px-4 py-2 text-body-md font-medium text-[#191919] transition-opacity hover:opacity-80"
@@ -238,7 +238,7 @@ export function OwnProductDetail() {
                 입금 확인 후 참여가 확정됩니다. 문의사항은 카카오톡으로 연락주세요.
               </p>
               <a
-                href="https://pf.kakao.com/_MkxalX"
+                href={KAKAO_CHAT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1 inline-flex items-center gap-1 rounded-lg bg-[#FEE500] px-4 py-2 text-body-md font-medium text-[#191919] transition-opacity hover:opacity-80"

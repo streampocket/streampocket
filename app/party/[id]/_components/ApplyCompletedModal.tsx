@@ -2,7 +2,7 @@
 
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
-import { KAKAO_PAYMENT_CHAT_URL } from '@/constants/app'
+import { KAKAO_CHAT_URL } from '@/constants/app'
 
 type ApplyCompletedModalProps = {
   isOpen: boolean
@@ -59,7 +59,7 @@ export function ApplyCompletedModal({
         </div>
 
         <a
-          href={KAKAO_PAYMENT_CHAT_URL}
+          href={KAKAO_CHAT_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="block"

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { KAKAO_OPEN_CHAT_URL, NAVER_PAY_HISTORY_URL } from '@/constants/app'
+import { KAKAO_CHAT_URL, NAVER_PAY_HISTORY_URL } from '@/constants/app'
 import { formatDate } from '@/lib/utils'
 import { useOrderTracking } from '../_hooks/useOrderTracking'
 import { resolveTrackView } from '../_types'
@@ -190,7 +190,7 @@ function TrackResult({ productOrderId, data }: TrackResultProps) {
               처리 중 확인이 필요한 사항이 있어요. 고객센터로 문의해 주세요.
             </p>
             <a
-              href={KAKAO_OPEN_CHAT_URL}
+              href={KAKAO_CHAT_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 inline-block rounded-lg bg-brand px-4 py-2 text-caption-md font-semibold text-white transition-colors hover:bg-brand-dark"

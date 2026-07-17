@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { ADMIN_PATH_PREFIXES, KAKAO_PAYMENT_CHAT_URL, TRACK_PATH } from '@/constants/app'
+import { ADMIN_PATH_PREFIXES, KAKAO_CHAT_URL, TRACK_PATH } from '@/constants/app'
 import { KakaoTalkIcon } from '@/components/icons/KakaoTalkIcon'
 
 function isAdminPath(pathname: string | null): boolean {
@@ -19,7 +19,7 @@ export function FloatingKakaoButton() {
 
   return (
     <a
-      href={KAKAO_PAYMENT_CHAT_URL}
+      href={KAKAO_CHAT_URL}
       target="_blank"
       rel="noopener noreferrer nofollow"
       aria-label="카카오톡 문의하기"

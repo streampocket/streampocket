@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { isUserAuthenticated, clearUserAuthSession, getUserInfo } from '@/lib/userAuth'
-import { USER_LOGIN_PATH, USER_MYPAGE_PATH, API_BASE_URL, KAKAO_OPEN_CHAT_URL } from '@/constants/app'
+import { USER_LOGIN_PATH, USER_MYPAGE_PATH, API_BASE_URL, KAKAO_CHAT_URL } from '@/constants/app'
 
 export function HeaderAuthButton() {
   const router = useRouter()
@@ -87,7 +87,7 @@ export function HeaderAuthButton() {
             마이페이지
           </Link>
           <a
-            href={KAKAO_OPEN_CHAT_URL}
+            href={KAKAO_CHAT_URL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
