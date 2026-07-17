@@ -67,7 +67,7 @@ export default function TermsPage() {
               </li>
               <li>
                 배송 지연에 따른 보장: 쉐어 플랫폼 운영 특성상 비영업시간(평일-
-                22:30 ~ 익일 10:30, 주말- 18:00 ~ 익일 10:30) 결제 건은 이용
+                22:30 ~ 익일 10:30, 주말- 23:00 ~ 익일 10:30) 결제 건은 이용
                 권한 제공이 지연될 수 있습니다. 회사는 영업시간 기준 6시간
                 이내에 서비스 매칭(이용 환경 제공)이 완료되지 않을 경우, 고객의
                 요청 시 어떠한 수수료도 부과하지 않고 100% 전액 환불할 것을
@@ -269,7 +269,7 @@ export default function TermsPage() {
           <div className="rounded-lg bg-gray-50 p-4">
             <p className="font-medium text-text-primary">고객센터 운영시간</p>
             <p className="mt-1">평일 10:30 ~ 22:30</p>
-            <p>주말 10:30 ~ 18:00</p>
+            <p>주말 10:30 ~ 23:00</p>
           </div>
         </div>
       </section>

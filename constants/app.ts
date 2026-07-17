@@ -43,8 +43,8 @@ export const USER_LOGIN_PATH = "/signin";
 export const USER_SIGNUP_PATH = "/signup";
 export const USER_MYPAGE_PATH = "/mypage";
 export const TRACK_PATH = "/track";
-export const KAKAO_OPEN_CHAT_URL = "https://pf.kakao.com/_MkxalX";
-export const KAKAO_PAYMENT_CHAT_URL = "http://pf.kakao.com/_MkxalX/chat";
+// 카카오톡 상담 — 채널 홈이 아닌 1:1 채팅으로 바로 연결 (모든 문의 버튼 공통)
+export const KAKAO_CHAT_URL = "http://pf.kakao.com/_MkxalX/chat";
 export const NAVER_PAY_HISTORY_URL = "https://pay.naver.com/history?page=1";
 
 export const ADMIN_PATH_PREFIXES = [
