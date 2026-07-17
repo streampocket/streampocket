@@ -75,6 +75,8 @@ export function OwnProductDetail() {
 
   const status = STATUS_MAP[product.status]
   const partyType = PARTY_TYPE_META[product.partyType] ?? PARTY_TYPE_META.shared
+  // 개인형·유지형은 참여 시점 기준 개별 기간 보장 — 공유형+차감형만 파티 전체 시작/종료 날짜 사용
+  const isPerMemberPeriod = product.partyType === 'personal' || product.durationMode === 'fixed'
   const progress = product.totalSlots > 0
     ? Math.round((product.filledSlots / product.totalSlots) * 100)
     : 0
@@ -142,22 +144,26 @@ export function OwnProductDetail() {
             </div>
           </div>
 
-          {/* 시작일/종료일 */}
+          {/* 시작일/종료일 — 개인형·유지형은 참여자 개인 기준 기간이라 파티 전체 날짜를 노출하지 않음 */}
           <div className="grid grid-cols-2 gap-3 rounded-lg bg-gray-50 p-4">
             <div className="text-center">
               <p className="text-caption-sm text-text-muted">시작일</p>
               <p className="text-body-md font-semibold text-text-primary">
-                {product.startedAt
-                  ? new Date(product.startedAt).toLocaleDateString('ko-KR')
-                  : '첫 파티원 참여 후 시작'}
+                {isPerMemberPeriod
+                  ? '참여 시'
+                  : product.startedAt
+                    ? new Date(product.startedAt).toLocaleDateString('ko-KR')
+                    : '참여 시 바로 시작'}
               </p>
             </div>
             <div className="text-center">
               <p className="text-caption-sm text-text-muted">종료일</p>
               <p className="text-body-md font-semibold text-text-primary">
-                {product.partyExpiresAt
-                  ? new Date(product.partyExpiresAt).toLocaleDateString('ko-KR')
-                  : `첫 파티원 참여일로부터 ${product.durationDays}일`}
+                {isPerMemberPeriod
+                  ? `참여일로부터 ${product.durationDays}일`
+                  : product.partyExpiresAt
+                    ? new Date(product.partyExpiresAt).toLocaleDateString('ko-KR')
+                    : `시작일로부터 ${product.durationDays}일`}
               </p>
             </div>
           </div>
