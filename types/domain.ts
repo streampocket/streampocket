@@ -237,13 +237,6 @@ export type DashboardStats = {
   revenue: RevenueData
 }
 
-/** 매출 차트 아이템 */
-export type RevenueChartItem = {
-  date: string
-  totalRevenue: number
-  netProfit: number
-}
-
 /** 상품별 매출 랭킹 아이템 */
 export type ProductRankingItem = {
   productName: string

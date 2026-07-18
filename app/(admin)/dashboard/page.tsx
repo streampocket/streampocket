@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import { StoreTabs } from '@/components/StoreTabs'
 import { StatsGrid } from './_components/StatsGrid'
 import { RevenueStats } from './_components/RevenueStats'
-import { RevenueChart } from './_components/RevenueChart'
+import { RevenueCalendar } from './_components/RevenueCalendar'
 import { DashboardExtras } from './_components/DashboardExtras'
 import { RecentOrdersTable } from './_components/RecentOrdersTable'
 
@@ -27,7 +27,7 @@ export default function DashboardPage() {
       </Suspense>
 
       <Suspense>
-        <RevenueChart />
+        <RevenueCalendar />
       </Suspense>
 
       <Suspense>
