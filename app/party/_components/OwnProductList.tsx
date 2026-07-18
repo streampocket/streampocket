@@ -6,7 +6,7 @@ import { SortDropdown } from './SortDropdown'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
 import { cn } from '@/lib/utils'
-import type { OwnProductStatus } from '@/types/domain'
+import type { OwnProduct, OwnProductStatus } from '@/types/domain'
 import type { ProductSort } from '../_types'
 
 type StatusFilter = OwnProductStatus | 'all'
@@ -32,6 +32,14 @@ const DURATION_FILTERS: {
   { value: '30+', label: '30일~', min: 30, max: Infinity },
 ]
 
+// 필터 기준 기간 — 지금 참여하면 실제로 이용하게 될 일수.
+// 개인형·유지형은 참여 시점부터 전체 기간 보장, 차감형은 시작 후 남은 기간만 이용 가능
+function effectiveDurationDays(p: OwnProduct): number {
+  const isPerMemberPeriod = p.partyType === 'personal' || p.durationMode === 'fixed'
+  if (isPerMemberPeriod || !p.startedAt) return p.durationDays
+  return p.remainingDays
+}
+
 const chipClass = (active: boolean): string =>
   cn(
     'rounded-full px-4 py-1.5 text-body-md font-medium transition-colors',
@@ -55,9 +63,10 @@ export function OwnProductList() {
   const filteredProducts =
     durationFilter === 'all' || !durationRange
       ? products
-      : products?.filter(
-          (p) => p.durationDays >= durationRange.min && p.durationDays <= durationRange.max,
-        )
+      : products?.filter((p) => {
+          const days = effectiveDurationDays(p)
+          return days >= durationRange.min && days <= durationRange.max
+        })
 
   const isFilterChanged =
     statusFilter !== 'recruiting' ||
