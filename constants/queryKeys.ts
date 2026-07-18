@@ -26,8 +26,10 @@ export const QUERY_KEYS = {
   },
   dashboard: {
     stats: (period?: string, store?: string) => ['dashboard', 'stats', period, store] as const,
-    revenueChart: (days?: number, store?: string) =>
-      ['dashboard', 'revenueChart', days, store] as const,
+    calendarAll: () => ['dashboard', 'calendar'] as const,
+    calendar: (yearMonth?: string, store?: string) =>
+      ['dashboard', 'calendar', yearMonth, store] as const,
+    dailyReport: (date?: string) => ['dashboard', 'dailyReport', date] as const,
     extras: (store?: string) => ['dashboard', 'extras', store] as const,
   },
   settings: {
