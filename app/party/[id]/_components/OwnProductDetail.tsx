@@ -12,7 +12,7 @@ import { useApplyParty } from '../_hooks/useApplyParty'
 import { useCheckApplied } from '../_hooks/useCheckApplied'
 import { ApplyCompletedModal } from './ApplyCompletedModal'
 import { getUserInfo } from '@/lib/userAuth'
-import { KAKAO_CHAT_URL, PARTY_DEFAULT_RULES, PARTY_TYPE_META, USER_LOGIN_PATH } from '@/constants/app'
+import { KAKAO_CHAT_URL, PARTY_DEFAULT_RULES, PARTY_TYPE_META, USER_LOGIN_PATH, USER_MYPAGE_PURCHASES_PATH } from '@/constants/app'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
@@ -294,11 +294,14 @@ export function OwnProductDetail() {
         </div>
       )}
 
-      {/* 신청 완료 모달 */}
+      {/* 신청 완료 모달 — 어떤 방식으로 닫아도(X/ESC/오버레이/OTP 버튼) 마이페이지 구매내역으로 이동 */}
       {completedInfo && (
         <ApplyCompletedModal
           isOpen
-          onClose={() => setCompletedInfo(null)}
+          onClose={() => {
+            setCompletedInfo(null)
+            router.push(USER_MYPAGE_PURCHASES_PATH)
+          }}
           price={completedInfo.price}
           fee={completedInfo.fee}
           totalAmount={completedInfo.totalAmount}

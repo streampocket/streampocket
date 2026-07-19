@@ -18,6 +18,7 @@ import { useDeleteManualOrder } from '../_hooks/useDeleteManualOrder'
 import { useUpdateManualOrderNetProfit } from '../_hooks/useUpdateManualOrderNetProfit'
 import { GiftSection } from './GiftSection'
 import { AutoFriendLinkSection } from './AutoFriendLinkSection'
+import { PartyOtpSection } from './PartyOtpSection'
 
 type ManualOrderDetailModalProps = {
   orderId: string | null
@@ -61,13 +62,18 @@ export function ManualOrderDetailModal({
   const { mutate: deleteOrder, isPending: isDeleting } = useDeleteManualOrder()
   const { mutate: updateNetProfit, isPending: isSavingNetProfit } = useUpdateManualOrderNetProfit()
 
-  const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink'>('input')
+  // 파티 주문은 입력/저장·친구링크 자동 탭 대신 [상태, OTP 발급] 구성
+  const isParty = source === 'party'
+  const [activeTab, setActiveTab] = useState<'input' | 'status' | 'autolink' | 'otp'>(
+    isParty ? 'status' : 'input',
+  )
   const [netProfitInput, setNetProfitInput] = useState('')
   const [receiverNameInput, setReceiverNameInput] = useState('')
 
   useEffect(() => {
-    setActiveTab('input')
-  }, [orderId])
+    // 파티 주문에서는 숨겨진 'input' 탭으로 리셋되지 않도록 기본 탭을 분기
+    setActiveTab(isParty ? 'status' : 'input')
+  }, [orderId, isParty])
 
   // order 로드/변경 시 입력값을 현재 순수익(settlementAmount)으로 동기화
   useEffect(() => {
@@ -242,11 +248,16 @@ export function ManualOrderDetailModal({
 
           <div className="flex gap-1">
             {(
-              [
-                { v: 'input', l: '입력/저장' },
-                { v: 'status', l: '상태' },
-                { v: 'autolink', l: '친구링크 자동' },
-              ] as const
+              isParty
+                ? ([
+                    { v: 'status', l: '상태' },
+                    { v: 'otp', l: 'OTP 발급' },
+                  ] as const)
+                : ([
+                    { v: 'input', l: '입력/저장' },
+                    { v: 'status', l: '상태' },
+                    { v: 'autolink', l: '친구링크 자동' },
+                  ] as const)
             ).map((t) => (
               <button
                 key={t.v}
@@ -264,15 +275,26 @@ export function ManualOrderDetailModal({
             ))}
           </div>
 
-          {/* 입력/저장 — 네이버 상세 모달과 동일 (전화번호 없어 알림톡 버튼 제외) */}
-          <div className={cn(activeTab !== 'input' && 'hidden')}>
-            <GiftSection order={order} title="선물 처리" showOrderStatusAlimtalk={false} />
-          </div>
+          {/* 입력/저장 — 네이버 상세 모달과 동일 (전화번호 없어 알림톡 버튼 제외). 파티 주문에서는 미노출 */}
+          {!isParty && (
+            <div className={cn(activeTab !== 'input' && 'hidden')}>
+              <GiftSection order={order} title="선물 처리" showOrderStatusAlimtalk={false} />
+            </div>
+          )}
 
-          {/* 친구링크 자동 가져오기 */}
-          <div className={cn(activeTab !== 'autolink' && 'hidden')}>
-            <AutoFriendLinkSection order={order} />
-          </div>
+          {/* 친구링크 자동 가져오기 — 파티 주문에서는 미노출 */}
+          {!isParty && (
+            <div className={cn(activeTab !== 'autolink' && 'hidden')}>
+              <AutoFriendLinkSection order={order} />
+            </div>
+          )}
+
+          {/* OTP 발급 — 파티 주문 전용 */}
+          {isParty && (
+            <div className={cn(activeTab !== 'otp' && 'hidden')}>
+              <PartyOtpSection orderId={order.id} />
+            </div>
+          )}
 
           {/* 상태 — 수동 주문 정보만 표시 */}
           <div className={cn(activeTab !== 'status' && 'hidden')}>

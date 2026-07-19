@@ -26,4 +26,17 @@ export type MyApplication = {
   expiresAt: string | null
   createdAt: string
   product: MyApplicationProduct
+  otpRegistered: boolean
+  otpIssueCount: number
+}
+
+// POST /own/applications/{id}/otp 응답 — 시크릿은 절대 포함되지 않음(서버가 코드만 계산)
+// 발급·재발급 모두 횟수 1회 차감. 코드는 1개(교체 없음), expiresIn(30초)부터 카운트다운.
+// viewExpiresAt까지 코드 표시 유지
+export type OtpIssueResult = {
+  code: string
+  expiresIn: number
+  issueCount: number
+  remaining: number
+  viewExpiresAt: string
 }

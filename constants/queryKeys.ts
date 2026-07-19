@@ -67,6 +67,9 @@ export const QUERY_KEYS = {
     check: (productId: string) => ['partyApplications', 'check', productId] as const,
     my: () => ['partyApplications', 'my'] as const,
   },
+  partyOtp: {
+    detail: (orderId: string) => ['partyOtp', orderId] as const,
+  },
   adminParties: {
     all: () => ['adminParties'] as const,
     list: (params?: Record<string, unknown>) => ['adminParties', 'list', params] as const,

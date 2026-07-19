@@ -3,6 +3,7 @@
 import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { useMyApplications } from '../_hooks/useMyApplications'
+import { OtpIssuePanel } from './OtpIssuePanel'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { MyApplication } from '../_types'
 
@@ -55,6 +56,11 @@ type ApplicationCardProps = {
 
 function ApplicationCard({ application }: ApplicationCardProps) {
   const appStatus = APPLICATION_STATUS_MAP[application.status]
+  // OTP 발급은 승인 완료 + 이용 기간 중인 신청만 가능
+  const otpAvailable =
+    application.status === 'confirmed' &&
+    application.expiresAt !== null &&
+    new Date(application.expiresAt).getTime() > Date.now()
 
   return (
     <Card>
@@ -105,6 +111,15 @@ function ApplicationCard({ application }: ApplicationCardProps) {
                 {new Date(application.startedAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} ~ {new Date(application.expiresAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}
               </span>
             </div>
+          )}
+
+          {/* OTP 발급 */}
+          {otpAvailable && (
+            <OtpIssuePanel
+              applicationId={application.id}
+              otpRegistered={application.otpRegistered}
+              otpIssueCount={application.otpIssueCount}
+            />
           )}
 
           {/* 하단: 신청일 */}
