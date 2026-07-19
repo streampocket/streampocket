@@ -45,6 +45,10 @@ export const USER_MYPAGE_PATH = "/mypage";
 export const TRACK_PATH = "/track";
 // 카카오톡 상담 — 채널 홈이 아닌 1:1 채팅으로 바로 연결 (모든 문의 버튼 공통)
 export const KAKAO_CHAT_URL = "http://pf.kakao.com/_MkxalX/chat";
+// 파티 OTP — 구매자당 최대 발급(차감) 횟수 (be/src/constants/party.ts와 동일 값 유지)
+export const PARTY_OTP_MAX_ISSUES = 3;
+// 마이페이지 구매내역 직행 경로 — 알림톡 링크 등 외부 진입점에서도 사용하므로 변경 금지
+export const USER_MYPAGE_PURCHASES_PATH = "/mypage?tab=purchases";
 export const NAVER_PAY_HISTORY_URL = "https://pay.naver.com/history?page=1";
 
 export const ADMIN_PATH_PREFIXES = [

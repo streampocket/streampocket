@@ -26,6 +26,8 @@ export function ApplyCompletedModal({
           아래 카카오 채널로 결제 안내를 받아주세요.
           <br />
           입금 확인 후 관리자가 승인하면 파티 참여가 최종 확정됩니다.
+          <br />
+          승인 완료 후 마이페이지 &gt; 구매 내역에서 OTP를 발급받을 수 있습니다.
         </p>
 
         <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-50 p-3 text-center">
@@ -58,16 +60,27 @@ export function ApplyCompletedModal({
           </p>
         </div>
 
-        <a
-          href={KAKAO_CHAT_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <Button variant="primary" className="w-full bg-[#FEE500] text-[#191919] hover:bg-[#FEE500]/90">
-            카카오 채널로 결제하기
+        <div className="grid grid-cols-2 gap-2">
+          <a
+            href={KAKAO_CHAT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            {/* cn이 tailwind-merge가 아니라 variant의 bg-brand와 클래스 충돌 → 인라인 스타일로 카카오 노란색 강제 */}
+            <Button
+              variant="primary"
+              className="w-full hover:opacity-90"
+              style={{ backgroundColor: '#FEE500', color: '#191919' }}
+            >
+              카카오톡 상담
+            </Button>
+          </a>
+          {/* 닫기(onClose)가 마이페이지 구매내역 이동을 담당 — 버튼은 모달만 닫으면 됨 */}
+          <Button variant="primary" className="w-full" onClick={onClose}>
+            OTP 발급받기
           </Button>
-        </a>
+        </div>
       </div>
     </Modal>
   )

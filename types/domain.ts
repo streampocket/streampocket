@@ -73,6 +73,8 @@ export type SteamOrderItem = {
   gameUrl: string | null
   memo: string | null
   estimatedCompletedAt: string | null
+  // 파티 주문(source=party) → 원본 파티 신청 연결. 기능 도입 전 주문·비파티 주문은 null
+  partyApplicationId: string | null
   completedAt: string | null
   createdAt: string
   updatedAt: string

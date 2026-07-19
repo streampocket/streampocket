@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { UserProfile } from './UserProfile'
 import { PurchaseHistory } from './PurchaseHistory'
+import { USER_MYPAGE_PATH } from '@/constants/app'
 import type { MyPageTab } from '../_types'
 
 const MYPAGE_TABS: { key: MyPageTab; label: string }[] = [
@@ -16,7 +18,19 @@ const TAB_CONTENT: Record<MyPageTab, () => React.ReactNode> = {
 }
 
 export function MyPageTabs() {
-  const [activeTab, setActiveTab] = useState<MyPageTab>('profile')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  // ?tab=purchases 진입 지원 — 신청 완료 모달·알림톡 링크 등 외부에서 구매내역 탭 직행
+  const [activeTab, setActiveTab] = useState<MyPageTab>(
+    searchParams.get('tab') === 'purchases' ? 'purchases' : 'profile',
+  )
+
+  const handleTabChange = (tab: MyPageTab) => {
+    setActiveTab(tab)
+    router.replace(tab === 'purchases' ? `${USER_MYPAGE_PATH}?tab=purchases` : USER_MYPAGE_PATH, {
+      scroll: false,
+    })
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -31,7 +45,7 @@ export function MyPageTabs() {
             <button
               key={tab.key}
               type="button"
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => handleTabChange(tab.key)}
               className={`shrink-0 px-4 py-2.5 text-body-md font-semibold transition-colors ${
                 activeTab === tab.key
                   ? 'border-b-2 border-brand text-brand'
