@@ -93,7 +93,7 @@ export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: O
           onClick={handleIssue}
           disabled={issueMutation.isPending}
         >
-          {issueMutation.isPending ? '발급 중...' : `OTP 발급 (남은 ${remainingIssues}회)`}
+          {issueMutation.isPending ? '발급 중...' : `OTP 발급 (${remainingIssues}회 남음)`}
         </Button>
         <p className="text-caption-md text-text-muted">
           발급한 코드는 10분 동안 표시됩니다. 재발급 시 횟수가 1회 차감됩니다.
@@ -134,7 +134,7 @@ export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: O
               onClick={handleIssue}
               disabled={issueMutation.isPending}
             >
-              {issueMutation.isPending ? '발급 중...' : `재발급 (남은 ${result.remaining}회)`}
+              {issueMutation.isPending ? '발급 중...' : `재발급 (${result.remaining}회 남음)`}
             </Button>
           ) : null
         ) : (
@@ -167,7 +167,7 @@ export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: O
       {codeExpired ? (
         result.remaining > 0 ? (
           <p className="text-caption-md text-text-muted">
-            코드 유효시간이 지났습니다. 재발급 시 횟수가 1회 차감됩니다. (남은 {result.remaining}회)
+            코드 유효시간이 지났습니다. 재발급 시 횟수가 1회 차감됩니다. ({result.remaining}회 남음)
           </p>
         ) : (
           <p className="text-caption-md text-danger">
@@ -176,7 +176,7 @@ export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: O
         )
       ) : (
         <p className="text-caption-md text-text-muted">
-          남은 발급 횟수 {result.remaining}회 · 코드는 10분 동안 표시됩니다.
+          발급 {result.remaining}회 남음 · 코드는 10분 동안 표시됩니다.
         </p>
       )}
     </div>
