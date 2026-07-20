@@ -4,11 +4,11 @@ import { useExportAccounts } from '../_hooks/useExportAccounts'
 import { Button } from '@/components/ui/Button'
 
 type Props = {
-  productId?: string
+  gameId?: string
   status?: string
 }
 
-export function ExportButton({ productId, status }: Props) {
+export function ExportButton({ gameId, status }: Props) {
   const { exportAccounts, isExporting } = useExportAccounts()
 
   return (
@@ -16,7 +16,7 @@ export function ExportButton({ productId, status }: Props) {
       variant="secondary"
       size="sm"
       loading={isExporting}
-      onClick={() => exportAccounts({ productId, status })}
+      onClick={() => exportAccounts({ gameId, status })}
     >
       ⬇ 엑셀 추출
     </Button>

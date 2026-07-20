@@ -3,7 +3,8 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import type { AccountStatus } from '@/types/domain'
-import { useProducts } from '../../products/_hooks/useProducts'
+import { useGameOptions } from '../../products/_hooks/useGameOptions'
+import { ACCOUNT_GAME_TYPES } from '../_types'
 
 const STATUS_OPTIONS: { value: AccountStatus | ''; label: string }[] = [
   { value: '', label: '전체' },
@@ -19,10 +20,10 @@ export function CodesFilterBar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const currentProductId = searchParams.get('productId') ?? ''
+  const currentGameId = searchParams.get('gameId') ?? ''
   const currentStatus = searchParams.get('status') ?? ''
 
-  const { data: productsData } = useProducts()
+  const { data: gamesData } = useGameOptions(ACCOUNT_GAME_TYPES)
 
   const updateParams = useCallback(
     (updates: Record<string, string>) => {
@@ -41,16 +42,16 @@ export function CodesFilterBar() {
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card-bg p-4">
-      {/* 상품 필터 */}
+      {/* 상품(게임) 필터 */}
       <select
-        value={currentProductId}
-        onChange={(e) => updateParams({ productId: e.target.value })}
+        value={currentGameId}
+        onChange={(e) => updateParams({ gameId: e.target.value })}
         className="text-body-md rounded-lg border border-border px-3 py-1.5 text-text-primary outline-none focus:border-brand"
       >
         <option value="">전체 상품</option>
-        {productsData?.data.map((product) => (
-          <option key={product.id} value={product.id}>
-            {product.name}
+        {gamesData?.data.map((game) => (
+          <option key={game.id} value={game.id}>
+            {game.name}
           </option>
         ))}
       </select>

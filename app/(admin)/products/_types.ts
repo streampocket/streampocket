@@ -1,4 +1,10 @@
-import type { ProductStatus, SteamProduct, SteamGame, Store } from '@/types/domain'
+import type {
+  ProductStatus,
+  SteamProduct,
+  SteamGame,
+  SteamProductType,
+  Store,
+} from '@/types/domain'
 
 export type ProductListParams = {
   status?: ProductStatus | ''
@@ -13,6 +19,13 @@ export type GameListParams = {
   search?: string
   page?: number
   pageSize?: number
+}
+
+// 드롭다운용 경량 게임 옵션 (GET /steam/admin/games/options)
+export type GameOption = {
+  id: string
+  name: string
+  productType: SteamProductType
 }
 
 export type GameStoreCounts = {

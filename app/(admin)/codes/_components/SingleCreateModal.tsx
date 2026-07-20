@@ -5,14 +5,15 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { useBulkCreateAccounts } from '../_hooks/useBulkCreateAccounts'
-import { useProducts } from '../../products/_hooks/useProducts'
+import { useGameOptions } from '../../products/_hooks/useGameOptions'
+import { ACCOUNT_GAME_TYPES } from '../_types'
 
 type SingleCreateModalProps = {
   onClose: () => void
 }
 
 type SingleCreateForm = {
-  productId: string
+  gameId: string
   username: string
   password: string
   email: string
@@ -24,7 +25,7 @@ type SingleCreateForm = {
 }
 
 const initialForm: SingleCreateForm = {
-  productId: '',
+  gameId: '',
   username: '',
   password: '',
   email: '',
@@ -44,13 +45,13 @@ const inputClass = cn(
 export function SingleCreateModal({ onClose }: SingleCreateModalProps) {
   const [form, setForm] = useState<SingleCreateForm>(initialForm)
 
-  const { data: productsData } = useProducts({ status: 'active' })
+  const { data: gamesData } = useGameOptions(ACCOUNT_GAME_TYPES)
   const { mutate: bulkCreate, isPending } = useBulkCreateAccounts()
 
-  const naProducts = productsData?.data.filter((p) => !/ AA$/i.test(p.name.trim())) ?? []
+  const games = gamesData?.data ?? []
 
   const isValid =
-    form.productId &&
+    form.gameId &&
     form.username &&
     form.password &&
     form.email &&
@@ -61,7 +62,7 @@ export function SingleCreateModal({ onClose }: SingleCreateModalProps) {
     if (!isValid) return
     bulkCreate(
       {
-        productId: form.productId,
+        gameId: form.gameId,
         accounts: [
           {
             username: form.username,
@@ -109,17 +110,17 @@ export function SingleCreateModal({ onClose }: SingleCreateModalProps) {
             상품 선택 <span className="text-danger">*</span>
           </label>
           <select
-            value={form.productId}
-            onChange={(e) => setField('productId', e.target.value)}
+            value={form.gameId}
+            onChange={(e) => setField('gameId', e.target.value)}
             className={cn(
               'w-full rounded-lg border border-border bg-white px-3 py-2',
               'text-body-md text-text-primary outline-none focus:border-brand',
             )}
           >
             <option value="">상품을 선택하세요</option>
-            {naProducts.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
+            {games.map((game) => (
+              <option key={game.id} value={game.id}>
+                {game.name}
               </option>
             ))}
           </select>

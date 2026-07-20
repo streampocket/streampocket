@@ -21,10 +21,10 @@ const STATUS_MAP: Record<AccountStatus, { label: string; variant: BadgeVariant }
 
 export function CodesTable() {
   const searchParams = useSearchParams()
-  const productId = searchParams.get('productId') || undefined
+  const gameId = searchParams.get('gameId') || undefined
   const status = (searchParams.get('status') as AccountStatus) || undefined
 
-  const { data, isLoading } = useAccounts({ productId, status })
+  const { data, isLoading } = useAccounts({ gameId, status })
   const [selectedAccount, setSelectedAccount] = useState<SteamAccount | null>(null)
 
   return (
@@ -34,7 +34,7 @@ export function CodesTable() {
           <p className="text-caption-md text-text-secondary">
             총 <strong className="text-text-primary">{data?.total ?? 0}</strong>개
           </p>
-          <ExportButton productId={productId} status={status} />
+          <ExportButton gameId={gameId} status={status} />
         </div>
 
         <CardBody className="p-0">
@@ -73,7 +73,8 @@ export function CodesTable() {
                       >
                         <td className="text-caption-md px-5 py-3 text-text-secondary">
                           {account.productName}
-                          {account.productId === null && (
+                          {/* 게임·레거시 상품 둘 다 끊긴 경우만 삭제 표시 (포켓 전용 계정은 productId가 원래 null) */}
+                          {account.productId === null && account.gameId === null && (
                             <span className="ml-1 text-text-muted">(삭제됨)</span>
                           )}
                         </td>
@@ -122,7 +123,7 @@ export function CodesTable() {
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-body-md font-medium text-text-primary">
                         {account.productName}
-                        {account.productId === null && (
+                        {account.productId === null && account.gameId === null && (
                           <span className="ml-1 text-text-muted">(삭제됨)</span>
                         )}
                       </span>

@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 
 type ExportAccountsParams = {
-  productId?: string
+  gameId?: string
   status?: string
 }
 
@@ -20,7 +20,7 @@ export function useExportAccounts(): {
   const { mutate, isPending } = useMutation({
     mutationFn: (params: ExportAccountsParams) => {
       const qs = new URLSearchParams()
-      if (params.productId) qs.set('productId', params.productId)
+      if (params.gameId) qs.set('gameId', params.gameId)
       if (params.status) qs.set('status', params.status)
       const query = qs.toString()
       return api.download(
