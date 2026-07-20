@@ -89,6 +89,10 @@ export const QUERY_KEYS = {
     all: () => ['adminGcoinOrders'] as const,
     list: (params?: Record<string, unknown>) => ['adminGcoinOrders', 'list', params] as const,
   },
+  adminSiteVisits: {
+    all: () => ['adminSiteVisits'] as const,
+    stats: (params?: Record<string, unknown>) => ['adminSiteVisits', 'stats', params] as const,
+  },
   ownRuleTemplates: {
     all: () => ['ownRuleTemplates'] as const,
     list: () => ['ownRuleTemplates', 'list'] as const,
