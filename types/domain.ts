@@ -154,6 +154,7 @@ export type SteamGame = {
 export type SteamAccount = {
   id: string
   productId: string | null
+  gameId: string | null
   productName: string | null
   username: string
   password: string

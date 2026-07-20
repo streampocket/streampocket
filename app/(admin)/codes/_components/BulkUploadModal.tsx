@@ -5,7 +5,8 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { useBulkCreateAccounts } from '../_hooks/useBulkCreateAccounts'
-import { useProducts } from '../../products/_hooks/useProducts'
+import { useGameOptions } from '../../products/_hooks/useGameOptions'
+import { ACCOUNT_GAME_TYPES } from '../_types'
 
 type BulkUploadModalProps = {
   onClose: () => void
@@ -49,18 +50,18 @@ function parseAccountLines(raw: string): Array<{
 }
 
 export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
-  const [productId, setProductId] = useState('')
+  const [gameId, setGameId] = useState('')
   const [raw, setRaw] = useState('')
 
-  const { data: productsData } = useProducts({ status: 'active' })
+  const { data: gamesData } = useGameOptions(ACCOUNT_GAME_TYPES)
   const { mutate: bulkCreate, isPending } = useBulkCreateAccounts()
 
-  const naProducts = productsData?.data.filter((p) => !/ AA$/i.test(p.name.trim())) ?? []
+  const games = gamesData?.data ?? []
   const accounts = parseAccountLines(raw)
 
   const handleSubmit = () => {
-    if (!productId || accounts.length === 0) return
-    bulkCreate({ productId, accounts }, { onSuccess: onClose })
+    if (!gameId || accounts.length === 0) return
+    bulkCreate({ gameId, accounts }, { onSuccess: onClose })
   }
 
   return (
@@ -75,7 +76,7 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
           </Button>
           <Button
             loading={isPending}
-            disabled={!productId || accounts.length === 0}
+            disabled={!gameId || accounts.length === 0}
             onClick={handleSubmit}
           >
             {accounts.length > 0 ? `${accounts.length}개 등록` : '등록'}
@@ -89,17 +90,17 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
             상품 선택 <span className="text-danger">*</span>
           </label>
           <select
-            value={productId}
-            onChange={(e) => setProductId(e.target.value)}
+            value={gameId}
+            onChange={(e) => setGameId(e.target.value)}
             className={cn(
               'w-full rounded-lg border border-border bg-white px-3 py-2',
               'text-body-md text-text-primary outline-none focus:border-brand',
             )}
           >
             <option value="">상품을 선택하세요</option>
-            {naProducts.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
+            {games.map((game) => (
+              <option key={game.id} value={game.id}>
+                {game.name}
               </option>
             ))}
           </select>

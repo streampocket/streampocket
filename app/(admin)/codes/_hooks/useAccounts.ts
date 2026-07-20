@@ -6,9 +6,9 @@ import type { PaginatedResponse } from '@/types/api'
 import type { AccountListParams } from '../_types'
 
 export function useAccounts(params: AccountListParams = {}) {
-  const { productId, status } = params
+  const { gameId, status } = params
   const searchParams = new URLSearchParams()
-  if (productId) searchParams.set('productId', productId)
+  if (gameId) searchParams.set('gameId', gameId)
   if (status) searchParams.set('status', status)
 
   return useQuery({
