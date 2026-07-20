@@ -14,6 +14,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/ottall/reviews': '리뷰 관리',
   '/gcoin/products': '배그상품 관리',
   '/gcoin/orders': '배그주문 관리',
+  '/gcoin/visits': '방문자 통계',
 }
 
 type TopBarProps = {
