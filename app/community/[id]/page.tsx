@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { USER_BRAND_NAME } from '@/constants/app'
+import { USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
 import { fetchCommunityPostServer } from '@/lib/communityServerApi'
 import { formatDate } from '@/lib/utils'
 import { MarkdownRenderer } from '../_components/MarkdownRenderer'
@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    alternates: { canonical: `${USER_SITE_URL}/community/${post.id}` },
     openGraph: {
       type: 'article',
       title: post.title,

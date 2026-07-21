@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import {
   REVIEW_PAGE_SIZE,
   USER_BRAND_NAME,
+  USER_SITE_URL,
 } from '@/constants/app'
 import {
   fetchOwnCategoriesServer,
@@ -34,6 +35,8 @@ export async function generateMetadata({ searchParams }: ReviewsPageProps): Prom
   return {
     title: titleBase,
     description,
+    // 필터·페이지·utm 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
+    alternates: { canonical: `${USER_SITE_URL}/reviews` },
     openGraph: { title: titleBase, description },
   }
 }

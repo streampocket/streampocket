@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
-import { USER_BRAND_NAME } from '@/constants/app'
+import { USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
 import { getOttEnglishName, withOttEnglishName } from '@/constants/ottNames'
 import { fetchOwnProductServer } from '@/lib/ownProductServerApi'
 import { OwnProductDetail } from './_components/OwnProductDetail'
-
-const SITE_URL = 'https://ottall.com'
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -19,7 +17,7 @@ function serializeJsonLd(data: unknown): string {
 // imagePath는 상대경로(/images/...) 또는 전체 URL일 수 있어, 검색엔진/OG용 절대 URL로 정규화한다.
 function absoluteImageUrl(path: string | null): string | null {
   if (!path) return null
-  return path.startsWith('http') ? path : `${SITE_URL}${path}`
+  return path.startsWith('http') ? path : `${USER_SITE_URL}${path}`
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -62,12 +60,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: pageTitle,
     description,
     keywords,
+    // utm 등 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
+    alternates: { canonical: `${USER_SITE_URL}/party/${product.id}` },
     openGraph: {
       type: 'website',
       title: ogTitle,
       description,
       images,
-      url: `${SITE_URL}/party/${product.id}`,
+      url: `${USER_SITE_URL}/party/${product.id}`,
     },
     twitter: {
       card: imageUrl ? 'summary_large_image' : 'summary',
@@ -102,7 +102,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         product.status === 'recruiting'
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
-      url: `${SITE_URL}/party/${product.id}`,
+      url: `${USER_SITE_URL}/party/${product.id}`,
     },
   }
 

@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { LANDING_NAV_ITEMS } from "@/app/(landing)/_data";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
+import { USER_SITE_URL } from "@/constants/app";
 
 export const metadata: Metadata = {
   title: "이용약관",
   description: "스트림포켓 서비스 이용약관 및 환불 정책",
+  alternates: { canonical: `${USER_SITE_URL}/terms` },
   robots: {
     index: true,
     follow: true,

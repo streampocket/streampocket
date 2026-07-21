@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { USER_SITE_URL } from "@/constants/app";
 import { CopyFormButton } from "./_components/CopyFormButton";
 
 export const metadata: Metadata = {
   title: "스팀 등록 안내 가이드",
   description: "스팀 게임 코드 등록 전 필수 확인 안내입니다.",
+  alternates: { canonical: `${USER_SITE_URL}/guide` },
 };
 
 export default function GuidePage() {
