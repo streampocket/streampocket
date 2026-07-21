@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card'
 import type { OwnProduct, OwnProductStatus } from '@/types/domain'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import { PARTY_TYPE_META } from '@/constants/app'
+import { withOttEnglishName } from '@/constants/ottNames'
 import { cn } from '@/lib/utils'
 
 type OwnProductCardProps = {
@@ -63,7 +64,7 @@ export function OwnProductCard({ product }: OwnProductCardProps) {
           </div>
 
           <h3 className="text-body-lg line-clamp-2 font-semibold text-text-primary">
-            {product.name}
+            {withOttEnglishName(product.name)}
           </h3>
 
           <div className="flex items-center gap-3 text-body-md text-text-secondary">

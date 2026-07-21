@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
-import { USER_BRAND_NAME } from '@/constants/app'
+import { USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
 import { fetchReviewServer } from '@/lib/reviewServerApi'
 import { formatDate } from '@/lib/utils'
 import { ReviewOwnerActions } from '../_components/ReviewOwnerActions'
@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
   return {
     title,
     description,
+    alternates: { canonical: `${USER_SITE_URL}/reviews/${review.id}` },
     openGraph: {
       title,
       description,

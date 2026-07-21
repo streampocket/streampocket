@@ -38,6 +38,8 @@ export const EXPENSE_ORDER_LINK_SINCE = "2026-05-20T20:30:00+09:00";
 export const EXPENSE_ORDER_LINK_EXCLUDE_STATUSES = ["failed", "returned"] as const;
 export const BRAND_NAME = "스트림포켓";
 export const USER_BRAND_NAME = "OTTALL";
+/** OTTALL 유저 사이트 대표 도메인 — canonical/OG/sitemap/robots 공통 사용 */
+export const USER_SITE_URL = "https://ottall.com";
 export const LOGIN_PATH = "/login";
 export const USER_LOGIN_PATH = "/signin";
 export const USER_SIGNUP_PATH = "/signup";

@@ -6,6 +6,8 @@ import { MyPageTabs } from './_components/MyPageTabs'
 export const metadata: Metadata = {
   title: `마이페이지 | ${USER_BRAND_NAME}`,
   description: '내 정보를 확인하고 관리합니다.',
+  // 로그인 필요한 개인 페이지 — 색인 제외
+  robots: { index: false, follow: false },
 }
 
 export default function MyPage() {

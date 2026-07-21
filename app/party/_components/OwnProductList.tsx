@@ -83,9 +83,13 @@ export function OwnProductList() {
 
   return (
     <div className="space-y-6">
-      {/* 헤더 */}
+      {/* 헤더 — 소개 문구는 "숏폼 드라마" 검색 노출용 텍스트를 겸한다 */}
       <div>
         <h1 className="text-heading-lg text-text-primary">파티 모집</h1>
+        <p className="mt-1 text-body-md text-text-secondary">
+          숏폼 드라마 · OTT 공동구매 파티 — 드라마박스(Dramabox), 릴숏(Reelshort) 등을 함께
+          저렴하게 이용하세요.
+        </p>
       </div>
 
       {/* 상태 필터 + 정렬 */}

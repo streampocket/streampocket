@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import { LANDING_NAV_ITEMS } from '@/app/(landing)/_data'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { PublicFooter } from '@/components/layout/PublicFooter'
+import { USER_SITE_URL } from '@/constants/app'
 
 export const metadata: Metadata = {
   title: '서비스 이용약관',
   description: 'OTTALL 서비스 이용약관',
+  alternates: { canonical: `${USER_SITE_URL}/terms/signup` },
   robots: {
     index: true,
     follow: true,

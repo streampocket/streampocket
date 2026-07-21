@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { COMMUNITY_PAGE_SIZE, USER_BRAND_NAME } from '@/constants/app'
+import { COMMUNITY_PAGE_SIZE, USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
 import { fetchCommunityPostsServer } from '@/lib/communityServerApi'
 import type { CommunityCategory } from '@/types/domain'
 import { Pagination } from './_components/Pagination'
@@ -23,6 +23,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     title,
     description,
+    // 카테고리·페이지·utm 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
+    alternates: { canonical: `${USER_SITE_URL}/community` },
     openGraph: { title, description, type: 'website' },
     twitter: { card: 'summary', title, description },
   }

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { API_BASE_URL } from '@/constants/app'
+import { API_BASE_URL, USER_SITE_URL } from '@/constants/app'
 
 type ProductListItem = {
   id: string
@@ -37,7 +37,7 @@ async function fetchCommunityPostIds(): Promise<CommunityPostListItem[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://ottall.com'
+  const baseUrl = USER_SITE_URL
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
