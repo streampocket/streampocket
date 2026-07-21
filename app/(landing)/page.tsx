@@ -17,20 +17,23 @@ import {
   LANDING_TRUST_ITEMS,
 } from '@/app/(landing)/_data'
 import { API_BASE_URL, USER_BRAND_NAME } from '@/constants/app'
+import { OTT_ENGLISH_NAME_LIST } from '@/constants/ottNames'
 import { fetchLatestVideos } from '@/app/(landing)/_lib/fetchYoutubeRss'
 import { fetchLandingReviews } from '@/app/(landing)/_lib/fetchLandingReviews'
 import type { OwnProduct, OwnReview } from '@/types/domain'
 
+const LANDING_DESCRIPTION =
+  'OTTALL(오티티올)에서 드라마박스(Dramabox), 드라마웨이브(Dramawave), 비글루(Vigloo), 릴숏(Reelshort), 넷숏(Netshort), 숏맥스(Shortmax), 플릭릴스(FlickReels) 등 숏폼 드라마 앱과 OTT 멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.'
+
 export const metadata: Metadata = {
-  title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
-  description:
-    'OTTALL(오티티올)에서 드라마박스, 드라마웨이브, 비글루, 릴숏, 넷숏, 숏맥스, 플릭릴스 등 OTT멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.',
-  keywords: ['ottall', '오티티올', 'OTT 공동구독', 'OTT 파티 매칭', '드라마박스', '웨이브', '비글루', '드라마웨이브', '릴숏', '넷숏', '숏맥스', '플릭릴스', '쇼츠드라마'],
+  // 레이아웃 title.template('%s | OTTALL')의 접미사 중복을 피하기 위해 absolute 사용
+  title: { absolute: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼` },
+  description: LANDING_DESCRIPTION,
+  keywords: ['ottall', '오티티올', 'OTT 공동구독', 'OTT 파티 매칭', '숏폼 드라마', '숏폼 드라마 앱', '드라마박스', '웨이브', '비글루', '드라마웨이브', '릴숏', '넷숏', '숏맥스', '플릭릴스', '쇼츠드라마', ...OTT_ENGLISH_NAME_LIST],
   robots: { index: true, follow: true },
   openGraph: {
     title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
-    description:
-      'OTTALL(오티티올)에서 드라마박스, 드라마웨이브, 비글루, 릴숏, 넷숏, 숏맥스, 플릭릴스 등 OTT멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.',
+    description: LANDING_DESCRIPTION,
     url: 'https://ottall.com',
     siteName: USER_BRAND_NAME,
     type: 'website',
@@ -39,8 +42,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
-    description:
-      'OTTALL(오티티올)에서 드라마박스, 드라마웨이브, 비글루, 릴숏, 넷숏, 숏맥스, 플릭릴스 등 OTT멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.',
+    description: LANDING_DESCRIPTION,
   },
 }
 

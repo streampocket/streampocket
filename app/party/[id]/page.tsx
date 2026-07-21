@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { USER_BRAND_NAME } from '@/constants/app'
+import { getOttEnglishName, withOttEnglishName } from '@/constants/ottNames'
 import { fetchOwnProductServer } from '@/lib/ownProductServerApi'
 import { OwnProductDetail } from './_components/OwnProductDetail'
 
@@ -31,20 +32,36 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const remaining = Math.max(0, product.totalSlots - product.filledSlots)
   const priceText = product.currentPrice.toLocaleString('ko-KR')
+  const englishName = getOttEnglishName(product.name)
+  const displayName = withOttEnglishName(product.name)
   // 레이아웃 title.template('%s | OTTALL')이 접미사를 자동 부착하므로 page는 접미사 없이 반환
-  const pageTitle = `${product.name} 파티 월 ${priceText}원`
+  const pageTitle = `${displayName} 파티 월 ${priceText}원`
   const ogTitle = `${pageTitle} | ${USER_BRAND_NAME}`
   const slotText =
     product.status === 'recruiting' && remaining > 0
       ? `남은 자리 ${remaining}자리.`
       : '모집이 마감되었어요.'
-  const description = `OTTALL에서 ${product.name} 파티를 월 ${priceText}원에 함께 이용하세요. ${slotText}`
+  // 드라마 OTT(영어 이름 매칭)면 "숏폼 드라마" 검색 대응 문구로 생성
+  const description = englishName
+    ? `OTTALL에서 숏폼 드라마 플랫폼 ${displayName} 파티를 월 ${priceText}원에 함께 이용하세요. ${slotText}`
+    : `OTTALL에서 ${product.name} 파티를 월 ${priceText}원에 함께 이용하세요. ${slotText}`
+  const keywords = englishName
+    ? [
+        product.name,
+        englishName,
+        `${englishName} 파티`,
+        `${product.name} 공유`,
+        '숏폼 드라마',
+        '숏폼 드라마 앱',
+      ]
+    : [product.name, `${product.name} 파티`, `${product.name} 공유`]
   const imageUrl = absoluteImageUrl(product.imagePath)
   const images = imageUrl ? [imageUrl] : []
 
   return {
     title: pageTitle,
     description,
+    keywords,
     openGraph: {
       type: 'website',
       title: ogTitle,
@@ -66,10 +83,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const product = await fetchOwnProductServer(id).catch(() => null)
 
   const jsonLdImage = product && absoluteImageUrl(product.imagePath)
+  const jsonLdEnglishName = product && getOttEnglishName(product.name)
   const jsonLd = product && {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
+    ...(jsonLdEnglishName ? { alternateName: jsonLdEnglishName } : {}),
     category: product.category.name,
     ...(jsonLdImage ? { image: [jsonLdImage] } : {}),
     ...(product.notes

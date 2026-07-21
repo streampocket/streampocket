@@ -13,6 +13,7 @@ import { useCheckApplied } from '../_hooks/useCheckApplied'
 import { ApplyCompletedModal } from './ApplyCompletedModal'
 import { getUserInfo } from '@/lib/userAuth'
 import { KAKAO_CHAT_URL, PARTY_DEFAULT_RULES, PARTY_TYPE_META, USER_LOGIN_PATH, USER_MYPAGE_PURCHASES_PATH } from '@/constants/app'
+import { withOttEnglishName } from '@/constants/ottNames'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
@@ -108,7 +109,7 @@ export function OwnProductDetail() {
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <h1 className="text-heading-lg text-text-primary">{product.name}</h1>
+              <h1 className="text-heading-lg text-text-primary">{withOttEnglishName(product.name)}</h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Badge variant="blue">{product.category.name}</Badge>
                 <Badge variant={partyType.variant}>{partyType.label}</Badge>
