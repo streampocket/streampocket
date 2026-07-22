@@ -56,8 +56,11 @@ export function SocialPhoneForm() {
       <h2 className="mb-2 text-center text-heading-lg text-text-primary">
         전화번호 인증
       </h2>
-      <p className="mb-6 text-center text-body-md text-text-secondary">
+      <p className="mb-1 text-center text-body-md text-text-secondary">
         서비스 이용을 위해 전화번호 인증이 필요합니다.
+      </p>
+      <p className="mb-6 text-center text-caption-md text-text-muted">
+        이미 가입된 번호라면 기존 계정에 자동으로 연결됩니다.
       </p>
 
       <div className="mb-4">
