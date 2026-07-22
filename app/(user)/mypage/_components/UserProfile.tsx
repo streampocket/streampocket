@@ -80,10 +80,14 @@ export function UserProfile() {
           </div>
 
           <div>
-            <p className="text-caption-md mb-1 font-semibold text-text-muted">가입 방식</p>
-            <Badge variant="blue">
-              {PROVIDER_LABELS[user.provider] ?? user.provider}
-            </Badge>
+            <p className="text-caption-md mb-1 font-semibold text-text-muted">로그인 수단</p>
+            <div className="flex flex-wrap gap-1.5">
+              {(user.loginMethods?.length ? user.loginMethods : [user.provider]).map((method) => (
+                <Badge key={method} variant="blue">
+                  {PROVIDER_LABELS[method] ?? method}
+                </Badge>
+              ))}
+            </div>
           </div>
         </div>
 

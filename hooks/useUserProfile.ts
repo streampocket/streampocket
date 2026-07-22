@@ -10,6 +10,7 @@ type UserProfile = {
   name: string
   phone: string
   provider: 'local' | 'kakao' | 'google'
+  loginMethods: ('local' | 'kakao' | 'google')[]
   phoneVerified: boolean
   createdAt: string
 }

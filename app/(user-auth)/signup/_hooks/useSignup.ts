@@ -24,7 +24,16 @@ type SignupResponse = {
       email: string
       name: string
     }
+    // 계정 통합 — 같은 번호의 기존 소셜 계정에 이메일/비밀번호가 합쳐진 경우
+    merged: boolean
+    previousProvider: 'local' | 'kakao' | 'google' | null
   }
+}
+
+const PROVIDER_LABELS: Record<string, string> = {
+  local: '이메일',
+  kakao: '카카오',
+  google: '구글',
 }
 
 export function useSignup() {
@@ -42,7 +51,14 @@ export function useSignup() {
         user: result.data.user,
       })
 
-      toast.success('회원가입이 완료되었습니다!')
+      if (result.data.merged) {
+        const providerLabel = result.data.previousProvider
+          ? PROVIDER_LABELS[result.data.previousProvider] ?? result.data.previousProvider
+          : '기존'
+        toast.success(`기존 ${providerLabel} 계정과 통합되었습니다. 이제 이메일 로그인도 사용할 수 있어요.`)
+      } else {
+        toast.success('회원가입이 완료되었습니다!')
+      }
       router.push(USER_MYPAGE_PATH)
       router.refresh()
     } catch (err) {
