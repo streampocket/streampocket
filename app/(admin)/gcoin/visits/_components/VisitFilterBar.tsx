@@ -1,7 +1,7 @@
 'use client'
 
 import { getTodayStringKST } from '@/lib/utils'
-import { SITE_TABS } from '../_types'
+import { DEFAULT_RANGE_DAYS, SITE_TABS } from '../_types'
 import type { VisitSite } from '../_types'
 
 type VisitFilterBarProps = {
@@ -13,6 +13,7 @@ type VisitFilterBarProps = {
 }
 
 const PRESETS: { label: string; days: number }[] = [
+  { label: '오늘', days: 1 },
   { label: '7일', days: 7 },
   { label: '30일', days: 30 },
   { label: '90일', days: 90 },
@@ -82,6 +83,12 @@ export function VisitFilterBar({
             className="text-caption-md rounded-lg border border-border px-2 py-1.5 text-text-primary outline-none focus:border-brand"
           />
         </div>
+        <button
+          onClick={() => onRangeChange(kstDaysAgo(DEFAULT_RANGE_DAYS - 1), today)}
+          className="text-caption-md ml-auto shrink-0 rounded-lg px-3 py-1.5 font-medium text-text-muted transition-colors hover:bg-gray-100 hover:text-text-primary"
+        >
+          ↺ 초기화
+        </button>
       </div>
     </div>
   )

@@ -36,6 +36,9 @@ export const SITE_TABS: { value: VisitSite; label: string }[] = [
   { value: 'gcoin', label: '지코인' },
 ]
 
+// 기본 조회 기간(일) — 초기 로드와 필터 "초기화" 버튼이 공유
+export const DEFAULT_RANGE_DAYS = 30
+
 // BE utils/referrerSource.ts 분류값 → 표시 라벨 (미지값·utm: 접두는 sourceLabel에서 처리)
 export const SOURCE_LABELS: Record<string, string> = {
   direct: '직접 유입',
