@@ -70,7 +70,7 @@ export function MobileTabBar() {
           style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)' }}
         >
           <div
-            className="absolute bottom-0 left-0 right-0 rounded-t-2xl bg-card-bg pb-20"
+            className="absolute bottom-0 left-0 right-0 flex max-h-[calc(100dvh-2.5rem)] flex-col rounded-t-2xl bg-card-bg pb-20"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 드래그 인디케이터 */}
@@ -78,9 +78,10 @@ export function MobileTabBar() {
               <div className="h-1 w-10 rounded-full bg-gray-300" />
             </div>
 
-            <nav className="max-h-[60vh] overflow-y-auto px-4 pb-4">
+            {/* 높이 제한은 시트 컨테이너(max-h)가 담당 — 내용이 넘칠 때만 내부 스크롤 */}
+            <nav className="flex-1 overflow-y-auto px-4 pb-4">
               {NAV_SECTIONS.map((section) => (
-                <div key={section.title} className="mb-4">
+                <div key={section.title} className="mb-3">
                   <p className="text-caption-sm mb-2 px-2 font-medium text-text-muted">
                     {section.title}
                   </p>
@@ -92,7 +93,7 @@ export function MobileTabBar() {
                           key={item.href}
                           href={item.href}
                           className={cn(
-                            'flex flex-col items-center gap-1 rounded-xl px-2 py-3 transition-colors',
+                            'flex flex-col items-center gap-1 rounded-xl px-2 py-2.5 transition-colors',
                             isActive
                               ? 'bg-brand/10 text-brand'
                               : 'text-text-secondary hover:bg-gray-50',
