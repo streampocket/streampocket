@@ -7,9 +7,8 @@ import { VisitStatCards } from './_components/VisitStatCards'
 import { DailyVisitsChart } from './_components/DailyVisitsChart'
 import { SourceTable } from './_components/SourceTable'
 import { useVisitStats } from './_hooks/useVisitStats'
+import { DEFAULT_RANGE_DAYS } from './_types'
 import type { VisitSite } from './_types'
-
-const DEFAULT_RANGE_DAYS = 30
 
 function kstDaysAgo(days: number): string {
   const todayKst = new Date(`${getTodayStringKST()}T00:00:00.000Z`)
