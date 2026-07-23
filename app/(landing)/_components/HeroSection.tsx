@@ -19,6 +19,9 @@ export function HeroSection() {
               모집 중인 파티를 확인하고 바로 참여하세요. 매칭부터 정산까지
               플랫폼이 관리합니다.
             </p>
+            <p className="text-sm font-semibold text-brand sm:text-base">
+              ⚡ 파티 인원이 다 모이지 않아도 바로 시청 가능해요
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
