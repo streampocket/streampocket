@@ -107,8 +107,10 @@ export function GiftSection({
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
+      <p className="text-caption-md font-semibold text-text-primary">{title}</p>
+
+      {/* 제목 아래 컨트롤 행 — zqbg 토글(좌) / 주문상황 알림톡(우, 네이버 모달만) */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-caption-md font-semibold text-text-primary">{title}</p>
         <label
           className="flex cursor-pointer items-center gap-2"
           title="켜면 선물 코드로 발송상태를 자동 조회해 완료 처리합니다 (기본 꺼짐)"
@@ -129,11 +131,9 @@ export function GiftSection({
             )}
           />
         </label>
-      </div>
 
-      {showOrderStatusAlimtalk && (
-        <div className="flex items-center justify-end">
-          {order.orderStatusAlimtalkSentAt ? (
+        {showOrderStatusAlimtalk &&
+          (order.orderStatusAlimtalkSentAt ? (
             <Badge variant="green">
               주문상황 알림톡 발송 ({formatDate(order.orderStatusAlimtalkSentAt)})
             </Badge>
@@ -152,9 +152,8 @@ export function GiftSection({
             >
               주문상황 알림톡
             </Button>
-          )}
-        </div>
-      )}
+          ))}
+      </div>
 
       {[
         { idx: 1, value: link1, setValue: setLink1, saved: order.friendLink1 },
