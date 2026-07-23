@@ -7,6 +7,7 @@ import type { BadgeVariant } from '@/components/ui/Badge'
 import type { PartyApplicationStatus } from '@/types/domain'
 import { useAdminApplicationDetail } from '../_hooks/useAdminApplicationDetail'
 import { useApproveApplication } from '../_hooks/useApproveApplication'
+import { useDuplicateParty } from '../_hooks/useDuplicateParty'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
 import type { AdminAlimtalkLog } from '../_types'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
@@ -41,12 +42,25 @@ function formatPrice(amount: number): string {
 export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDetailModalProps) {
   const { data: detail, isLoading } = useAdminApplicationDetail(applicationId)
   const approveMutation = useApproveApplication()
+  const duplicateMutation = useDuplicateParty()
   const rejectMutation = useRejectApplication()
 
   const handleApprove = () => {
     if (!applicationId) return
     if (!confirm('이 신청을 승인하시겠습니까? 승인 시점부터 이용 기간이 시작됩니다.')) return
-    approveMutation.mutate(applicationId, { onSuccess: onClose })
+    approveMutation.mutate(applicationId, {
+      onSuccess: (res) => {
+        onClose()
+        // 이번 승인으로 파티가 정원을 채워 모집완료된 경우 — 동일 파티 재생성 여부 확인
+        if (
+          res.partyClosed &&
+          res.productId &&
+          confirm('파티가 정원을 채워 모집완료되었습니다.\n똑같은 파티를 새로 생성하시겠습니까?')
+        ) {
+          duplicateMutation.mutate(res.productId)
+        }
+      },
+    })
   }
 
   const handleReject = () => {
