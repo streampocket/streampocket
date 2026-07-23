@@ -4,7 +4,7 @@ import type { ApiResponse } from '@/types/api'
 
 type PollResult =
   | { status: 'pending' }
-  | { status: 'completed'; inviteLink1: string; inviteLink2: string }
+  | { status: 'completed'; inviteLink1: string; inviteLink2: string; friendCode: string | null }
 
 // 양식 C 승인(DeviceConfirmation) 방식 — 폰 승인 완료를 3초 간격으로 폴링.
 // 완료를 감지하면 호출측에서 enabled를 false로 바꿔(세션 초기화) 폴링을 중단한다.

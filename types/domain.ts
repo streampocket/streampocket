@@ -69,6 +69,8 @@ export type SteamOrderItem = {
   orderStatusAlimtalkSentAt: string | null
   friendLink1: string | null
   friendLink2: string | null
+  // 스팀 친구 코드 (계정번호) — 친구링크 자동 생성 시 함께 저장, 수동 입력 가능
+  friendCode: string | null
   giftCode: string | null
   gameUrl: string | null
   memo: string | null
