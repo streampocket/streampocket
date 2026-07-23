@@ -10,19 +10,29 @@ type UpdateFriendLinksInput = {
   giftCode: string | null
   gameUrl: string | null
   memo: string | null
+  zqbgAutoCheckEnabled: boolean
 }
 
 export function useUpdateFriendLinks() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, friendLink1, friendLink2, giftCode, gameUrl, memo }: UpdateFriendLinksInput) =>
+    mutationFn: ({
+      id,
+      friendLink1,
+      friendLink2,
+      giftCode,
+      gameUrl,
+      memo,
+      zqbgAutoCheckEnabled,
+    }: UpdateFriendLinksInput) =>
       api.patch(`/steam/admin/orders/${id}/friend-links`, {
         friendLink1,
         friendLink2,
         giftCode,
         gameUrl,
         memo,
+        zqbgAutoCheckEnabled,
       }),
     onSuccess: (_, variables) => {
       toast.success('친구 링크가 저장되었습니다.')
