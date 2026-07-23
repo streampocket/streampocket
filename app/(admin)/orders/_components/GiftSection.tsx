@@ -39,6 +39,7 @@ export function GiftSection({
   const [giftCode, setGiftCode] = useState(order.giftCode ?? '')
   const [gameUrl, setGameUrl] = useState(order.gameUrl ?? '')
   const [memo, setMemo] = useState(order.memo ?? '')
+  const [zqbgEnabled, setZqbgEnabled] = useState(order.zqbgAutoCheckEnabled ?? false)
   const [receiptLink, setReceiptLink] = useState(
     order.gameUrl ? GIFT_RECEIPT_LINK_OPTIONS[1].value : GIFT_RECEIPT_LINK_OPTIONS[0].value,
   )
@@ -51,10 +52,18 @@ export function GiftSection({
     setGiftCode(order.giftCode ?? '')
     setGameUrl(order.gameUrl ?? '')
     setMemo(order.memo ?? '')
+    setZqbgEnabled(order.zqbgAutoCheckEnabled ?? false)
     setReceiptLink(
       order.gameUrl ? GIFT_RECEIPT_LINK_OPTIONS[1].value : GIFT_RECEIPT_LINK_OPTIONS[0].value,
     )
-  }, [order.friendLink1, order.friendLink2, order.giftCode, order.gameUrl, order.memo])
+  }, [
+    order.friendLink1,
+    order.friendLink2,
+    order.giftCode,
+    order.gameUrl,
+    order.memo,
+    order.zqbgAutoCheckEnabled,
+  ])
 
   const normalized1 = link1.trim()
   const normalized2 = link2.trim()
@@ -66,7 +75,8 @@ export function GiftSection({
     normalized2 !== (order.friendLink2 ?? '') ||
     normalizedGiftCode !== (order.giftCode ?? '') ||
     normalizedGameUrl !== (order.gameUrl ?? '') ||
-    normalizedMemo !== (order.memo ?? '')
+    normalizedMemo !== (order.memo ?? '') ||
+    zqbgEnabled !== (order.zqbgAutoCheckEnabled ?? false)
 
   const handleCopy = async (value: string) => {
     if (!value) return
@@ -86,6 +96,7 @@ export function GiftSection({
       giftCode: normalizedGiftCode ? normalizedGiftCode : null,
       gameUrl: normalizedGameUrl ? normalizedGameUrl : null,
       memo: normalizedMemo ? normalizedMemo : null,
+      zqbgAutoCheckEnabled: zqbgEnabled,
     })
   }
 
@@ -96,10 +107,33 @@ export function GiftSection({
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-caption-md font-semibold text-text-primary">{title}</p>
-        {showOrderStatusAlimtalk &&
-          (order.orderStatusAlimtalkSentAt ? (
+        <label
+          className="flex cursor-pointer items-center gap-2"
+          title="켜면 선물 코드로 발송상태를 자동 조회해 완료 처리합니다 (기본 꺼짐)"
+        >
+          <span className="text-caption-md text-text-muted">zqbg 자동 조회</span>
+          <input
+            type="checkbox"
+            className="peer sr-only"
+            checked={zqbgEnabled}
+            onChange={(e) => setZqbgEnabled(e.target.checked)}
+          />
+          {/* 토글 스위치 — 트랙 + 노브 (peer-checked로 색·위치 전환) */}
+          <span
+            className={cn(
+              'relative h-5 w-9 rounded-full bg-gray-300 transition-colors peer-checked:bg-brand',
+              'after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full',
+              'after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4',
+            )}
+          />
+        </label>
+      </div>
+
+      {showOrderStatusAlimtalk && (
+        <div className="flex items-center justify-end">
+          {order.orderStatusAlimtalkSentAt ? (
             <Badge variant="green">
               주문상황 알림톡 발송 ({formatDate(order.orderStatusAlimtalkSentAt)})
             </Badge>
@@ -118,8 +152,9 @@ export function GiftSection({
             >
               주문상황 알림톡
             </Button>
-          ))}
-      </div>
+          )}
+        </div>
+      )}
 
       {[
         { idx: 1, value: link1, setValue: setLink1, saved: order.friendLink1 },

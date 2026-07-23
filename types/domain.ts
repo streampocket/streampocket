@@ -72,6 +72,8 @@ export type SteamOrderItem = {
   giftCode: string | null
   gameUrl: string | null
   memo: string | null
+  // zqbg 발송상태 자동 조회 사용 여부 (기본 false — 켠 주문만 폴링 대상)
+  zqbgAutoCheckEnabled: boolean
   estimatedCompletedAt: string | null
   // 파티 주문(source=party) → 원본 파티 신청 연결. 기능 도입 전 주문·비파티 주문은 null
   partyApplicationId: string | null
