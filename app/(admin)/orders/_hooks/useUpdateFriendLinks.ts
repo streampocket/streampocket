@@ -7,6 +7,7 @@ type UpdateFriendLinksInput = {
   id: string
   friendLink1: string | null
   friendLink2: string | null
+  friendCode: string | null
   giftCode: string | null
   gameUrl: string | null
   memo: string | null
@@ -21,6 +22,7 @@ export function useUpdateFriendLinks() {
       id,
       friendLink1,
       friendLink2,
+      friendCode,
       giftCode,
       gameUrl,
       memo,
@@ -29,6 +31,7 @@ export function useUpdateFriendLinks() {
       api.patch(`/steam/admin/orders/${id}/friend-links`, {
         friendLink1,
         friendLink2,
+        friendCode,
         giftCode,
         gameUrl,
         memo,

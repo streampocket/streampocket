@@ -20,7 +20,7 @@ export type AutoFriendLinkCreds = {
 }
 
 export type AutoFriendLinkResult =
-  | { status: 'completed'; inviteLink1: string; inviteLink2: string }
+  | { status: 'completed'; inviteLink1: string; inviteLink2: string; friendCode: string | null }
   | { status: 'guard_required'; sessionId: string; guardOptions: GuardOptions }
 
 // 친구링크 자동 가져오기 1단계 (양식 B/A는 즉시 완료, 양식 C는 guard_required 반환)
@@ -35,7 +35,11 @@ export function useAutoFriendLink(orderId: string) {
       ),
     onSuccess: (res) => {
       if (res.data.status === 'completed') {
-        toast.success('친구링크 2개를 가져와 저장했습니다.')
+        toast.success(
+          res.data.friendCode
+            ? '친구링크 2개와 친구 코드를 가져와 저장했습니다.'
+            : '친구링크 2개를 가져와 저장했습니다.',
+        )
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.orders.detail(orderId) })
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.orders.all() })
       }

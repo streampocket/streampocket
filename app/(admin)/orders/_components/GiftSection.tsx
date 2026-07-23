@@ -36,6 +36,7 @@ export function GiftSection({
 }: GiftSectionProps) {
   const [link1, setLink1] = useState(order.friendLink1 ?? '')
   const [link2, setLink2] = useState(order.friendLink2 ?? '')
+  const [friendCode, setFriendCode] = useState(order.friendCode ?? '')
   const [giftCode, setGiftCode] = useState(order.giftCode ?? '')
   const [gameUrl, setGameUrl] = useState(order.gameUrl ?? '')
   const [memo, setMemo] = useState(order.memo ?? '')
@@ -49,6 +50,7 @@ export function GiftSection({
   useEffect(() => {
     setLink1(order.friendLink1 ?? '')
     setLink2(order.friendLink2 ?? '')
+    setFriendCode(order.friendCode ?? '')
     setGiftCode(order.giftCode ?? '')
     setGameUrl(order.gameUrl ?? '')
     setMemo(order.memo ?? '')
@@ -59,6 +61,7 @@ export function GiftSection({
   }, [
     order.friendLink1,
     order.friendLink2,
+    order.friendCode,
     order.giftCode,
     order.gameUrl,
     order.memo,
@@ -67,12 +70,14 @@ export function GiftSection({
 
   const normalized1 = link1.trim()
   const normalized2 = link2.trim()
+  const normalizedFriendCode = friendCode.trim()
   const normalizedGiftCode = giftCode.trim()
   const normalizedGameUrl = gameUrl.trim()
   const normalizedMemo = memo.trim()
   const isDirty =
     normalized1 !== (order.friendLink1 ?? '') ||
     normalized2 !== (order.friendLink2 ?? '') ||
+    normalizedFriendCode !== (order.friendCode ?? '') ||
     normalizedGiftCode !== (order.giftCode ?? '') ||
     normalizedGameUrl !== (order.gameUrl ?? '') ||
     normalizedMemo !== (order.memo ?? '') ||
@@ -93,6 +98,7 @@ export function GiftSection({
       id: order.id,
       friendLink1: normalized1 ? normalized1 : null,
       friendLink2: normalized2 ? normalized2 : null,
+      friendCode: normalizedFriendCode ? normalizedFriendCode : null,
       giftCode: normalizedGiftCode ? normalizedGiftCode : null,
       gameUrl: normalizedGameUrl ? normalizedGameUrl : null,
       memo: normalizedMemo ? normalizedMemo : null,
@@ -182,6 +188,34 @@ export function GiftSection({
           </div>
         </div>
       ))}
+
+      <div>
+        <label className="text-caption-md mb-1 block text-text-muted">친구 코드</label>
+        <div className="flex gap-2">
+          <input
+            className={giftInputClass}
+            placeholder="자동 생성 시 함께 저장됩니다 (수동 입력 가능)"
+            value={friendCode}
+            onChange={(e) => setFriendCode(e.target.value)}
+          />
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={!order.friendCode}
+            onClick={() => order.friendCode && handleCopy(order.friendCode)}
+          >
+            복사
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={!friendCode}
+            onClick={() => setFriendCode('')}
+          >
+            ✕
+          </Button>
+        </div>
+      </div>
 
       <div>
         <label className="text-caption-md mb-1 block text-text-muted">선물 코드 번호</label>
