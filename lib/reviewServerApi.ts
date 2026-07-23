@@ -1,5 +1,9 @@
+import { cache } from 'react'
 import { API_BASE_URL } from '@/constants/app'
 import type { OwnCategory, OwnReview } from '@/types/domain'
+
+// 필터용 참조 데이터(카테고리·상품)의 서버 fetch 캐시 시간 — 자주 안 바뀌므로 5분
+const FILTER_DATA_REVALIDATE_SECONDS = 300
 
 type ListResponse = {
   data: {
@@ -51,7 +55,8 @@ export async function fetchReviewsServer(params: ReviewListServerParams) {
   return json.data
 }
 
-export async function fetchReviewServer(id: string): Promise<OwnReview | null> {
+// react cache()로 같은 요청 내 dedupe — generateMetadata와 페이지 본문이 각각 호출해도 fetch 1회
+export const fetchReviewServer = cache(async (id: string): Promise<OwnReview | null> => {
   const res = await fetch(`${API_BASE_URL}/own/reviews/${id}`, { cache: 'no-store' })
   if (res.status === 404) return null
   if (!res.ok) {
@@ -59,10 +64,12 @@ export async function fetchReviewServer(id: string): Promise<OwnReview | null> {
   }
   const json: DetailResponse = await res.json()
   return json.data
-}
+})
 
 export async function fetchOwnCategoriesServer(): Promise<OwnCategory[]> {
-  const res = await fetch(`${API_BASE_URL}/own/categories`, { cache: 'no-store' })
+  const res = await fetch(`${API_BASE_URL}/own/categories`, {
+    next: { revalidate: FILTER_DATA_REVALIDATE_SECONDS },
+  })
   if (!res.ok) return []
   const json: CategoriesResponse = await res.json()
   return json.data
@@ -70,7 +77,9 @@ export async function fetchOwnCategoriesServer(): Promise<OwnCategory[]> {
 
 export async function fetchOwnProductsLiteServer(categoryId?: string) {
   const qs = buildQuery({ categoryId })
-  const res = await fetch(`${API_BASE_URL}/own/products${qs}`, { cache: 'no-store' })
+  const res = await fetch(`${API_BASE_URL}/own/products${qs}`, {
+    next: { revalidate: FILTER_DATA_REVALIDATE_SECONDS },
+  })
   if (!res.ok) return []
   const json: ProductsResponse = await res.json()
   return json.data
