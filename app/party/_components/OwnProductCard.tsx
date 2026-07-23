@@ -57,7 +57,14 @@ export function OwnProductCard({ product }: OwnProductCardProps) {
 
         {/* 정보 영역 */}
         <div className="space-y-2 p-4">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* WebGradients Sunny Morning — 즉시 시청 강조 (기존 뱃지 색과 구분) */}
+            <Badge
+              variant="orange"
+              className="bg-linear-to-r from-[#f6d365] to-[#fda085] text-amber-900"
+            >
+              바로 시청 가능
+            </Badge>
             <Badge variant="blue">{product.category.name}</Badge>
             <Badge variant={partyType.variant}>{partyType.label}</Badge>
             <Badge variant={status.variant}>{status.label}</Badge>
