@@ -160,7 +160,12 @@ export function ManualOrderDetailModal({
               variant="danger"
               loading={isReturning}
               onClick={() => {
-                if (order && window.confirm('이 주문을 반품 처리하시겠습니까?')) {
+                if (!order) return
+                // 파티 주문은 반품과 함께 파티원에서도 제거된다 (인원 1명 감소)
+                const message = isParty
+                  ? '이 파티 주문을 반품 처리하시겠습니까?\n\n· 연결된 파티원이 함께 제거되어 모집 인원이 1명 줄어듭니다'
+                  : '이 주문을 반품 처리하시겠습니까?'
+                if (window.confirm(message)) {
                   manualReturn(order.id)
                 }
               }}

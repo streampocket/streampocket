@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { OwnProductStatus, PartyApplicationStatus } from '@/types/domain'
 import { useAdminPartyDetail } from '../_hooks/useAdminPartyDetail'
+import { useCancelPartyMember } from '../_hooks/useCancelPartyMember'
 import { useUpdatePartyStatus } from '../_hooks/useUpdatePartyStatus'
 import { PartyEditForm } from './PartyEditForm'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
@@ -38,6 +39,15 @@ function formatDate(dateStr: string): string {
   })
 }
 
+// 참여자 표에서 가로 폭을 아끼기 위한 축약 표기 (MM.DD) — 전체 날짜는 title 툴팁으로 제공
+function formatCompactDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Seoul',
+  })
+}
+
 function formatPrice(amount: number): string {
   return amount.toLocaleString('ko-KR')
 }
@@ -45,8 +55,21 @@ function formatPrice(amount: number): string {
 export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
   const { data: party, isLoading } = useAdminPartyDetail(partyId)
   const statusMutation = useUpdatePartyStatus()
+  const cancelMemberMutation = useCancelPartyMember()
   const [selectedStatus, setSelectedStatus] = useState<OwnProductStatus | ''>('')
   const [mode, setMode] = useState<'view' | 'edit'>('view')
+
+  // 확정 파티원 제거 — 인원 감소 + 연결된 파티 주문 자동 반품 (되돌릴 수 없음)
+  const handleCancelMember = (applicationId: string, userName: string) => {
+    if (
+      !window.confirm(
+        `${userName} 님을 파티에서 제거하시겠습니까?\n\n· 모집 인원이 1명 줄어듭니다\n· 연결된 파티 주문이 자동으로 반품 처리됩니다\n· 되돌릴 수 없습니다`,
+      )
+    ) {
+      return
+    }
+    cancelMemberMutation.mutate(applicationId)
+  }
 
   const handleStatusChange = () => {
     if (!partyId || !selectedStatus) return
@@ -67,6 +90,9 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
         setMode('view')
       }}
       title={mode === 'edit' ? '파티 수정' : '파티 상세'}
+      // 참여자 표(이름·연락처·금액·상태·기간·신청일·관리)가 가로 스크롤 없이 들어가도록 넓게.
+      // cn()이 tailwind-merge를 쓰지 않아 Modal 기본 max-w를 덮으려면 important(v4 접미사)가 필요하다.
+      className="max-w-4xl!"
     >
       {isLoading || !party ? (
         <div className="py-10 text-center">
@@ -156,14 +182,14 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                         <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
                           신청상태
                         </th>
-                        <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
-                          시작일
+                        <th className="text-caption-md whitespace-nowrap px-3 py-2 font-medium text-text-muted">
+                          이용기간
                         </th>
-                        <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
-                          만료일
-                        </th>
-                        <th className="text-caption-md px-3 py-2 font-medium text-text-muted">
+                        <th className="text-caption-md whitespace-nowrap px-3 py-2 font-medium text-text-muted">
                           신청일
+                        </th>
+                        <th className="text-caption-md whitespace-nowrap px-3 py-2 font-medium text-text-muted">
+                          관리
                         </th>
                       </tr>
                     </thead>
@@ -172,26 +198,47 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                         const appBadge = APP_STATUS_BADGE[app.status]
                         return (
                           <tr key={app.id} className="border-b border-border">
-                            <td className="text-body-md px-3 py-2 text-text-primary">
+                            <td className="text-body-md whitespace-nowrap px-3 py-2 text-text-primary">
                               {app.user.name}
                             </td>
-                            <td className="text-body-md px-3 py-2 text-text-secondary">
+                            <td className="text-body-md whitespace-nowrap px-3 py-2 text-text-secondary">
                               {app.user.phone}
                             </td>
-                            <td className="text-body-md px-3 py-2 text-text-secondary">
+                            <td className="text-body-md whitespace-nowrap px-3 py-2 text-text-secondary">
                               {formatPrice(app.totalAmount)}원
                             </td>
-                            <td className="px-3 py-2">
+                            <td className="whitespace-nowrap px-3 py-2">
                               <Badge variant={appBadge.variant}>{appBadge.label}</Badge>
                             </td>
-                            <td className="text-body-md px-3 py-2 text-text-muted">
-                              {app.startedAt ? formatDate(app.startedAt) : '-'}
+                            <td
+                              className="text-body-md whitespace-nowrap px-3 py-2 text-text-muted"
+                              title={`${app.startedAt ? formatDate(app.startedAt) : '-'} ~ ${app.expiresAt ? formatDate(app.expiresAt) : '-'}`}
+                            >
+                              {app.startedAt || app.expiresAt
+                                ? `${app.startedAt ? formatCompactDate(app.startedAt) : '-'} ~ ${app.expiresAt ? formatCompactDate(app.expiresAt) : '-'}`
+                                : '-'}
                             </td>
-                            <td className="text-body-md px-3 py-2 text-text-muted">
-                              {app.expiresAt ? formatDate(app.expiresAt) : '-'}
+                            <td
+                              className="text-body-md whitespace-nowrap px-3 py-2 text-text-muted"
+                              title={formatDate(app.createdAt)}
+                            >
+                              {formatCompactDate(app.createdAt)}
                             </td>
-                            <td className="text-body-md px-3 py-2 text-text-muted">
-                              {formatDate(app.createdAt)}
+                            <td className="whitespace-nowrap px-3 py-2">
+                              {app.status === 'confirmed' && (
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  loading={
+                                    cancelMemberMutation.isPending &&
+                                    cancelMemberMutation.variables === app.id
+                                  }
+                                  disabled={cancelMemberMutation.isPending}
+                                  onClick={() => handleCancelMember(app.id, app.user.name)}
+                                >
+                                  파티원 제거
+                                </Button>
+                              )}
                             </td>
                           </tr>
                         )
@@ -229,6 +276,22 @@ export function PartyDetailModal({ partyId, onClose }: PartyDetailModalProps) {
                         <p className="text-caption-sm mt-1 text-text-muted">
                           {formatDate(app.createdAt)}
                         </p>
+                        {app.status === 'confirmed' && (
+                          <div className="mt-2 flex justify-end">
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              loading={
+                                cancelMemberMutation.isPending &&
+                                cancelMemberMutation.variables === app.id
+                              }
+                              disabled={cancelMemberMutation.isPending}
+                              onClick={() => handleCancelMember(app.id, app.user.name)}
+                            >
+                              파티원 제거
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     )
                   })}
