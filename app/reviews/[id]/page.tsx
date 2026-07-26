@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
-import { USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
+import { USER_BRAND_NAME, USER_OG_IMAGE, USER_SITE_URL } from '@/constants/app'
 import { fetchReviewServer } from '@/lib/reviewServerApi'
 import { formatDate } from '@/lib/utils'
 import { ReviewOwnerActions } from '../_components/ReviewOwnerActions'
@@ -26,10 +26,17 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
     title,
     description,
     alternates: { canonical: `${USER_SITE_URL}/reviews/${review.id}` },
+    // openGraph를 선언한 페이지는 대표 OG 이미지를 상속받지 못하므로 폴백을 직접 지정한다
     openGraph: {
       title,
       description,
-      ...(review.imageUrl ? { images: [{ url: review.imageUrl }] } : {}),
+      images: [review.imageUrl ? { url: review.imageUrl } : USER_OG_IMAGE],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [review.imageUrl ? { url: review.imageUrl } : USER_OG_IMAGE],
     },
   }
 }
