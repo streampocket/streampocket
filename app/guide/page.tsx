@@ -39,6 +39,7 @@ export default function GuidePage() {
             height={300}
             priority
             className="rounded-xl w-full"
+            unoptimized
           />
         </section>
 
@@ -114,6 +115,7 @@ export default function GuidePage() {
             width={600}
             height={400}
             className="rounded-lg w-full md:max-w-md"
+            unoptimized
           />
           <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
             📥 카카오톡 등록 접수 양식
@@ -178,6 +180,7 @@ export default function GuidePage() {
                 width={600}
                 height={400}
                 className="rounded-lg w-full md:max-w-md"
+                unoptimized
               />
               <Image
                 src="/images/guide/예비코드입력.png"
@@ -185,6 +188,7 @@ export default function GuidePage() {
                 width={600}
                 height={400}
                 className="rounded-lg w-full md:max-w-md"
+                unoptimized
               />
               <Image
                 src="/images/guide/예비코드결과.png"
@@ -192,6 +196,7 @@ export default function GuidePage() {
                 width={600}
                 height={400}
                 className="rounded-lg w-full md:max-w-md"
+                unoptimized
               />
             </div>
             <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
@@ -255,6 +260,7 @@ export default function GuidePage() {
                   width={600}
                   height={400}
                   className="rounded-lg w-full md:max-w-md"
+                  unoptimized
                 />
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-700">

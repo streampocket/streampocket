@@ -35,6 +35,7 @@ export function ImageSelector({ value, onChange }: ImageSelectorProps) {
               fill
               className="object-contain"
               sizes="56px"
+              unoptimized
             />
           </div>
           <span className={cn(

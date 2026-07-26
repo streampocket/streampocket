@@ -95,12 +95,14 @@ export function OwnProductDetail() {
           <div className="flex items-start gap-4">
             {product.imagePath ? (
               <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-50">
+                {/* 정적 OTT 이미지는 256px로 미리 압축돼 있어 추가 변환이 불필요 */}
                 <Image
                   src={product.imagePath}
                   alt={product.name}
                   fill
                   className="object-contain"
                   sizes="80px"
+                  unoptimized
                 />
               </div>
             ) : (

@@ -30,12 +30,14 @@ export function VideoSection({ videos, sectionId }: VideoSectionProps) {
             >
               <Card className="flex h-full flex-col rounded-2xl shadow-none transition-shadow hover:shadow-md">
                 <div className="relative mx-4 mt-4 aspect-video overflow-hidden rounded-[14px]">
+                  {/* 유튜브 mqdefault 썸네일은 원본이 320x180 — 최적화해봐야 업스케일 변환만 소모하므로 원본 사용 */}
                   <Image
                     src={video.thumbnailUrl}
                     alt={video.title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 33vw"
                     className="object-cover"
+                    unoptimized
                   />
                 </div>
                 <CardBody className="flex flex-1 flex-col p-4">
