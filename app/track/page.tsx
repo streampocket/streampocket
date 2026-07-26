@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { USER_OG_IMAGE } from '@/constants/app'
 import { TrackClient } from './_components/TrackClient'
 
 const PAGE_TITLE = '주문 진행상황 조회'
@@ -15,11 +16,13 @@ export const metadata: Metadata = {
     url: '/track',
     type: 'website',
     locale: 'ko_KR',
+    images: [USER_OG_IMAGE],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
+    images: [USER_OG_IMAGE],
   },
 }
 

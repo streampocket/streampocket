@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
+import { USER_BRAND_NAME, USER_OG_IMAGE, USER_SITE_URL } from '@/constants/app'
 import { fetchCommunityPostServer } from '@/lib/communityServerApi'
 import { formatDate } from '@/lib/utils'
 import { MarkdownRenderer } from '../_components/MarkdownRenderer'
@@ -31,7 +31,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
   const description = stripMarkdown(post.content).slice(0, 160)
   const title = `${post.title} | ${USER_BRAND_NAME} 커뮤니티`
-  const images = post.imageUrl ? [post.imageUrl] : []
+  // openGraph를 선언한 페이지는 대표 OG 이미지를 상속받지 못하므로 폴백을 직접 지정한다
+  const images = [post.imageUrl ? { url: post.imageUrl } : USER_OG_IMAGE]
   return {
     title,
     description,
@@ -45,7 +46,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       modifiedTime: post.updatedAt,
     },
     twitter: {
-      card: post.imageUrl ? 'summary_large_image' : 'summary',
+      // 첨부 사진도 대표 OG 폴백도 모두 가로형이라 큰 카드가 맞다
+      card: 'summary_large_image',
       title: post.title,
       description,
       images,

@@ -40,6 +40,24 @@ export const BRAND_NAME = "스트림포켓";
 export const USER_BRAND_NAME = "OTTALL";
 /** OTTALL 유저 사이트 대표 도메인 — canonical/OG/sitemap/robots 공통 사용 */
 export const USER_SITE_URL = "https://ottall.com";
+/**
+ * SNS 링크 미리보기 대표 이미지 (1200×630).
+ *
+ * 실체는 `app/opengraph-image.png` 파일 규약이 만들어 주는 라우트다.
+ * 파일 규약은 openGraph를 **선언하지 않은** 페이지에만 자동 상속되고,
+ * 페이지가 openGraph를 선언하면 그 객체가 통째로 교체되어 이미지가 사라진다
+ * (next/dist/lib/metadata/resolve-metadata.js: `target.openGraph = resolveOpenGraph(source.openGraph, ...)`).
+ * 그래서 openGraph를 선언하는 페이지는 이 상수로 이미지를 명시해야 한다.
+ * 상대 경로는 루트 레이아웃의 metadataBase 기준으로 절대 URL로 변환된다.
+ * width/height를 함께 주는 이유: 파일 규약이 자동으로 넣어주는 og:image:width/height를
+ * 명시 경로에서는 Next가 알 수 없어, 없으면 일부 크롤러가 카드 렌더를 지연시킨다.
+ */
+export const USER_OG_IMAGE = {
+  url: "/opengraph-image.png",
+  width: 1200,
+  height: 630,
+  alt: `${USER_BRAND_NAME} — OTT 공동구독 파티 매칭 플랫폼`,
+};
 export const LOGIN_PATH = "/login";
 export const USER_LOGIN_PATH = "/signin";
 export const USER_SIGNUP_PATH = "/signup";

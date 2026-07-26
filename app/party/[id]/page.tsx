@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
+import { USER_BRAND_NAME, USER_OG_IMAGE, USER_SITE_URL } from '@/constants/app'
 import { getOttEnglishName, withOttEnglishName } from '@/constants/ottNames'
 import { fetchOwnProductServer } from '@/lib/ownProductServerApi'
 import { OwnProductDetail } from './_components/OwnProductDetail'
@@ -54,7 +54,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ]
     : [product.name, `${product.name} 파티`, `${product.name} 공유`]
   const imageUrl = absoluteImageUrl(product.imagePath)
-  const images = imageUrl ? [imageUrl] : []
+  // openGraph를 선언한 페이지는 대표 OG 이미지를 상속받지 못하므로 폴백을 직접 지정한다.
+  const images = [imageUrl ? { url: imageUrl } : USER_OG_IMAGE]
+  // OTT 로고는 정사각(225px)이라 소형 카드가 규격에 맞고,
+  // 로고가 없어 대표 OG(1200×630 가로형)로 폴백할 때만 큰 카드가 맞다.
+  const twitterCard = imageUrl ? 'summary' : 'summary_large_image'
 
   return {
     title: pageTitle,
@@ -70,7 +74,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${USER_SITE_URL}/party/${product.id}`,
     },
     twitter: {
-      card: imageUrl ? 'summary_large_image' : 'summary',
+      card: twitterCard,
       title: ogTitle,
       description,
       images,

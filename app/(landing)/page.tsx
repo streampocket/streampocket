@@ -16,7 +16,7 @@ import {
   LANDING_STEPS,
   LANDING_TRUST_ITEMS,
 } from '@/app/(landing)/_data'
-import { API_BASE_URL, USER_BRAND_NAME, USER_SITE_URL } from '@/constants/app'
+import { API_BASE_URL, USER_BRAND_NAME, USER_OG_IMAGE, USER_SITE_URL } from '@/constants/app'
 import { OTT_ENGLISH_NAME_LIST } from '@/constants/ottNames'
 import { fetchLatestVideos } from '@/app/(landing)/_lib/fetchYoutubeRss'
 import { fetchLandingReviews } from '@/app/(landing)/_lib/fetchLandingReviews'
@@ -40,11 +40,13 @@ export const metadata: Metadata = {
     siteName: USER_BRAND_NAME,
     type: 'website',
     locale: 'ko_KR',
+    images: [USER_OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼`,
     description: LANDING_DESCRIPTION,
+    images: [USER_OG_IMAGE],
   },
 }
 

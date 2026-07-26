@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import {
   REVIEW_PAGE_SIZE,
   USER_BRAND_NAME,
+  USER_OG_IMAGE,
   USER_SITE_URL,
 } from '@/constants/app'
 import {
@@ -37,7 +38,8 @@ export async function generateMetadata({ searchParams }: ReviewsPageProps): Prom
     description,
     // 필터·페이지·utm 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
     alternates: { canonical: `${USER_SITE_URL}/reviews` },
-    openGraph: { title: titleBase, description },
+    openGraph: { title: titleBase, description, images: [USER_OG_IMAGE] },
+    twitter: { card: 'summary_large_image', title: titleBase, description, images: [USER_OG_IMAGE] },
   }
 }
 
