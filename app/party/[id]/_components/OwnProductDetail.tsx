@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams, useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardBody } from '@/components/ui/Card'
@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { cn } from '@/lib/utils'
-import type { OwnProductStatus } from '@/types/domain'
+import type { OwnProduct, OwnProductStatus } from '@/types/domain'
 import type { BadgeVariant } from '@/components/ui/Badge'
 
 const STATUS_MAP: Record<OwnProductStatus, { label: string; variant: BadgeVariant }> = {
@@ -29,12 +29,17 @@ const STATUS_MAP: Record<OwnProductStatus, { label: string; variant: BadgeVarian
   expired: { label: '만료', variant: 'gray' },
 }
 
-export function OwnProductDetail() {
-  const params = useParams()
+type OwnProductDetailProps = {
+  id: string
+  // 페이지(서버 컴포넌트)가 이미 가져온 파티 — 서버 렌더 HTML을 채우고 중복 호출을 없앤다.
+  // 존재하지 않는 파티면 null이 온다.
+  initialProduct: OwnProduct | null
+}
+
+export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const id = params.id as string
-  const { data: product, isLoading } = useOwnProductDetail(id)
+  const { data: product, isLoading } = useOwnProductDetail(id, initialProduct ?? undefined)
   const queryClient = useQueryClient()
   const applyMutation = useApplyParty(id)
   const { data: applicationCheck } = useCheckApplied(id)
@@ -143,7 +148,10 @@ export function OwnProductDetail() {
             </div>
             <div className="text-center">
               <p className="text-caption-sm text-text-muted">모집인원</p>
-              <p className="text-body-lg font-semibold text-text-primary">{product.filledSlots}/{product.totalSlots}명</p>
+              {/* 조각난 텍스트는 파이버가 여러 개 생겨 번역 후 갱신이 먹지 않는다 — 문자열 하나로 합친다 */}
+              <p className="text-body-lg font-semibold text-text-primary">
+                {`${product.filledSlots}/${product.totalSlots}명`}
+              </p>
             </div>
           </div>
 

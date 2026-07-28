@@ -19,10 +19,13 @@ export const metadata: Metadata = {
   },
 }
 
+// translate="no" + notranslate — 브라우저 자동 번역 차단.
+// 번역기가 텍스트 노드를 자기 태그로 바꿔치기하면 React가 그 노드를 지우다 NotFoundError로 터진다
+// (`/party`에서 실제 발생). 한국어 전용 서비스라 번역을 끄는 비용이 없고, 색인에는 영향이 없다.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
-      <body>
+    <html lang="ko" translate="no">
+      <body className="notranslate">
         <QueryProvider>
           <UIProvider>
             <VisitTracker />

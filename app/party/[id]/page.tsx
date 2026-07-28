@@ -118,7 +118,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
       )}
-      <OwnProductDetail />
+      {/* 서버가 JSON-LD를 만들며 이미 가져온 파티를 그대로 넘긴다 —
+          서버 렌더 HTML에 실제 내용이 담기고 클라이언트의 중복 호출이 사라진다 */}
+      <OwnProductDetail id={id} initialProduct={product} />
     </section>
   )
 }
