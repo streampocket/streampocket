@@ -77,14 +77,23 @@ export function OwnProductCard({ product }: OwnProductCardProps) {
           </h3>
 
           <div className="flex items-center gap-3 text-body-md text-text-secondary">
+            {/* 두 분기 모두 "요소"만 내놓고, 각 요소의 자식은 문자열 하나로 합친다.
+                자식이 문자열 하나면 React가 텍스트 파이버를 만들지 않고 textContent로 갱신하므로
+                (react-dom의 shouldSetTextContent 경로) 브라우저 번역기가 텍스트 노드를 바꿔치기해도
+                removeChild를 호출하지 않아 NotFoundError가 나지 않는다.
+                기존에는 할인 분기가 요소, 정가 분기가 맨몸 텍스트여서 분기 전환 시 텍스트 노드를 지웠다. */}
             <span>
               {product.currentPrice != null && product.currentPrice < product.price ? (
                 <>
-                  <span className="mr-1 text-text-muted line-through">{product.price.toLocaleString()}원</span>
-                  <span className="font-semibold text-brand">{product.currentPrice.toLocaleString()}원</span>
+                  <span className="mr-1 text-text-muted line-through">
+                    {`${product.price.toLocaleString()}원`}
+                  </span>
+                  <span className="font-semibold text-brand">
+                    {`${product.currentPrice.toLocaleString()}원`}
+                  </span>
                 </>
               ) : (
-                <>{product.price.toLocaleString()}원</>
+                <span>{`${product.price.toLocaleString()}원`}</span>
               )}
             </span>
             <span>{product.startedAt ? `${product.remainingDays ?? 0}일 남음` : `${product.durationDays}일`}</span>
@@ -94,7 +103,8 @@ export function OwnProductCard({ product }: OwnProductCardProps) {
           <div>
             <div className="mb-1 flex items-center justify-between text-caption-sm text-text-muted">
               <span>모집 현황</span>
-              <span>{product.filledSlots}/{product.totalSlots}명</span>
+              {/* 조각난 텍스트는 파이버가 여러 개 생겨 번역 후 갱신이 먹지 않는다 — 문자열 하나로 합친다 */}
+              <span>{`${product.filledSlots}/${product.totalSlots}명`}</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
