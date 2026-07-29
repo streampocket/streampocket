@@ -27,15 +27,19 @@ export type DramaAccount = {
   dueAt: string | null
   /** 파티원 형식이 아닌 괄호 줄 — 원문 보존 */
   notes: string[]
+  /**
+   * 낙관적 잠금용 버전값. 편집기를 열 때 들고 있다가 저장할 때 그대로 돌려보낸다.
+   * 저장이 파티원까지 통째 교체라, 이 검사가 없으면 그 사이 남이 추가한 파티원이 사라진다.
+   */
+  updatedAt: string
   members: DramaMember[]
 }
 
 /** 카드에 그릴 한 줄 = 검색 대상 한 줄. 렌더와 검색이 같은 값을 쓰게 하는 단일 소스 */
 export type MemoLine = {
   text: string
-  kind: 'head' | 'credential' | 'member' | 'note' | 'free'
-  /** 복사 버튼 라벨 (credential일 때만) */
-  copyLabel?: string
+  /** otp는 credential이지만 「발급」 버튼이 붙어야 해서 따로 구분한다 */
+  kind: 'head' | 'credential' | 'otp' | 'member' | 'note' | 'free'
   member?: DecoratedMember
 }
 
@@ -71,7 +75,7 @@ export type FilterGroup = 'slot' | 'due' | 'mem' | 'plat' | 'site'
 
 export type ViewMode = 'card' | 'list'
 
-export type SortKey = 'due' | 'free' | 'memexp' | 'plat'
+export type SortKey = 'dueAsc' | 'dueDesc' | 'free' | 'memexp' | 'plat'
 
 /** 서버 파서가 메모 한 덩어리를 읽은 결과 */
 export type ParsedItem = {

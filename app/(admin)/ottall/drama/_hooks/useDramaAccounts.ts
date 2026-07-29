@@ -23,6 +23,17 @@ function useInvalidate() {
   return () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.dramaAccounts.all() })
 }
 
+type SaveTextPayload = {
+  id?: string
+  text: string
+  dryRun: boolean
+  /**
+   * 편집기를 열 때 받은 계정의 updatedAt. 수정 저장에 필수다 —
+   * 저장이 파티원까지 통째 교체라, 그 사이 다른 관리자가 바꿨으면 서버가 409로 막는다.
+   */
+  expectedUpdatedAt?: string
+}
+
 /**
  * 계정 1건을 메모 텍스트로 저장한다.
  * `dryRun`이면 저장하지 않고 파싱 결과와 변화 요약만 돌려준다 — 미리보기와 저장이 같은 API다.
@@ -31,11 +42,15 @@ function useInvalidate() {
 export function useSaveDramaAccountText() {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: ({ id, text, dryRun }: { id?: string; text: string; dryRun: boolean }) =>
+    mutationFn: ({ id, text, dryRun, expectedUpdatedAt }: SaveTextPayload) =>
       id
-        ? api.put<{ data: TextSaveResult }>(`${BASE}/${id}/text`, { text, dryRun })
+        ? api.put<{ data: TextSaveResult }>(`${BASE}/${id}/text`, { text, dryRun, expectedUpdatedAt })
         : api.post<{ data: TextSaveResult }>(`${BASE}/text`, { text, dryRun }),
     onSuccess: (_res, variables) => {
+      if (!variables.dryRun) invalidate()
+    },
+    // 저장이 막힌 이유가 대개 "남이 먼저 고쳤다"이므로, 다시 열었을 때 최신 내용이 보이게 한다
+    onError: (_error, variables) => {
       if (!variables.dryRun) invalidate()
     },
   })

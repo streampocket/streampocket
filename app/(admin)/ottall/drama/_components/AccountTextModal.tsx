@@ -49,6 +49,9 @@ export function AccountTextModal({ account, onClose }: AccountTextModalProps) {
   // 끝 개행은 파서가 블록을 나누지 않으므로 안전하다 (실측 확인).
   const [text, setText] = useState(account ? `${toMemoText(account)}\n` : '')
   const [preview, setPreview] = useState<TextSaveResult | null>(null)
+  // 저장 실패는 토스트만으로는 놓치기 쉽다. 특히 "남이 먼저 고쳤다"는 다시 눌러도 계속 막히므로
+  // 무엇을 해야 하는지가 창 안에 남아 있어야 한다.
+  const [saveError, setSaveError] = useState<string | null>(null)
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
   const save = useSaveDramaAccountText()
@@ -77,13 +80,19 @@ export function AccountTextModal({ account, onClose }: AccountTextModalProps) {
 
   const runSave = () => {
     save.mutate(
-      { id: account?.id, text, dryRun: false },
+      // 편집기를 열 때 본 버전을 함께 보낸다 — 그 사이 남이 고쳤으면 서버가 막는다(409).
+      // 이 값이 없으면 통째 교체라 상대의 파티원 추가가 알림 없이 사라진다.
+      { id: account?.id, text, dryRun: false, expectedUpdatedAt: account?.updatedAt },
       {
         onSuccess: () => {
           toast.success(isCreate ? '계정이 등록되었습니다.' : '저장되었습니다.')
           onClose()
         },
-        onError: (e) => toast.error(e instanceof Error ? e.message : '저장에 실패했습니다.'),
+        onError: (e) => {
+          const message = e instanceof Error ? e.message : '저장에 실패했습니다.'
+          setSaveError(message)
+          toast.error(message)
+        },
       },
     )
   }
@@ -121,12 +130,23 @@ export function AccountTextModal({ account, onClose }: AccountTextModalProps) {
           onChange={(e) => {
             setText(e.target.value)
             setPreview(null)
+            setSaveError(null)
           }}
           spellCheck={false}
           rows={12}
           placeholder={PLACEHOLDER}
           className="border-border focus:border-brand bg-gray-50 w-full resize-y rounded-lg border p-3 font-mono text-[12.5px] leading-[22px] outline-none"
         />
+
+        {saveError && (
+          <div className="border-danger text-danger rounded-lg border bg-red-50 p-3 text-[12.5px]">
+            {saveError}
+            <br />
+            <span className="text-text-secondary">
+              내용을 다른 곳에 복사해 두고 창을 닫았다가 다시 열면 최신 내용에서 이어 작업할 수 있습니다.
+            </span>
+          </div>
+        )}
 
         <p className="text-caption-md text-text-muted">
           첫 줄 = <b>[마감일]-플랫폼 정원</b> (아직 안 열었으면 생략) · 2줄 = 아이디 · 3줄 = 비밀번호 · 4줄 = OTP · 그 아래 = 파티원
