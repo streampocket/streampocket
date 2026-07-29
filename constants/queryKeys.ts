@@ -126,4 +126,8 @@ export const QUERY_KEYS = {
     all: () => ['adminCommunity'] as const,
     list: (params?: Record<string, unknown>) => ['adminCommunity', 'list', params] as const,
   },
+  // 드라마 계정은 전건을 한 번 받아 프론트에서 필터·검색하므로 list 하나로 충분하다
+  dramaAccounts: {
+    all: () => ['dramaAccounts'] as const,
+  },
 } as const
