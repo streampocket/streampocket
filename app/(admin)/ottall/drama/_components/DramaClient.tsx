@@ -9,8 +9,10 @@ import { AccountTextModal } from './AccountTextModal'
 import { DramaCard } from './DramaCard'
 import { DramaFilterBar, type FilterDefs } from './DramaFilterBar'
 import { DramaList } from './DramaList'
+import { ExportModal } from './ExportModal'
 import { ImportModal } from './ImportModal'
 import { useDeleteDramaMember, useDramaAccounts } from '../_hooks/useDramaAccounts'
+import { useDramaViewState } from '../_hooks/useDramaViewState'
 import {
   DUE_SOON_DAYS,
   MEMBER_SOON_DAYS,
@@ -23,32 +25,28 @@ import {
 import type { DecoratedAccount, DecoratedMember, FilterGroup, SortKey, ViewMode } from '../_types'
 
 const SORT_LABELS: { value: SortKey; label: string }[] = [
-  { value: 'due', label: '멤버십 마감 임박순' },
+  { value: 'dueAsc', label: '멤버십 마감 빠른순' },
+  { value: 'dueDesc', label: '멤버십 마감 느린순' },
   { value: 'free', label: '빈자리 많은순' },
   { value: 'memexp', label: '파티원 만료 임박순' },
   { value: 'plat', label: '플랫폼순' },
 ]
 
-const emptyActive = (): Record<FilterGroup, Set<string>> => ({
-  slot: new Set(),
-  due: new Set(),
-  mem: new Set(),
-  plat: new Set(),
-  site: new Set(),
-})
+/** 마감일이 없는(미개설) 계정을 밀어 둘 자리 — 정렬 방향과 무관하게 항상 맨 뒤여야 한다 */
+const NO_DUE = 99999
 
 // 수정·파티원 추가·신규 등록이 전부 같은 텍스트 편집기다 — 시작 상태(mode)만 다르다
 type ModalState =
   | { kind: 'none' }
   | { kind: 'import' }
+  | { kind: 'export' }
   | { kind: 'text'; account: DecoratedAccount | null }
 
 export function DramaClient() {
   const { data, isLoading, isError } = useDramaAccounts()
-  const [active, setActive] = useState(emptyActive)
-  const [query, setQuery] = useState('')
-  const [sortBy, setSortBy] = useState<SortKey>('due')
-  const [view, setView] = useState<ViewMode>('card')
+  // 검색·필터·정렬·보기 모드는 페이지를 오가도 유지된다 (sessionStorage)
+  const { active, query, sortBy, view, toggleFilter, setQuery, setSortBy, setView, resetAll } =
+    useDramaViewState()
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [modal, setModal] = useState<ModalState>({ kind: 'none' })
 
@@ -106,9 +104,11 @@ export function DramaClient() {
 
   const visible = useMemo(() => {
     const sortKey: Record<SortKey, (a: DecoratedAccount) => number> = {
-      due: (a) => (a.opened && a.dueLeft !== null ? a.dueLeft : 99999),
+      dueAsc: (a) => (a.opened && a.dueLeft !== null ? a.dueLeft : NO_DUE),
+      // 느린순은 부호를 뒤집는다. 미개설은 뒤집기 전에 걸러 양쪽 모두 맨 뒤로 보낸다
+      dueDesc: (a) => (a.opened && a.dueLeft !== null ? -a.dueLeft : NO_DUE),
       free: (a) => -a.free,
-      memexp: (a) => (a.members.length > 0 ? Math.min(...a.members.map((m) => m.daysLeft)) : 99999),
+      memexp: (a) => (a.members.length > 0 ? Math.min(...a.members.map((m) => m.daysLeft)) : NO_DUE),
       plat: (a) => (a.platform ? platforms.indexOf(a.platform) : 99),
     }
     const key = sortKey[sortBy]
@@ -116,21 +116,6 @@ export function DramaClient() {
       .filter((a) => passesExcept(a, null))
       .sort((x, y) => key(x) - key(y) || x.email.localeCompare(y.email))
   }, [accounts, passesExcept, sortBy, platforms])
-
-  const toggleFilter = (group: FilterGroup, value: string) => {
-    setActive((prev) => {
-      const next = { ...prev, [group]: new Set(prev[group]) }
-      if (next[group].has(value)) next[group].delete(value)
-      else next[group].add(value)
-      return next
-    })
-  }
-
-  const resetAll = () => {
-    setActive(emptyActive())
-    setQuery('')
-    setSortBy('due')
-  }
 
   const toggleExpanded = (id: string) => {
     setExpanded((prev) => {
@@ -161,6 +146,14 @@ export function DramaClient() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-heading-md text-text-primary">드라마 계정 관리</h2>
         <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setModal({ kind: 'export' })}
+            disabled={accounts.length === 0}
+          >
+            메모로 추출
+          </Button>
           <Button size="sm" variant="secondary" onClick={() => setModal({ kind: 'import' })}>
             ＋ 메모 붙여넣기
           </Button>
@@ -279,6 +272,9 @@ export function DramaClient() {
       )}
 
       {modal.kind === 'import' && <ImportModal onClose={() => setModal({ kind: 'none' })} />}
+      {modal.kind === 'export' && (
+        <ExportModal visible={visible} all={accounts} onClose={() => setModal({ kind: 'none' })} />
+      )}
       {modal.kind === 'text' && (
         <AccountTextModal account={modal.account} onClose={() => setModal({ kind: 'none' })} />
       )}

@@ -48,9 +48,10 @@ function buildLines(account: DramaAccount, members: DecoratedMember[], free: num
   const head = formatHeadLine(account)
   if (head) lines.push({ text: head, kind: 'head' })
 
-  lines.push({ text: account.email, kind: 'credential', copyLabel: '아이디' })
-  lines.push({ text: account.password, kind: 'credential', copyLabel: '비밀번호' })
-  lines.push({ text: account.otpSecret, kind: 'credential', copyLabel: 'OTP 시크릿' })
+  lines.push({ text: account.email, kind: 'credential' })
+  lines.push({ text: account.password, kind: 'credential' })
+  // OTP 시크릿 줄만 따로 구분한다 — 이 줄에 「발급」 버튼이 붙는다
+  lines.push({ text: account.otpSecret, kind: 'otp' })
 
   for (const member of members) {
     lines.push({ text: formatMemberLine(member), kind: 'member', member })
@@ -114,6 +115,15 @@ export function toMemoText(account: DecoratedAccount): string {
     .filter((line) => line.kind !== 'free')
     .map((line) => line.text)
     .join('\n')
+}
+
+/**
+ * 여러 계정을 메모장 원문 한 덩어리로 되돌린다.
+ * 계정 사이는 빈 줄 — 메모 형식에서 빈 줄이 계정 구분자라, 이 결과를 그대로
+ * 「메모 붙여넣기」에 다시 넣을 수 있다 (백업 → 복원이 같은 형식으로 닫힌다).
+ */
+export function toMemoTextAll(accounts: DecoratedAccount[]): string {
+  return accounts.map(toMemoText).join('\n\n')
 }
 
 /** 등록된 값에서 플랫폼 목록을 모은다 — 마스터 테이블이 없어 새 값이 자동으로 필터에 나타난다 */

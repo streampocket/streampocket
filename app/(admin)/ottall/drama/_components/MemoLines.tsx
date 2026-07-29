@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { generateCode, getRemainingSeconds, isValidSecret } from '@/lib/totp'
 import type { DecoratedAccount, DecoratedMember, MemoLine } from '../_types'
 
 type MemoLinesProps = {
@@ -35,31 +36,63 @@ function Highlight({ text, query }: { text: string; query: string }) {
   return <>{parts}</>
 }
 
-function CopyButton({ value, label }: { value: string; label: string }) {
-  const [done, setDone] = useState(false)
+/**
+ * OTP 시크릿 줄의 「발급」 버튼 — 누르면 6자리 코드를 만들어 클립보드에 넣고 남은 시간을 센다.
+ *
+ * 시크릿이 이미 화면에 평문으로 있어 계산을 서버에 맡길 이유가 없다.
+ * 다만 카드 수십 개가 매초 다시 계산하면 낭비라, **누를 때만** 계산하고
+ * 주기가 끝나면(남은 초 0) 원래 상태로 돌아가 옛 코드가 남지 않게 한다.
+ */
+function OtpIssueButton({ secret }: { secret: string }) {
+  const [issued, setIssued] = useState<{ code: string; left: number } | null>(null)
+  const valid = isValidSecret(secret)
+  const counting = issued !== null
 
-  const handleCopy = async () => {
+  useEffect(() => {
+    if (!counting) return
+    const timer = setInterval(() => {
+      setIssued((prev) => {
+        if (!prev) return prev
+        const left = prev.left - 1
+        return left > 0 ? { ...prev, left } : null
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [counting])
+
+  const handleIssue = async () => {
+    const code = generateCode(secret)
     try {
-      await navigator.clipboard.writeText(value)
-      setDone(true)
-      setTimeout(() => setDone(false), 1200)
+      await navigator.clipboard.writeText(code)
+      toast.success(`OTP ${code} 복사됨`)
     } catch {
-      toast.error('복사에 실패했습니다. 직접 선택해 주세요.')
+      // 복사가 막혀도 코드는 버튼에 보여준다 — 눈으로 읽어 옮길 수 있다
+      toast.error('복사에 실패했습니다. 버튼의 숫자를 직접 입력해 주세요.')
     }
+    setIssued({ code, left: getRemainingSeconds() })
+  }
+
+  if (!valid) {
+    return (
+      <span className="text-caption-sm border-border text-text-muted shrink-0 rounded border px-1.5">
+        OTP 형식 아님
+      </span>
+    )
   }
 
   return (
     <button
       type="button"
-      onClick={handleCopy}
-      title={`${label} 복사`}
+      onClick={handleIssue}
+      title="OTP 코드를 만들어 복사합니다"
       className={cn(
-        'text-caption-sm shrink-0 cursor-pointer rounded border px-1.5 opacity-0 transition-opacity',
-        'group-hover/line:opacity-100 focus-visible:opacity-100',
-        done ? 'border-success text-success opacity-100' : 'border-border bg-card-bg text-text-secondary',
+        'text-caption-sm shrink-0 cursor-pointer rounded border px-1.5 tabular-nums transition-opacity',
+        issued
+          ? 'border-success text-success font-semibold'
+          : 'border-border bg-card-bg text-text-secondary opacity-0 group-hover/line:opacity-100 focus-visible:opacity-100',
       )}
     >
-      {done ? '복사됨' : '복사'}
+      {issued ? `${issued.code} · ${issued.left}초` : '발급'}
     </button>
   )
 }
@@ -106,9 +139,7 @@ export function MemoLines({ account, query, onDeleteMember, className }: MemoLin
           >
             <Highlight text={line.text} query={query} />
           </span>
-          {line.kind === 'credential' && line.copyLabel && (
-            <CopyButton value={line.text} label={line.copyLabel} />
-          )}
+          {line.kind === 'otp' && <OtpIssueButton secret={line.text} />}
           {line.member && (
             <span className="flex shrink-0 gap-1 opacity-0 transition-opacity group-hover/line:opacity-100 focus-within:opacity-100">
               {/* 수정은 텍스트 편집기에서 한다. 한 명만 뺄 때는 클릭 한 번이 빨라 삭제만 남긴다 */}
