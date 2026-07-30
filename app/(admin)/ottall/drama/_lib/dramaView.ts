@@ -15,11 +15,41 @@ export const MEMBER_SOON_DAYS = 3
 /** 멤버십 마감이 임박했다고 표시할 기준(일) */
 export const DUE_SOON_DAYS = 7
 
-/** 'YYYY-MM-DD' 두 값의 일수 차 — 둘 다 KST 벽시계 날짜라 문자열만으로 계산할 수 있다 */
+const DAY_MS = 86_400_000
+const HOUR_MS = 3_600_000
+const MINUTE_MS = 60_000
+
+/**
+ * 'YYYY-MM-DD' 두 값의 일수 차 — 둘 다 KST 벽시계 날짜라 문자열만으로 계산할 수 있다.
+ * 멤버십 마감(dueAt)에만 쓴다. 마감일에는 시각이 없어(원문에 없다) 날짜로만 잴 수 있다.
+ */
 function daysBetween(fromYmd: string, toYmd: string): number {
   const from = Date.parse(`${fromYmd}T00:00:00Z`)
   const to = Date.parse(`${toYmd}T00:00:00Z`)
-  return Math.round((to - from) / 86_400_000)
+  return Math.round((to - from) / DAY_MS)
+}
+
+/**
+ * 파티원의 만료 시각(epoch ms).
+ *
+ * 메모의 `2026.08.05/01:30`에서 시각이 곧 만료 시각이다 — 날짜만 보면
+ * 01:30에 끝난 자리가 그날 하루 종일 차 있는 것으로 잡혀 빈자리를 늦게 발견한다.
+ * 두 값 모두 KST 벽시계라 오프셋을 +09:00으로 명시한다 (브라우저 로컬 존으로 해석되면 몇 시간씩 어긋난다).
+ */
+export function memberExpiresAt(member: Pick<DramaMember, 'endDate' | 'startTime'>): number {
+  return Date.parse(`${member.endDate}T${member.startTime}:00+09:00`)
+}
+
+/**
+ * 파티원 줄에 붙일 마감 표시.
+ * 24시간 이내는 남은 시간으로 보여준다 — "지금 들어갈 수 있는 자리인가"가 D-0으로는 안 읽힌다.
+ */
+export function formatTimeLeft(member: DecoratedMember): string | null {
+  if (member.expired) return '만료'
+  if (member.msLeft < HOUR_MS) return `${Math.max(1, Math.floor(member.msLeft / MINUTE_MS))}분 뒤`
+  if (member.msLeft < DAY_MS) return `${Math.floor(member.msLeft / HOUR_MS)}시간 뒤`
+  if (member.soon) return `D-${member.daysLeft}`
+  return null
 }
 
 /** 메모 원문의 사이트+이름 표기 — "중고나라#7561308"처럼 공백 없이 붙는 경우가 있다 */
@@ -66,21 +96,30 @@ function buildLines(account: DramaAccount, members: DecoratedMember[], free: num
   return lines
 }
 
-export function decorateAccount(account: DramaAccount, today = getTodayStringKST()): DecoratedAccount {
+export function decorateAccount(
+  account: DramaAccount,
+  now = Date.now(),
+  today = getTodayStringKST(),
+): DecoratedAccount {
   const opened = account.platform !== null
 
   const members: DecoratedMember[] = account.members.map((member) => {
-    const daysLeft = daysBetween(today, member.endDate)
+    // 남은 시간 하나가 진실이고 만료·임박·배지·정렬이 전부 여기서 파생된다.
+    // daysLeft를 달력 날짜 차이로 따로 두면 "D-1인데 30시간 남음" 같은 어긋남이 생긴다.
+    const msLeft = memberExpiresAt(member) - now
+    const expired = msLeft <= 0
     return {
       ...member,
-      daysLeft,
-      expired: daysLeft < 0,
-      soon: daysLeft >= 0 && daysLeft <= MEMBER_SOON_DAYS,
+      msLeft,
+      daysLeft: Math.floor(msLeft / DAY_MS),
+      expired,
+      soon: !expired && msLeft <= MEMBER_SOON_DAYS * DAY_MS,
     }
   })
 
   const alive = members.filter((m) => !m.expired).length
   const free = opened ? Math.max(0, (account.capacity ?? 0) - alive) : 0
+  // 멤버십 마감은 원문에 시각이 없어 날짜로만 잰다 (파티원과 달리 시각 기준이 불가능)
   const dueLeft = opened && account.dueAt ? daysBetween(today, account.dueAt) : null
   const lines = buildLines(account, members, free)
 
@@ -102,8 +141,10 @@ export function decorateAccount(account: DramaAccount, today = getTodayStringKST
 }
 
 export function decorateAccounts(accounts: DramaAccount[]): DecoratedAccount[] {
+  // 기준 시각을 한 번만 잡는다 — 계정마다 다른 시각을 쓰면 목록 안에서 판정이 엇갈릴 수 있다
+  const now = Date.now()
   const today = getTodayStringKST()
-  return accounts.map((account) => decorateAccount(account, today))
+  return accounts.map((account) => decorateAccount(account, now, today))
 }
 
 /**

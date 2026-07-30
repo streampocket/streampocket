@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { generateCode, getRemainingSeconds, isValidSecret } from '@/lib/totp'
+import { formatTimeLeft } from '../_lib/dramaView'
 import type { DecoratedAccount, DecoratedMember, MemoLine } from '../_types'
 
 type MemoLinesProps = {
@@ -103,11 +104,21 @@ function LineTag({ line }: { line: MemoLine }) {
   }
   const member = line.member
   if (!member) return null
-  if (member.expired) {
-    return <span className="text-caption-sm bg-badge-red-bg text-badge-red-text shrink-0 rounded px-1.5 font-semibold">만료</span>
-  }
-  if (member.soon) {
-    return <span className="text-caption-sm bg-badge-yellow-bg text-badge-yellow-text shrink-0 rounded px-1.5 font-semibold">D-{member.daysLeft}</span>
+  // 「만료」 / 「40분 뒤」 / 「3시간 뒤」 / 「D-2」 — 24시간 이내는 남은 시간으로 보여준다
+  const timeLeft = formatTimeLeft(member)
+  if (timeLeft) {
+    return (
+      <span
+        className={cn(
+          'text-caption-sm shrink-0 rounded px-1.5 font-semibold',
+          member.expired
+            ? 'bg-badge-red-bg text-badge-red-text'
+            : 'bg-badge-yellow-bg text-badge-yellow-text',
+        )}
+      >
+        {timeLeft}
+      </span>
+    )
   }
   if (!member.site) {
     return <span className="text-caption-sm bg-badge-gray-bg text-badge-gray-text shrink-0 rounded px-1.5 font-semibold">사이트?</span>
