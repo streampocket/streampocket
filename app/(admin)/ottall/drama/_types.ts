@@ -44,7 +44,9 @@ export type MemoLine = {
 }
 
 export type DecoratedMember = DramaMember & {
-  /** 오늘 기준 남은 일수 (음수면 만료) */
+  /** 만료 시각(endDate + startTime, KST)까지 남은 ms. 음수면 이미 지났다 — 판정의 단일 소스 */
+  msLeft: number
+  /** msLeft에서 파생된 남은 일수. 달력 날짜 차이가 아니라 24시간 단위다 (음수면 만료) */
   daysLeft: number
   expired: boolean
   /** 만료가 코앞 */

@@ -34,6 +34,8 @@ const SORT_LABELS: { value: SortKey; label: string }[] = [
 
 /** 마감일이 없는(미개설) 계정을 밀어 둘 자리 — 정렬 방향과 무관하게 항상 맨 뒤여야 한다 */
 const NO_DUE = 99999
+/** 파티원이 없는 계정을 맨 뒤로 — ms 단위라 자릿수가 다르다. Infinity는 서로 빼면 NaN이라 쓰지 않는다 */
+const NO_MEMBER_MS = 1e15
 
 // 수정·파티원 추가·신규 등록이 전부 같은 텍스트 편집기다 — 시작 상태(mode)만 다르다
 type ModalState =
@@ -108,7 +110,8 @@ export function DramaClient() {
       // 느린순은 부호를 뒤집는다. 미개설은 뒤집기 전에 걸러 양쪽 모두 맨 뒤로 보낸다
       dueDesc: (a) => (a.opened && a.dueLeft !== null ? -a.dueLeft : NO_DUE),
       free: (a) => -a.free,
-      memexp: (a) => (a.members.length > 0 ? Math.min(...a.members.map((m) => m.daysLeft)) : NO_DUE),
+      // 남은 시간으로 재므로 같은 날짜 안에서도 시각이 이른 쪽이 먼저 온다
+      memexp: (a) => (a.members.length > 0 ? Math.min(...a.members.map((m) => m.msLeft)) : NO_MEMBER_MS),
       plat: (a) => (a.platform ? platforms.indexOf(a.platform) : 99),
     }
     const key = sortKey[sortBy]
@@ -177,7 +180,12 @@ export function DramaClient() {
           icon="🪑"
         />
         <StatCard label="멤버십 마감·임박" value={dueSoonCount} sub={`${DUE_SOON_DAYS}일 이내 또는 이미 마감`} icon="⏳" />
-        <StatCard label="만료된 파티원" value={expiredMembers} sub={`${MEMBER_SOON_DAYS}일 이내 임박은 D- 표시`} icon="🧹" />
+        <StatCard
+          label="만료된 파티원"
+          value={expiredMembers}
+          sub={`만료 시각까지 반영 · ${MEMBER_SOON_DAYS}일 이내 임박 표시`}
+          icon="🧹"
+        />
       </div>
 
       <DramaFilterBar
