@@ -42,6 +42,12 @@ export type AdminUserDetailApplication = {
     name: string
     status: OwnProductStatus
     durationDays: number
+    leaderName: string
+    /** 파티 정가. 신청의 price와 다르면 기간 차감이 실제로 일어난 것 */
+    price: number
+    totalSlots: number
+    filledSlots: number
+    category: { name: string }
   }
 }
 

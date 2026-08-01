@@ -5,8 +5,11 @@ import { getTodayStringKST } from '@/lib/utils'
 import { VisitFilterBar } from './_components/VisitFilterBar'
 import { VisitStatCards } from './_components/VisitStatCards'
 import { DailyVisitsChart } from './_components/DailyVisitsChart'
+import { HourlyApplicationsChart } from './_components/HourlyApplicationsChart'
 import { SourceTable } from './_components/SourceTable'
 import { useVisitStats } from './_hooks/useVisitStats'
+import { useApplicationHours } from './_hooks/useApplicationHours'
+import { useSignupStats } from './_hooks/useSignupStats'
 import { DEFAULT_RANGE_DAYS } from './_types'
 import type { VisitSite } from './_types'
 
@@ -24,6 +27,11 @@ export default function VisitsPage() {
   const { data, isLoading } = useVisitStats({ site, from, to })
   const stats = data?.data
 
+  // 파티·회원은 OTTALL 전용이라 지코인 탭에서는 요청 자체를 보내지 않는다
+  const isOttall = site === 'ottall'
+  const { data: hourData, isLoading: hourLoading } = useApplicationHours({ from, to }, isOttall)
+  const { data: signupData } = useSignupStats({ from, to }, isOttall)
+
   const handleRangeChange = (nextFrom: string, nextTo: string) => {
     setFrom(nextFrom)
     setTo(nextTo)
@@ -39,7 +47,7 @@ export default function VisitsPage() {
         onRangeChange={handleRangeChange}
       />
 
-      <VisitStatCards stats={stats} />
+      <VisitStatCards stats={stats} signup={signupData?.data} showSignup={isOttall} />
 
       {isLoading ? (
         <div className="py-16 text-center">
@@ -53,6 +61,9 @@ export default function VisitsPage() {
             otherHosts={stats?.otherHosts ?? []}
             totalVisits={stats?.totalVisits ?? 0}
           />
+          {isOttall && (
+            <HourlyApplicationsChart stats={hourData?.data} isLoading={hourLoading} />
+          )}
         </>
       )}
     </div>

@@ -31,6 +31,35 @@ export type VisitStatsParams = {
   to?: string
 }
 
+/** 조회 기간 파라미터 — 파티 신청 시간대·가입자 수가 함께 쓴다 (방문 필터를 그대로 따라간다) */
+export type RangeParams = {
+  from: string
+  to: string
+}
+
+export type HourlyApplication = {
+  /** 0~23 (KST) */
+  hour: number
+  count: number
+}
+
+/** 이용자가 신청한 시각의 시간대 분포 — 관리자 승인 시각이 아니다 */
+export type ApplicationHourStats = {
+  range: { from: string; to: string }
+  total: number
+  /** 신청이 0건이면 null */
+  peakHour: number | null
+  /** 항상 24개 (0~23시) */
+  hourly: HourlyApplication[]
+}
+
+export type SignupStats = {
+  range: { from: string; to: string }
+  /** KST 오늘 가입 수 (조회 기간과 무관) */
+  today: number
+  rangeTotal: number
+}
+
 export const SITE_TABS: { value: VisitSite; label: string }[] = [
   { value: 'ottall', label: 'OTTALL' },
   { value: 'gcoin', label: '지코인' },
