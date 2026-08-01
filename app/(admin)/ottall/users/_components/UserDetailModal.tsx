@@ -1,14 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
+import { USER_SITE_URL } from '@/constants/app'
 import type {
   AuthProvider,
+  OwnProductStatus,
   PartyApplicationStatus,
 } from '@/types/domain'
+import type { AdminUserDetailApplication } from '../_types'
 import { useAdminUserDetail } from '../_hooks/useAdminUserDetail'
 import { useAdminWithdrawUser } from '../_hooks/useAdminWithdrawUser'
 import { AdminWithdrawModal } from './AdminWithdrawModal'
@@ -29,6 +33,13 @@ const APP_STATUS_BADGE: Record<PartyApplicationStatus, { variant: BadgeVariant; 
   confirmed: { variant: 'green', label: '확정' },
   cancelled: { variant: 'red', label: '취소' },
   expired: { variant: 'gray', label: '만료' },
+}
+
+// 파티 자체의 상태 — 위 신청 상태와 다른 축이다. 라벨에 "파티"를 붙여 구분한다
+const PARTY_STATUS_LABEL: Record<OwnProductStatus, string> = {
+  recruiting: '모집중',
+  closed: '모집완료',
+  expired: '만료',
 }
 
 function formatDate(dateStr: string): string {
@@ -151,33 +162,9 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
               <p className="text-caption-md text-text-muted">참여 중인 파티가 없습니다.</p>
             ) : (
               <div className="space-y-2">
-                {detail.partyApplications.map((app) => {
-                  const statusBadge = APP_STATUS_BADGE[app.status]
-                  return (
-                    <div
-                      key={app.id}
-                      className="rounded-lg border border-border bg-card-bg p-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-body-md font-medium text-text-primary">
-                          {app.product.name}
-                        </span>
-                        <Badge variant={statusBadge.variant}>{statusBadge.label}</Badge>
-                      </div>
-                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
-                        <span className="text-caption-md text-text-secondary">
-                          {formatPrice(app.totalAmount)}원
-                        </span>
-                        {app.startedAt && (
-                          <span className="text-caption-md text-text-muted">
-                            {formatDate(app.startedAt)}
-                            {app.expiresAt && ` ~ ${formatDate(app.expiresAt)}`}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
+                {detail.partyApplications.map((app) => (
+                  <PartyApplicationCard key={app.id} app={app} />
+                ))}
               </div>
             )}
           </section>
@@ -223,6 +210,73 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
         onClose={() => setIsWithdrawOpen(false)}
       />
     </Modal>
+  )
+}
+
+/**
+ * 참여 파티 한 건.
+ *
+ * 카드 전체가 유저용 파티 상세로 가는 링크다 — 관리자 파티 상세는 모달이라 URL이 없고,
+ * 유저 페이지는 모집완료·만료 파티도 열린다. 새 창이라 회원 상세 모달이 그대로 남는다.
+ */
+function PartyApplicationCard({ app }: { app: AdminUserDetailApplication }) {
+  const statusBadge = APP_STATUS_BADGE[app.status]
+  const { product } = app
+  // 정가보다 "싸게" 산 경우에만 정가를 함께 보여준다.
+  //  - 차감형이어도 경과일 0이면 정가와 같아서 `!==`로는 같은 숫자를 두 번 찍는다
+  //  - product.price는 '현재' 정가라 관리자가 값을 내리면 신청가가 더 클 수 있는데,
+  //    그때 화살표를 그리면 "정가보다 비싸게 냈다"로 잘못 읽힌다
+  const discounted = app.price < product.price
+
+  return (
+    <Link
+      href={`${USER_SITE_URL}/party/${product.id}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block rounded-lg border border-border bg-card-bg p-3 transition-colors hover:border-brand hover:bg-gray-50"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-body-md font-medium text-text-primary">
+          {product.name}
+          <span className="text-text-muted ml-1 text-caption-md">↗</span>
+        </span>
+        <span className="flex shrink-0 flex-wrap justify-end gap-1">
+          <Badge variant={statusBadge.variant}>{statusBadge.label}</Badge>
+          <Badge variant="gray">파티 {PARTY_STATUS_LABEL[product.status]}</Badge>
+        </span>
+      </div>
+
+      <p className="text-caption-md text-text-secondary mt-1">
+        {product.category.name} · 파티장 {product.leaderName} · {product.filledSlots}/
+        {product.totalSlots}명
+      </p>
+
+      <p className="text-caption-md text-text-secondary mt-1">
+        {discounted && (
+          <>
+            <span className="text-text-muted line-through">{formatPrice(product.price)}원</span>
+            <span className="mx-1">→</span>
+          </>
+        )}
+        <span className="text-text-primary font-medium">{formatPrice(app.price)}원</span>
+        <span className="text-text-muted"> + 수수료 {formatPrice(app.fee)}원</span>
+        <span className="text-text-primary font-semibold">
+          {' '}
+          · 결제 {formatPrice(app.totalAmount)}원
+        </span>
+      </p>
+
+      <p className="text-caption-md text-text-muted mt-1">
+        신청 {formatDateTime(app.createdAt)}
+        {app.startedAt && (
+          <>
+            {' · 이용 '}
+            {formatDate(app.startedAt)}
+            {app.expiresAt && ` ~ ${formatDate(app.expiresAt)}`}
+          </>
+        )}
+      </p>
+    </Link>
   )
 }
 

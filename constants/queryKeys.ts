@@ -93,6 +93,16 @@ export const QUERY_KEYS = {
     all: () => ['adminSiteVisits'] as const,
     stats: (params?: Record<string, unknown>) => ['adminSiteVisits', 'stats', params] as const,
   },
+  adminPartyApplications: {
+    all: () => ['adminPartyApplications'] as const,
+    hourly: (params?: Record<string, unknown>) =>
+      ['adminPartyApplications', 'hourly', params] as const,
+  },
+  adminOwnUsers: {
+    all: () => ['adminOwnUsers'] as const,
+    signupStats: (params?: Record<string, unknown>) =>
+      ['adminOwnUsers', 'signupStats', params] as const,
+  },
   ownRuleTemplates: {
     all: () => ['ownRuleTemplates'] as const,
     list: () => ['ownRuleTemplates', 'list'] as const,

@@ -40,11 +40,29 @@ export function RevenueCalendar() {
   // 1일 앞의 빈 칸 수 = 1일의 요일
   const leadingBlanks = items && items.length > 0 ? weekdayOf(items[0].date) : 0
 
+  // 보고 있는 달의 총 순수익 — 서버가 따로 계산해 내려주지 않고 화면에서 칸을 더한다.
+  // 제목 옆 숫자와 아래 칸들의 합이 반드시 같아야 하기 때문 (네이버 수수료 반올림을
+  // 일별로 하느냐 월 단위로 하느냐에 따라 몇 원이 갈린다).
+  const monthNetProfit = items?.reduce((sum, item) => sum + item.netProfit, 0) ?? null
+
   return (
     <>
       <Card>
         <CardHeader>
-          <h2 className="text-heading-md text-text-primary">매출 캘린더</h2>
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+            <h2 className="text-heading-md text-text-primary">매출 캘린더</h2>
+            {/* 로딩 중에는 숨긴다 — 0원이 잠깐 보이면 "이번 달 수익 0"으로 오해한다 */}
+            {monthNetProfit !== null && (
+              <span
+                className={cn(
+                  'text-body-md font-semibold tabular-nums',
+                  monthNetProfit >= 0 ? 'text-emerald-600' : 'text-red-500',
+                )}
+              >
+                순수익 {monthNetProfit.toLocaleString('ko-KR')}원
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setYearMonth((prev) => shiftYearMonth(prev, -1))}
