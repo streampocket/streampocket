@@ -2,22 +2,10 @@
 
 import { useEffect } from 'react'
 import { userApi } from '@/lib/userApi'
-import { NAV_SECTIONS } from '@/constants/navigation'
+import { isAdminPath } from '@/lib/adminPaths'
 
 const VISITOR_ID_KEY = 'ottall_visitor_id'
 const LAST_VISIT_KEY = 'ottall_last_visit_date'
-
-// 관리자 화면은 방문 집계 제외 — 관리자 경로 프리픽스는 네비게이션 정의(단일 소스)에서 파생
-const ADMIN_PATH_PREFIXES = [
-  ...NAV_SECTIONS.flatMap((section) => section.items.map((item) => item.href)),
-  '/login',
-]
-
-function isAdminPath(pathname: string): boolean {
-  return ADMIN_PATH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  )
-}
 
 // KST 오늘 'YYYY-MM-DD' — en-CA 로케일은 ISO 형식으로 포맷된다
 function kstToday(): string {

@@ -134,6 +134,11 @@ export const REVIEW_RATING_MAX = 5;
 export const REVIEW_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const REVIEW_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
 
+/** 리뷰 유도 모달 — "오늘 하루 안 보기"가 저장하는 KST 날짜 (localStorage) */
+export const REVIEW_NUDGE_HIDE_DATE_KEY = "ottall_review_nudge_hide_date";
+/** 리뷰 유도 모달 — "닫기"가 저장하는 세션 플래그 (sessionStorage) */
+export const REVIEW_NUDGE_CLOSED_KEY = "ottall_review_nudge_closed";
+
 /** 회원 탈퇴 사유 선택지 — be(userWithdrawalService)의 WITHDRAWAL_REASON_LABELS와 코드 일치 필수 */
 export const WITHDRAWAL_REASONS = [
   { code: "price", label: "가격이 비싸서" },
