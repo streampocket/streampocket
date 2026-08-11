@@ -51,6 +51,7 @@ export function ApplicationFilterBar({
 
       <input
         type="text"
+        name="applicationSearch"
         placeholder="신청자명/연락처 또는 파티명 검색..."
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}

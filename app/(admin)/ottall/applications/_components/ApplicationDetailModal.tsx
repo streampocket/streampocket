@@ -8,6 +8,7 @@ import type { PartyApplicationStatus } from '@/types/domain'
 import { useAdminApplicationDetail } from '../_hooks/useAdminApplicationDetail'
 import { useApproveApplication } from '../_hooks/useApproveApplication'
 import { useDuplicateParty } from '../_hooks/useDuplicateParty'
+import { useExpandPartySlots } from '../_hooks/useExpandPartySlots'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
 import type { AdminAlimtalkLog } from '../_types'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
@@ -45,6 +46,10 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
   const approveMutation = useApproveApplication()
   const duplicateMutation = useDuplicateParty()
   const rejectMutation = useRejectApplication()
+  const expandMutation = useExpandPartySlots()
+
+  // 정원 만석 — 이 상태에서 승인 API를 부르면 승인이 아니라 자동 거절되므로 버튼을 막는다
+  const isFull = detail ? detail.product.filledSlots >= detail.product.totalSlots : false
 
   const handleApprove = () => {
     if (!applicationId) return
@@ -112,10 +117,32 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
             </div>
             <InfoRow label="카테고리" value={detail.product.category.name} />
             <InfoRow label="이용 기간" value={`${detail.product.durationDays}일`} />
-            <InfoRow
-              label="모집 현황"
-              value={`${detail.product.filledSlots}/${detail.product.totalSlots}명`}
-            />
+            <div className="flex items-center gap-3">
+              <span className="text-body-md w-20 shrink-0 text-text-muted">모집 현황</span>
+              <span className="text-body-md text-text-primary">
+                {detail.product.filledSlots}/{detail.product.totalSlots}명
+              </span>
+              {isFull && detail.status === 'pending' && (
+                <Button
+                  size="xs"
+                  variant="secondary"
+                  loading={expandMutation.isPending}
+                  onClick={() =>
+                    expandMutation.mutate({
+                      productId: detail.product.id,
+                      currentTotalSlots: detail.product.totalSlots,
+                    })
+                  }
+                >
+                  +1 늘리기
+                </Button>
+              )}
+            </div>
+            {isFull && detail.status === 'pending' && (
+              <p className="text-caption-md text-danger">
+                정원이 가득 찼습니다. 정원을 늘리면 승인할 수 있습니다.
+              </p>
+            )}
           </section>
 
           {/* 금액 */}
@@ -177,7 +204,7 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
               <Button
                 variant="primary"
                 loading={approveMutation.isPending}
-                disabled={rejectMutation.isPending}
+                disabled={rejectMutation.isPending || isFull}
                 onClick={handleApprove}
               >
                 승인
