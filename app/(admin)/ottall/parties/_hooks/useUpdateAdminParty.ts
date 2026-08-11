@@ -28,9 +28,11 @@ export function useUpdateAdminParty() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: UpdateAdminPartyInput }) =>
       api.patch<UpdateResponse>(`/own/admin/products/${id}`, input),
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.all() })
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminParties.detail(variables.id) })
+      // 정원·가격 수정은 신청 상세 모달의 모집 현황과 유저 화면(파티 목록·상세)에도 반영돼야 한다
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminApplications.all() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.all() })
     },
   })
 }
