@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import { USER_SITE_URL } from '@/constants/app'
+import { formatPoint, payableAmount } from '@/lib/points'
 import type {
   AuthProvider,
   OwnProductStatus,
@@ -150,6 +151,7 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
               <StatBox label="총 결제금액" value={`${formatPrice(detail.stats.totalPaidAmount)}원`} />
               <StatBox label="파티 참여" value={`${detail.stats.partyCount}건`} />
               <StatBox label="활성 파티" value={`${detail.stats.activePartyCount}건`} />
+              <StatBox label="보유 포인트" value={formatPoint(detail.user.pointBalance)} />
             </div>
           </section>
 
@@ -260,9 +262,12 @@ function PartyApplicationCard({ app }: { app: AdminUserDetailApplication }) {
         )}
         <span className="text-text-primary font-medium">{formatPrice(app.price)}원</span>
         <span className="text-text-muted"> + 수수료 {formatPrice(app.fee)}원</span>
+        {app.usedPoint > 0 && (
+          <span className="text-brand"> − 포인트 {formatPoint(app.usedPoint)}</span>
+        )}
         <span className="text-text-primary font-semibold">
           {' '}
-          · 결제 {formatPrice(app.totalAmount)}원
+          · 결제 {formatPrice(payableAmount(app.totalAmount, app.usedPoint))}원
         </span>
       </p>
 

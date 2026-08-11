@@ -8,6 +8,7 @@ import { useCreateReview, useUpdateReview } from '../_hooks/useOwnReview'
 import { useReviewableApplications } from '../_hooks/useReviewableApplications'
 import { ReviewImageUploader } from './ReviewImageUploader'
 import { StarRating } from '@/components/own/StarRating'
+import { formatPoint } from '@/lib/points'
 
 type ReviewFormProps =
   | {
@@ -42,6 +43,10 @@ export function ReviewForm(props: ReviewFormProps) {
   const [content, setContent] = useState<string>(isEdit ? props.initial.content : '')
   const [imageUrl, setImageUrl] = useState<string | null>(isEdit ? props.initial.imageUrl : null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  // 지급액은 파티의 실결제액 구간에 따라 달라진다 — 고른 파티 기준으로 안내한다
+  const selectedReward =
+    eligibleQuery.data?.find((app) => app.id === applicationId)?.rewardPoint ?? null
 
   const trimmedContent = content.trim()
   const isSubmitting = createMutation.isPending || updateMutation.isPending
@@ -104,15 +109,23 @@ export function ReviewForm(props: ReviewFormProps) {
             <option value="">— 파티를 선택해주세요 —</option>
             {eligibleQuery.data?.map((app) => (
               <option key={app.id} value={app.id}>
-                {app.product.name}
+                {app.product.name} (리뷰 작성 시 {formatPoint(app.rewardPoint)} 적립)
               </option>
             ))}
           </select>
         )}
         {!isEdit ? (
-          <p className="mt-1.5 text-caption-sm text-text-muted">
-            참여 확정된 파티 중 아직 리뷰가 없는 항목만 표시돼요.
-          </p>
+          <>
+            <p className="mt-1.5 text-caption-sm text-text-muted">
+              참여 확정된 파티 중 아직 리뷰가 없는 항목만 표시돼요.
+            </p>
+            {/* 지급액은 파티마다 다르다(결제 금액 구간) — 고른 파티의 실제 금액을 보여준다 */}
+            {selectedReward !== null && (
+              <p className="mt-1.5 text-caption-md font-semibold text-brand">
+                리뷰를 등록하면 {formatPoint(selectedReward)}가 적립됩니다.
+              </p>
+            )}
+          </>
         ) : null}
       </div>
 

@@ -8,6 +8,8 @@ export type AdminApplicationListItem = {
   price: number
   fee: number
   totalAmount: number
+  /** 신청 시점에 차감한 포인트. 실제 받은 돈은 totalAmount - usedPoint */
+  usedPoint: number
   startedAt: string | null
   expiresAt: string | null
   createdAt: string

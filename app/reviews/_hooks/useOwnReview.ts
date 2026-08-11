@@ -1,12 +1,15 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { userApi } from '@/lib/userApi'
 import { resizeImageFile } from '@/lib/resizeImage'
 import type { OwnReview, ReviewImageUploadUrl } from '@/types/domain'
 
 type SingleResponse = { data: OwnReview }
+/** 생성 응답에는 실제 적립된 포인트가 함께 온다 (중복 지급이면 0) */
+type CreateResponse = { data: OwnReview & { grantedPoint: number } }
 type UploadUrlResponse = { data: ReviewImageUploadUrl }
 
 export function useOwnReview(reviewId: string | undefined) {
@@ -29,10 +32,15 @@ export function useCreateReview() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (payload: CreatePayload) =>
-      userApi.post<SingleResponse>('/own/reviews', payload),
-    onSuccess: () => {
+      userApi.post<CreateResponse>('/own/reviews', payload),
+    onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: QUERY_KEYS.ownReviews.all() })
       qc.invalidateQueries({ queryKey: QUERY_KEYS.ownReviews.eligible() })
+      // 적립으로 잔액이 늘었으므로 헤더 드롭다운이 옛 값을 들고 있지 않게 한다
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.userAuth.me() })
+      if (res.data.grantedPoint > 0) {
+        toast.success(`리뷰가 등록되었습니다. ${res.data.grantedPoint.toLocaleString()}P 적립!`)
+      }
     },
   })
 }

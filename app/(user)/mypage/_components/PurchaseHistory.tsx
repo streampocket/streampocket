@@ -4,6 +4,7 @@ import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { useMyApplications } from '../_hooks/useMyApplications'
 import { OtpIssuePanel } from './OtpIssuePanel'
+import { formatPoint, formatWon, payableAmount } from '@/lib/points'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { MyApplication } from '../_types'
 
@@ -96,10 +97,18 @@ function ApplicationCard({ application }: ApplicationCardProps) {
               </p>
             </div>
             <div>
-              <p className="text-caption-md text-text-muted">합계</p>
-              <p className="text-body-md font-semibold text-brand">
-                {application.totalAmount.toLocaleString()}원
+              <p className="text-caption-md text-text-muted">
+                {application.usedPoint > 0 ? '결제 금액' : '합계'}
               </p>
+              <p className="text-body-md font-semibold text-brand">
+                {formatWon(payableAmount(application.totalAmount, application.usedPoint))}
+              </p>
+              {/* 포인트를 쓴 건에만 근거를 덧붙인다 */}
+              {application.usedPoint > 0 && (
+                <p className="text-caption-md text-text-muted">
+                  포인트 -{formatPoint(application.usedPoint)}
+                </p>
+              )}
             </div>
           </div>
 

@@ -298,8 +298,21 @@ export type AlimtalkTestResult = {
 }
 
 /** 시스템 설정 (전역 기본 소요시간 등) */
+/** 리뷰 적립 포인트 3구간 (실결제액 기준). 구간 개수는 3으로 고정이다 */
+export type ReviewPointTiers = {
+  /** 이 금액 이하 → tier1Point */
+  tier1Max: number
+  /** 이 금액 이하 → tier2Point */
+  tier2Max: number
+  tier1Point: number
+  tier2Point: number
+  /** tier2Max 초과 → tier3Point */
+  tier3Point: number
+}
+
 export type SystemSettings = {
   defaultDurationMinutes: number
+  reviewPointTiers: ReviewPointTiers
 }
 
 // ───────────────────────── 인증 (OTTALL) ─────────────────────────
@@ -347,6 +360,8 @@ export type OwnProduct = {
   startedAt: string | null
   leaderName: string
   currentPrice: number
+  /** 신청 수수료 — 서버 상수를 그대로 받는다 (fe에 복제하면 값이 바뀔 때 갈라진다) */
+  applicationFee: number
   partyExpiresAt: string | null
   remainingDays: number
   createdAt: string
@@ -372,6 +387,8 @@ export type PartyApplication = {
   price: number
   fee: number
   totalAmount: number
+  /** 신청 시점에 차감한 포인트. 실결제액은 totalAmount - usedPoint */
+  usedPoint: number
   status: PartyApplicationStatus
   startedAt: string | null
   expiresAt: string | null
@@ -419,6 +436,13 @@ export type ReviewableApplication = {
   id: string
   startedAt: string | null
   expiresAt: string | null
+  totalAmount: number
+  usedPoint: number
+  /**
+   * 이 파티에 리뷰를 쓰면 받을 포인트 — 서버가 실결제액으로 계산해 내려준다.
+   * 구간이 3개라 화면에서 뭉뚱그리면 낮은 구간 사용자에게 틀린 안내가 된다.
+   */
+  rewardPoint: number
   product: {
     id: string
     name: string

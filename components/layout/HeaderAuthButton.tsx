@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { isUserAuthenticated, clearUserAuthSession, getUserInfo } from '@/lib/userAuth'
 import { USER_LOGIN_PATH, USER_MYPAGE_PATH, API_BASE_URL, KAKAO_CHAT_URL } from '@/constants/app'
+import { useUserProfile } from '@/hooks/useUserProfile'
+import { formatPoint } from '@/lib/points'
 
 export function HeaderAuthButton() {
   const router = useRouter()
@@ -12,6 +14,10 @@ export function HeaderAuthButton() {
   const [userName, setUserName] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  // 드롭다운을 열 때만 조회한다 — 헤더는 모든 페이지에 있어 무조건 부르면 요청이 낭비된다.
+  // getUserInfo()는 localStorage 캐시라 잔액을 담으면 리뷰 적립 후에도 옛 값이 남는다.
+  const { data: profile } = useUserProfile({ enabled: loggedIn && open })
 
   useEffect(() => {
     setLoggedIn(isUserAuthenticated())
@@ -78,7 +84,13 @@ export function HeaderAuthButton() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-30 mt-2 w-40 overflow-hidden rounded-xl border border-border bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-border bg-white shadow-lg">
+          <div className="border-b border-border bg-gray-50 px-4 py-2.5">
+            <p className="text-xs text-text-muted">보유 포인트</p>
+            <p className="text-sm font-bold text-brand">
+              {profile ? formatPoint(profile.pointBalance) : '불러오는 중...'}
+            </p>
+          </div>
           <Link
             href={USER_MYPAGE_PATH}
             onClick={() => setOpen(false)}
