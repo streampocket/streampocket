@@ -11,6 +11,7 @@ import { useDuplicateParty } from '../_hooks/useDuplicateParty'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
 import type { AdminAlimtalkLog } from '../_types'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
+import { formatPoint, payableAmount } from '@/lib/points'
 
 type ApplicationDetailModalProps = {
   applicationId: string | null
@@ -120,24 +121,26 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
           {/* 금액 */}
           <section className="space-y-2">
             <h3 className="text-body-md font-semibold text-text-primary">금액</h3>
-            <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-50 p-3 text-center">
-              <div>
-                <p className="text-caption-md text-text-muted">가격</p>
-                <p className="text-body-md font-semibold text-text-primary">
-                  {formatPrice(detail.price)}원
-                </p>
+            <div className="space-y-1.5 rounded-lg bg-gray-50 p-3">
+              <div className="text-body-md flex justify-between text-text-secondary">
+                <span>가격</span>
+                <span>{formatPrice(detail.price)}원</span>
               </div>
-              <div>
-                <p className="text-caption-md text-text-muted">수수료</p>
-                <p className="text-body-md font-semibold text-text-primary">
-                  {formatPrice(detail.fee)}원
-                </p>
+              <div className="text-body-md flex justify-between text-text-secondary">
+                <span>수수료</span>
+                <span>{formatPrice(detail.fee)}원</span>
               </div>
-              <div>
-                <p className="text-caption-md text-text-muted">합계</p>
-                <p className="text-body-md font-semibold text-brand">
-                  {formatPrice(detail.totalAmount)}원
-                </p>
+              {detail.usedPoint > 0 && (
+                <div className="text-body-md flex justify-between text-text-secondary">
+                  <span>포인트 사용</span>
+                  <span className="text-brand">-{formatPoint(detail.usedPoint)}</span>
+                </div>
+              )}
+              <div className="text-body-md flex justify-between border-t border-border pt-1.5 font-semibold text-text-primary">
+                <span>{detail.usedPoint > 0 ? '실결제 금액' : '합계'}</span>
+                <span className="text-brand">
+                  {formatPrice(payableAmount(detail.totalAmount, detail.usedPoint))}원
+                </span>
               </div>
             </div>
           </section>

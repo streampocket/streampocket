@@ -34,6 +34,8 @@ export type AdminUserDetailApplication = {
   price: number
   fee: number
   totalAmount: number
+  /** 신청 시점에 차감한 포인트. 실제 받은 돈은 totalAmount - usedPoint */
+  usedPoint: number
   startedAt: string | null
   expiresAt: string | null
   createdAt: string
@@ -59,6 +61,8 @@ export type AdminUserDetail = {
     phone: string
     phoneVerified: boolean
     provider: AuthProvider
+    /** 현재 보유 포인트 */
+    pointBalance: number
     createdAt: string
     updatedAt: string
   }

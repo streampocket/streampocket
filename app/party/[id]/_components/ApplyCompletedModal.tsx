@@ -3,6 +3,7 @@
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { KAKAO_CHAT_URL } from '@/constants/app'
+import { formatPoint, formatWon, payableAmount } from '@/lib/points'
 
 type ApplyCompletedModalProps = {
   isOpen: boolean
@@ -10,6 +11,7 @@ type ApplyCompletedModalProps = {
   price: number
   fee: number
   totalAmount: number
+  usedPoint: number
 }
 
 export function ApplyCompletedModal({
@@ -18,7 +20,9 @@ export function ApplyCompletedModal({
   price,
   fee,
   totalAmount,
+  usedPoint,
 }: ApplyCompletedModalProps) {
+  const payable = payableAmount(totalAmount, usedPoint)
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="참여 신청이 완료되었습니다">
       <div className="space-y-4">
@@ -30,24 +34,25 @@ export function ApplyCompletedModal({
           승인 완료 후 마이페이지 &gt; 구매 내역에서 OTP를 발급받을 수 있습니다.
         </p>
 
-        <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-50 p-3 text-center">
-          <div>
-            <p className="text-caption-md text-text-muted">가격</p>
-            <p className="text-body-md font-semibold text-text-primary">
-              {price.toLocaleString()}원
-            </p>
+        <div className="space-y-1.5 rounded-lg bg-gray-50 p-3">
+          <div className="flex justify-between text-body-md text-text-secondary">
+            <span>가격</span>
+            <span>{formatWon(price)}</span>
           </div>
-          <div>
-            <p className="text-caption-md text-text-muted">수수료</p>
-            <p className="text-body-md font-semibold text-text-primary">
-              {fee.toLocaleString()}원
-            </p>
+          <div className="flex justify-between text-body-md text-text-secondary">
+            <span>수수료</span>
+            <span>{formatWon(fee)}</span>
           </div>
-          <div>
-            <p className="text-caption-md text-text-muted">합계</p>
-            <p className="text-body-md font-semibold text-brand">
-              {totalAmount.toLocaleString()}원
-            </p>
+          {/* 포인트를 쓴 건에만 줄을 추가한다 — 안 쓴 신청에 "-0P"가 붙으면 읽는 데 방해만 된다 */}
+          {usedPoint > 0 && (
+            <div className="flex justify-between text-body-md text-text-secondary">
+              <span>포인트 사용</span>
+              <span className="text-brand">-{formatPoint(usedPoint)}</span>
+            </div>
+          )}
+          <div className="flex justify-between border-t border-border pt-1.5 text-body-md font-bold text-text-primary">
+            <span>결제 금액</span>
+            <span className="text-brand">{formatWon(payable)}</span>
           </div>
         </div>
 

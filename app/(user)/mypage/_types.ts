@@ -21,6 +21,8 @@ export type MyApplication = {
   price: number
   fee: number
   totalAmount: number
+  /** 신청 시점에 차감한 포인트. 실결제액은 totalAmount - usedPoint */
+  usedPoint: number
   status: 'pending' | 'confirmed' | 'cancelled' | 'expired'
   startedAt: string | null
   expiresAt: string | null

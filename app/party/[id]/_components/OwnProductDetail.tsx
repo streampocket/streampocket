@@ -20,6 +20,8 @@ import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { cn } from '@/lib/utils'
+import { useUserProfile } from '@/hooks/useUserProfile'
+import { formatPoint, formatWon, payableAmount, usablePoint } from '@/lib/points'
 import type { OwnProduct, OwnProductStatus } from '@/types/domain'
 import type { BadgeVariant } from '@/components/ui/Badge'
 
@@ -44,21 +46,27 @@ export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) 
   const applyMutation = useApplyParty(id)
   const { data: applicationCheck } = useCheckApplied(id)
   const [agreedToRules, setAgreedToRules] = useState(false)
+  const [usePoint, setUsePoint] = useState(false)
   const [completedInfo, setCompletedInfo] = useState<{
     price: number
     fee: number
     totalAmount: number
+    usedPoint: number
   } | null>(null)
 
   async function handleApply() {
     try {
-      const res = await applyMutation.mutateAsync()
+      // 금액이 아니라 "쓸지 말지"만 보낸다 — 실제 사용액은 서버가 min(잔액, 총액)으로 정한다
+      const res = await applyMutation.mutateAsync({ usePoint })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ownProducts.detail(id) })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partyApplications.check(id) })
+      // 포인트를 썼으면 헤더 드롭다운 잔액도 낡는다
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userAuth.me() })
       setCompletedInfo({
         price: res.data.price,
         fee: res.data.fee,
         totalAmount: res.data.totalAmount,
+        usedPoint: res.data.usedPoint,
       })
     } catch (err) {
       const message = err instanceof Error ? err.message : '신청 처리 중 오류가 발생했습니다.'
@@ -67,6 +75,13 @@ export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) 
   }
 
   const userInfo = getUserInfo()
+  // 로그인 상태에서만 조회한다 — 비로그인 방문자에게 401을 만들 이유가 없다
+  const { data: profile } = useUserProfile({ enabled: Boolean(userInfo) })
+  const pointBalance = profile?.pointBalance ?? 0
+  // 총액 = 현재 파티가 + 신청 수수료(서버가 내려준다 — fe에 상수를 복제하면 값이 갈라진다)
+  const totalBeforePoint = (product?.currentPrice ?? 0) + (product?.applicationFee ?? 0)
+  const pointToUse = usablePoint(pointBalance, totalBeforePoint)
+
   const isClosed = product
     ? product.filledSlots >= product.totalSlots || (product.startedAt !== null && product.remainingDays <= 1)
     : false
@@ -285,6 +300,42 @@ export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) 
                   파티 규칙을 확인했으며, 파티 규칙에 동의합니다
                 </span>
               </label>
+
+              {/* 잔액이 없으면 숨긴다 — 항상 0P짜리 빈 체크박스가 보이면 혼란만 준다 */}
+              {pointToUse > 0 && (
+                <div className="rounded-lg border border-border bg-gray-50 p-3">
+                  <label className="flex cursor-pointer items-start gap-2">
+                    <input
+                      type="checkbox"
+                      checked={usePoint}
+                      onChange={(e) => setUsePoint(e.target.checked)}
+                      className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-brand focus:ring-brand"
+                    />
+                    <span className="text-body-md text-text-secondary">
+                      보유 포인트 사용{' '}
+                      <b className="text-text-primary">{formatPoint(pointBalance)}</b>
+                    </span>
+                  </label>
+
+                  {usePoint && (
+                    <div className="mt-2 space-y-1 border-t border-border pt-2 text-body-md">
+                      <div className="flex justify-between text-text-secondary">
+                        <span>결제 예정 금액</span>
+                        <span>{formatWon(totalBeforePoint)}</span>
+                      </div>
+                      <div className="flex justify-between text-text-secondary">
+                        <span>포인트 사용</span>
+                        <span className="text-brand">-{formatPoint(pointToUse)}</span>
+                      </div>
+                      <div className="flex justify-between font-bold text-text-primary">
+                        <span>최종 결제 금액</span>
+                        <span>{formatWon(payableAmount(totalBeforePoint, pointToUse))}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <Button
                 variant="primary"
                 className="w-full"
@@ -316,6 +367,7 @@ export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) 
           price={completedInfo.price}
           fee={completedInfo.fee}
           totalAmount={completedInfo.totalAmount}
+          usedPoint={completedInfo.usedPoint}
         />
       )}
     </div>

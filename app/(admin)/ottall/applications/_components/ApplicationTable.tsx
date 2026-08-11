@@ -7,6 +7,7 @@ import type { BadgeVariant } from '@/components/ui/Badge'
 import type { PartyApplicationStatus } from '@/types/domain'
 import type { AdminApplicationListItem } from '../_types'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
+import { formatPoint, payableAmount } from '@/lib/points'
 
 type ApplicationTableProps = {
   applications: AdminApplicationListItem[]
@@ -98,7 +99,12 @@ export function ApplicationTable({
                       </span>
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
-                      {formatPrice(app.totalAmount)}원
+                      {formatPrice(payableAmount(app.totalAmount, app.usedPoint))}원
+                      {app.usedPoint > 0 && (
+                        <span className="text-caption-sm block text-text-muted">
+                          포인트 -{formatPoint(app.usedPoint)}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={badge.variant}>{badge.label}</Badge>
@@ -145,7 +151,10 @@ export function ApplicationTable({
                   {app.product.name}
                 </p>
                 <p className="text-caption-md mt-1 text-text-secondary">
-                  {app.user.phone} · {formatPrice(app.totalAmount)}원
+                  {app.user.phone} · {formatPrice(payableAmount(app.totalAmount, app.usedPoint))}원
+                  {app.usedPoint > 0 && (
+                    <span className="text-text-muted"> (포인트 -{formatPoint(app.usedPoint)})</span>
+                  )}
                 </p>
                 <p className="text-caption-sm mt-1 text-text-muted">{formatDate(app.createdAt)}</p>
               </button>
