@@ -35,7 +35,9 @@ export function ReviewNudgeModal() {
   }, [])
 
   const excluded = isAdminPath(pathname) || pathname.startsWith('/reviews/new')
-  const query = useReviewableApplications({ enabled: eligible && !excluded })
+  // redirectOn401: false — 공개 페이지에서 배경으로 도는 조회라, 세션이 만료됐으면
+  // 방문자를 로그인으로 튕기지 말고 모달만 조용히 포기한다
+  const query = useReviewableApplications({ enabled: eligible && !excluded, redirectOn401: false })
   const reviewableCount = query.data?.length ?? 0
 
   if (excluded || closed || !eligible || reviewableCount === 0) return null

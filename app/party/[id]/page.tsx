@@ -64,6 +64,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: pageTitle,
     description,
     keywords,
+    // 마감·만료 파티는 목록에서 빠져 사이트 안에서 못 찾는다 — 검색 색인에서도 제외
+    ...(product.status !== 'recruiting' ? { robots: { index: false } } : {}),
     // utm 등 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
     alternates: { canonical: `${USER_SITE_URL}/party/${product.id}` },
     openGraph: {
