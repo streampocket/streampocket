@@ -245,6 +245,23 @@ export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) 
         을 확인해 주세요.
       </p>
 
+      {/* 마감·만료 파티 — 목록에는 안 나오고 구매 기록·관리자 링크 등 직접 URL로만 진입.
+          신청 영역 자리에 마감 안내를 띄운다 (없으면 규칙 문구에서 뚝 끊겨 빈 화면처럼 보임) */}
+      {product.status !== 'recruiting' && (
+        <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 p-4">
+          <Badge variant="gray">{product.status === 'expired' ? '만료' : '모집 마감'}</Badge>
+          <p className="text-body-md text-text-secondary">
+            모집이 마감된 파티입니다. 다른 모집중인 파티를 확인해 보세요.
+          </p>
+          <Link
+            href="/party"
+            className="mt-1 inline-flex items-center rounded-lg bg-brand px-4 py-2 text-body-md font-medium text-white transition-opacity hover:opacity-90"
+          >
+            모집중인 파티 보기
+          </Link>
+        </div>
+      )}
+
       {/* 참여 신청 */}
       {product.status === 'recruiting' && (
         <div className="space-y-3">

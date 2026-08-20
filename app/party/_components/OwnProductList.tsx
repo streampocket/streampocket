@@ -6,15 +6,8 @@ import { SortDropdown } from './SortDropdown'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
 import { cn } from '@/lib/utils'
-import type { OwnProduct, OwnProductStatus } from '@/types/domain'
+import type { OwnProduct } from '@/types/domain'
 import type { ProductSort } from '../_types'
-
-type StatusFilter = OwnProductStatus | 'all'
-
-const STATUS_TABS: { value: StatusFilter; label: string }[] = [
-  { value: 'recruiting', label: '모집중' },
-  { value: 'all', label: '전체' },
-]
 
 type DurationFilterValue = 'all' | '1-7' | '8-14' | '15-29' | '30+'
 
@@ -48,12 +41,12 @@ const chipClass = (active: boolean): string =>
 
 export function OwnProductList() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('recruiting')
   const [sort, setSort] = useState<ProductSort | undefined>()
   const [durationFilter, setDurationFilter] = useState<DurationFilterValue>('all')
+  // 유저 목록은 모집중만 노출한다 — 마감·만료 파티는 상세 직접 링크(구매 기록·관리자 ↗)로만 접근
   const { data: products, isLoading: productsLoading } = useOwnProducts({
     categoryId: selectedCategoryId,
-    status: statusFilter === 'all' ? undefined : statusFilter,
+    status: 'recruiting',
     sort,
   })
   const { data: categories } = useOwnCategories()
@@ -69,13 +62,9 @@ export function OwnProductList() {
         })
 
   const isFilterChanged =
-    statusFilter !== 'recruiting' ||
-    selectedCategoryId !== undefined ||
-    sort !== undefined ||
-    durationFilter !== 'all'
+    selectedCategoryId !== undefined || sort !== undefined || durationFilter !== 'all'
 
   function resetFilters() {
-    setStatusFilter('recruiting')
     setSelectedCategoryId(undefined)
     setSort(undefined)
     setDurationFilter('all')
@@ -92,42 +81,28 @@ export function OwnProductList() {
         </p>
       </div>
 
-      {/* 상태 필터 + 정렬 */}
+      {/* 카테고리 필터 + 정렬 (상태 탭 없음 — 모집중만 노출) */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex gap-2">
-          {STATUS_TABS.map((tab) => (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedCategoryId(undefined)}
+            className={chipClass(selectedCategoryId === undefined)}
+          >
+            전체
+          </button>
+          {categories?.map((cat) => (
             <button
-              key={tab.value}
+              key={cat.id}
               type="button"
-              onClick={() => setStatusFilter(tab.value)}
-              className={chipClass(statusFilter === tab.value)}
+              onClick={() => setSelectedCategoryId(cat.id)}
+              className={chipClass(selectedCategoryId === cat.id)}
             >
-              {tab.label}
+              {cat.name}
             </button>
           ))}
         </div>
         <SortDropdown value={sort} onChange={setSort} />
-      </div>
-
-      {/* 카테고리 필터 */}
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setSelectedCategoryId(undefined)}
-          className={chipClass(selectedCategoryId === undefined)}
-        >
-          전체
-        </button>
-        {categories?.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => setSelectedCategoryId(cat.id)}
-            className={chipClass(selectedCategoryId === cat.id)}
-          >
-            {cat.name}
-          </button>
-        ))}
       </div>
 
       {/* 기간 필터 + 전체 초기화 */}

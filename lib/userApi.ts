@@ -5,6 +5,13 @@ import { clearUserAuthSession, getUserAccessToken, setUserAuthSession, getUserIn
 
 type RequestOptions = Omit<RequestInit, 'body'> & {
   body?: unknown
+  /**
+   * 401(리프레시 실패 포함) 시 로그인 페이지로 보낼지. 기본 true.
+   * 공개 페이지에서 배경으로 도는 조회(리뷰 유도 모달 등)는 false —
+   * 만료 토큰이 남은 방문자를 공개 페이지에서 로그인으로 튕겨내면 안 된다.
+   * false여도 세션 정리는 동일하게 수행한다 (죽은 토큰 방치 방지).
+   */
+  redirectOn401?: boolean
 }
 
 // 동시 다발 401 방지: 리프레시 진행 중이면 동일 Promise 공유
@@ -50,8 +57,17 @@ function redirectToLogin(): void {
   }
 }
 
+function handleAuthFailure(redirectOn401: boolean): never {
+  if (redirectOn401) {
+    redirectToLogin()
+  } else {
+    clearUserAuthSession()
+  }
+  throw new Error('인증이 만료되었습니다.')
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { body, headers, ...rest } = options
+  const { body, headers, redirectOn401 = true, ...rest } = options
   const accessToken = getUserAccessToken()
 
   const res = await fetch(`${API_BASE_URL}${path}`, {
@@ -70,8 +86,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     const newToken = await getOrCreateRefreshPromise()
 
     if (!newToken) {
-      redirectToLogin()
-      throw new Error('인증이 만료되었습니다.')
+      handleAuthFailure(redirectOn401)
     }
 
     // 새 토큰으로 원래 요청 재시도
@@ -87,8 +102,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     })
 
     if (retryRes.status === 401) {
-      redirectToLogin()
-      throw new Error('인증이 만료되었습니다.')
+      handleAuthFailure(redirectOn401)
     }
 
     if (!retryRes.ok) {
