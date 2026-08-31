@@ -19,7 +19,7 @@ import { QUERY_KEYS } from '@/constants/queryKeys'
 import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { formatPoint, formatWon, payableAmount, usablePoint } from '@/lib/points'
 import type { OwnProduct, OwnProductStatus } from '@/types/domain'
@@ -303,6 +303,29 @@ export function OwnProductDetail({ id, initialProduct }: OwnProductDetailProps) 
                   ? '이 파티는 모집이 완료되었습니다.'
                   : '이 파티는 남은 기간이 1일 이하로 참여가 불가합니다.'}
               </p>
+            </div>
+          ) : applicationCheck?.restriction ? (
+            <div className="flex flex-col items-center gap-2 rounded-lg bg-yellow-50 p-4">
+              <Badge variant="yellow">신청 제한</Badge>
+              {applicationCheck.restriction.type === 'category_pending' ? (
+                <p className="text-center text-body-md text-text-secondary">
+                  같은 OTT의 다른 파티 &lsquo;{applicationCheck.restriction.partyName}&rsquo;에 신청
+                  대기 중입니다. 기존 신청이 처리된 뒤 참여할 수 있어요.
+                </p>
+              ) : (
+                <p className="text-center text-body-md text-text-secondary">
+                  반품 이력이 있어 12시간 동안 이 OTT 파티에 신청할 수 없습니다.
+                  {applicationCheck.restriction.retryAt && (
+                    <>
+                      <br />
+                      <b className="text-text-primary">
+                        {formatDate(applicationCheck.restriction.retryAt)}
+                      </b>{' '}
+                      이후 재신청 가능합니다.
+                    </>
+                  )}
+                </p>
+              )}
             </div>
           ) : (
             <>

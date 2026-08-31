@@ -38,6 +38,8 @@ export type AdminUserDetailApplication = {
   usedPoint: number
   startedAt: string | null
   expiresAt: string | null
+  /** 반품(파티원 제거) 시각 — cancelled 중 반품 건 구분 + 재신청 차단 근거 */
+  returnedAt: string | null
   createdAt: string
   product: {
     id: string
@@ -49,8 +51,19 @@ export type AdminUserDetailApplication = {
     price: number
     totalSlots: number
     filledSlots: number
-    category: { name: string }
+    category: { id: string; name: string }
   }
+}
+
+/** 현재 유효한 반품 재신청 차단 (카테고리별 최신 1건) */
+export type AdminUserReturnCooldown = {
+  categoryId: string
+  categoryName: string
+  /** 반품된 파티명 */
+  partyName: string
+  returnedAt: string
+  /** 재신청 가능 시각 (returnedAt + 12h) */
+  retryAt: string
 }
 
 export type AdminUserDetail = {
@@ -67,6 +80,7 @@ export type AdminUserDetail = {
     updatedAt: string
   }
   partyApplications: AdminUserDetailApplication[]
+  returnCooldowns: AdminUserReturnCooldown[]
   termsAgreements: { type: string; agreedAt: string }[]
   stats: {
     totalPaidAmount: number

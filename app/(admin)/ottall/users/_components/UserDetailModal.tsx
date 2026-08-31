@@ -16,6 +16,7 @@ import type {
 import type { AdminUserDetailApplication } from '../_types'
 import { useAdminUserDetail } from '../_hooks/useAdminUserDetail'
 import { useAdminWithdrawUser } from '../_hooks/useAdminWithdrawUser'
+import { useReleaseReturnCooldown } from '../_hooks/useReleaseReturnCooldown'
 import { AdminWithdrawModal } from './AdminWithdrawModal'
 
 type UserDetailModalProps = {
@@ -71,6 +72,7 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
   const { data: detail, isLoading } = useAdminUserDetail(userId)
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
   const withdrawMutation = useAdminWithdrawUser()
+  const releaseCooldownMutation = useReleaseReturnCooldown()
 
   const isWithdrawn = !!detail?.user.deletedAt
 
@@ -80,6 +82,19 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
       { userId, reason },
       { onSuccess: () => setIsWithdrawOpen(false) },
     )
+  }
+
+  const handleReleaseCooldown = () => {
+    if (!userId || !detail) return
+    const count = detail.returnCooldowns.length
+    if (
+      !window.confirm(
+        `${detail.user.name}님의 재신청 차단 ${count}건을 모두 해제할까요?\n해제 즉시 재신청이 가능해집니다.`,
+      )
+    ) {
+      return
+    }
+    releaseCooldownMutation.mutate({ userId })
   }
 
   return (
@@ -141,6 +156,39 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
                     : '-'
                 }
               />
+            </section>
+          )}
+
+          {/* 재신청 차단 — 유효한(12시간 이내) 반품 쿨다운이 있을 때만 */}
+          {detail.returnCooldowns.length > 0 && (
+            <section className="space-y-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+              <h3 className="text-body-md font-semibold text-yellow-700">
+                재신청 차단 ({detail.returnCooldowns.length})
+              </h3>
+              {detail.returnCooldowns.map((cooldown) => (
+                <p key={cooldown.categoryId} className="text-caption-md text-text-secondary">
+                  <span className="font-medium text-text-primary">{cooldown.categoryName}</span>
+                  {' — '}&lsquo;{cooldown.partyName}&rsquo; 반품 ·{' '}
+                  {formatDateTime(cooldown.returnedAt)} 반품 →{' '}
+                  <span className="font-medium text-text-primary">
+                    {formatDateTime(cooldown.retryAt)}
+                  </span>
+                  까지 차단
+                </p>
+              ))}
+              <div className="pt-1">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  disabled={releaseCooldownMutation.isPending}
+                  onClick={handleReleaseCooldown}
+                >
+                  전체 차단 해제
+                </Button>
+                <p className="text-caption-sm mt-2 text-text-muted">
+                  해제 즉시 같은 카테고리 파티에 다시 신청할 수 있습니다.
+                </p>
+              </div>
             </section>
           )}
 
@@ -222,7 +270,11 @@ export function UserDetailModal({ userId, onClose }: UserDetailModalProps) {
  * 유저 페이지는 모집완료·만료 파티도 열린다. 새 창이라 회원 상세 모달이 그대로 남는다.
  */
 function PartyApplicationCard({ app }: { app: AdminUserDetailApplication }) {
-  const statusBadge = APP_STATUS_BADGE[app.status]
+  // 반품은 취소의 하위 구분 — returnedAt이 있으면 라벨만 "반품"으로 바꾼다 (거절·제거와 구분)
+  const statusBadge =
+    app.status === 'cancelled' && app.returnedAt
+      ? { variant: 'red' as const, label: '반품' }
+      : APP_STATUS_BADGE[app.status]
   const { product } = app
   // 정가보다 "싸게" 산 경우에만 정가를 함께 보여준다.
   //  - 차감형이어도 경과일 0이면 정가와 같아서 `!==`로는 같은 숫자를 두 번 찍는다
