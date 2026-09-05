@@ -9,9 +9,14 @@ import { useAdminApplicationDetail } from '../_hooks/useAdminApplicationDetail'
 import { useApproveApplication } from '../_hooks/useApproveApplication'
 import { useDuplicateParty } from '../_hooks/useDuplicateParty'
 import { useExpandPartySlots } from '../_hooks/useExpandPartySlots'
+import { usePartyAutoDeliverSetting } from '../_hooks/usePartyAutoDeliverSetting'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
-import type { AdminAlimtalkLog } from '../_types'
-import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
+import type { AdminAlimtalkLog, AdminApplicationDetail } from '../_types'
+import {
+  PARTY_TYPE_META,
+  PARTY_DURATION_MODE_META,
+  describeAutoDeliverReason,
+} from '@/constants/app'
 import { formatPoint, payableAmount } from '@/lib/points'
 
 type ApplicationDetailModalProps = {
@@ -48,25 +53,38 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
   const rejectMutation = useRejectApplication()
   const expandMutation = useExpandPartySlots()
 
+  const autoDeliverSetting = usePartyAutoDeliverSetting()
+
   // 정원 만석 — 이 상태에서 승인 API를 부르면 승인이 아니라 자동 거절되므로 버튼을 막는다
   const isFull = detail ? detail.product.filledSlots >= detail.product.totalSlots : false
 
+  // 조건에 맞는 계정이 없으면 토글을 켠 채로 둘 수 없다 — 전역 설정이 ON이어도 강제로 끈다.
+  // 승인 자체는 그대로 진행된다 (자동발송만 생략).
+  const canAutoDeliver = detail?.autoDeliverPreview.eligible ?? false
+  const autoDeliver = canAutoDeliver && autoDeliverSetting.enabled
+
   const handleApprove = () => {
     if (!applicationId) return
-    if (!confirm('이 신청을 승인하시겠습니까? 승인 시점부터 이용 기간이 시작됩니다.')) return
-    approveMutation.mutate(applicationId, {
-      onSuccess: (res) => {
-        onClose()
-        // 이번 승인으로 파티가 정원을 채워 모집완료된 경우 — 동일 파티 재생성 여부 확인
-        if (
-          res.partyClosed &&
-          res.productId &&
-          confirm('파티가 정원을 채워 모집완료되었습니다.\n똑같은 파티를 새로 생성하시겠습니까?')
-        ) {
-          duplicateMutation.mutate(res.productId)
-        }
+    const notice = autoDeliver
+      ? '\n승인과 동시에 계정을 배정하고 알림톡을 보냅니다.'
+      : ''
+    if (!confirm(`이 신청을 승인하시겠습니까? 승인 시점부터 이용 기간이 시작됩니다.${notice}`)) return
+    approveMutation.mutate(
+      { applicationId, autoDeliver },
+      {
+        onSuccess: (res) => {
+          onClose()
+          // 이번 승인으로 파티가 정원을 채워 모집완료된 경우 — 동일 파티 재생성 여부 확인
+          if (
+            res.partyClosed &&
+            res.productId &&
+            confirm('파티가 정원을 채워 모집완료되었습니다.\n똑같은 파티를 새로 생성하시겠습니까?')
+          ) {
+            duplicateMutation.mutate(res.productId)
+          }
+        },
       },
-    })
+    )
   }
 
   const handleReject = () => {
@@ -190,30 +208,102 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
             <AlimtalkLogList logs={detail.alimtalkLogs} />
           </section>
 
+          {/* 배정된 계정 (확정 건) */}
+          {detail.dramaAccount && (
+            <section className="space-y-2">
+              <h3 className="text-body-md font-semibold text-text-primary">배정된 계정</h3>
+              <InfoRow label="아이디" value={detail.dramaAccount.email} />
+              {detail.dramaAccount.platform && (
+                <InfoRow label="플랫폼" value={detail.dramaAccount.platform} />
+              )}
+              {detail.dramaAccount.dueAt && (
+                <InfoRow label="계정 마감일" value={detail.dramaAccount.dueAt} />
+              )}
+            </section>
+          )}
+
           {/* 액션 (대기 상태에서만) */}
           {detail.status === 'pending' && (
-            <div className="flex justify-end gap-2 border-t border-border pt-4">
-              <Button
-                variant="danger"
-                loading={rejectMutation.isPending}
-                disabled={approveMutation.isPending}
-                onClick={handleReject}
-              >
-                거절
-              </Button>
-              <Button
-                variant="primary"
-                loading={approveMutation.isPending}
-                disabled={rejectMutation.isPending || isFull}
-                onClick={handleApprove}
-              >
-                승인
-              </Button>
+            <div className="space-y-3 border-t border-border pt-4">
+              <AutoDeliverToggle
+                detail={detail}
+                checked={autoDeliver}
+                disabled={
+                  !canAutoDeliver ||
+                  autoDeliverSetting.isLoading ||
+                  approveMutation.isPending ||
+                  rejectMutation.isPending
+                }
+                onChange={autoDeliverSetting.save}
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="danger"
+                  loading={rejectMutation.isPending}
+                  disabled={approveMutation.isPending}
+                  onClick={handleReject}
+                >
+                  거절
+                </Button>
+                <Button
+                  variant="primary"
+                  loading={approveMutation.isPending}
+                  disabled={rejectMutation.isPending || isFull}
+                  onClick={handleApprove}
+                >
+                  승인
+                </Button>
+              </div>
             </div>
           )}
         </div>
       )}
     </Modal>
+  )
+}
+
+type AutoDeliverToggleProps = {
+  detail: AdminApplicationDetail
+  checked: boolean
+  disabled: boolean
+  onChange: (next: boolean) => void
+}
+
+/**
+ * 승인 시 계정 자동 배정 + 알림톡 발송 토글.
+ * 배정 가능할 때는 어떤 계정이 나갈지 미리 보여주고, 불가할 때는 사유를 보여주며 꺼진 채로 잠긴다.
+ */
+function AutoDeliverToggle({ detail, checked, disabled, onChange }: AutoDeliverToggleProps) {
+  const { eligible, reason, account } = detail.autoDeliverPreview
+
+  return (
+    <div className="rounded-lg border border-border bg-gray-50 p-3">
+      <label className="flex cursor-pointer items-center gap-2">
+        <input
+          type="checkbox"
+          className="h-4 w-4 accent-brand disabled:cursor-not-allowed"
+          checked={checked}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        <span className="text-body-md font-medium text-text-primary">
+          승인 시 계정 자동 배정 + 알림톡 발송
+        </span>
+        {!eligible && <Badge variant="gray">자동발송 불가</Badge>}
+      </label>
+
+      {eligible && account ? (
+        <p className="text-caption-md mt-1.5 pl-6 text-text-secondary">
+          배정 예정: {account.email}
+          {account.dueAt && ` (마감 ${account.dueAt}`}
+          {account.dueAt && `, 빈자리 ${account.freeSlots}개)`}
+        </p>
+      ) : (
+        <p className="text-caption-md mt-1.5 pl-6 text-danger">
+          ⚠ {describeAutoDeliverReason(reason)}
+        </p>
+      )}
+    </div>
   )
 }
 

@@ -8,6 +8,15 @@ export type PartyOtpIssueLogItem = {
   issuedAt: string
 }
 
+/** 드라마 계정 자동 배정 상태 — 재시도 버튼을 켤 수 있는지와 그 사유 */
+export type PartyAutoAssignInfo = {
+  assigned: boolean
+  accountEmail: string | null
+  eligible: boolean
+  /** 불가 사유 코드 (가능하면 null). 문구 변환은 constants/app의 describeAutoDeliverReason */
+  reason: string | null
+}
+
 export type PartyOtpInfo =
   | { linked: false }
   | {
@@ -17,4 +26,5 @@ export type PartyOtpInfo =
       issueCount: number
       maxIssues: number
       logs: PartyOtpIssueLogItem[]
+      autoAssign: PartyAutoAssignInfo
     }

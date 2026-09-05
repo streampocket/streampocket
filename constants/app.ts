@@ -118,6 +118,23 @@ export const PARTY_DURATION_MODE_META: Record<
   },
 };
 
+// 파티 승인 시 계정 자동 배정이 막히는 이유 → 관리자용 문구.
+// 서버가 사유 코드만 내려주고 문구는 화면이 정한다 (관리자 화면 두 곳이 같은 문구를 쓰도록 한 곳에 모음).
+export const AUTO_DELIVER_REASON_LABEL: Record<string, string> = {
+  not_found: "신청 내역을 찾을 수 없습니다.",
+  not_confirmed: "승인 완료된 신청만 계정을 배정할 수 있습니다.",
+  already_assigned: "이미 계정이 배정되어 있습니다.",
+  already_has_secret: "이미 OTP 시크릿이 등록되어 있어 자동 배정할 수 없습니다.",
+  unmapped_party: "이 파티는 드라마 계정 플랫폼 매핑이 없습니다.",
+  no_account: "조건에 맞는 계정이 없습니다 (플랫폼·빈자리·마감일 확인 필요).",
+};
+
+/** 사유 코드를 문구로. 매핑에 없으면(발송 실패 메시지 등) 원문을 그대로 보여준다 */
+export function describeAutoDeliverReason(reason: string | null): string {
+  if (!reason) return "알 수 없는 이유로 실패했습니다.";
+  return AUTO_DELIVER_REASON_LABEL[reason] ?? reason;
+}
+
 export const PARTY_DEFAULT_RULES = [
   "운영시간 기준 6시간 내 파티장 연락 두절시 100% 전액환불 가능",
   "디지털 상품은 '이용 후 환불 불가'",

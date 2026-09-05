@@ -313,6 +313,8 @@ export type ReviewPointTiers = {
 export type SystemSettings = {
   defaultDurationMinutes: number
   reviewPointTiers: ReviewPointTiers
+  /** 파티 승인 시 계정 자동 배정 + 알림톡 발송 — 승인 모달 토글의 기본값 */
+  partyAutoDeliverEnabled: boolean
 }
 
 // ───────────────────────── 인증 (OTTALL) ─────────────────────────

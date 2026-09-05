@@ -8,6 +8,7 @@ import { useUpdateAdminParty } from '../_hooks/useUpdateAdminParty'
 import type { UpdateAdminPartyInput } from '../_hooks/useUpdateAdminParty'
 import { ImageSelector } from './ImageSelector'
 import { RuleTemplateSelect } from './RuleTemplateSelect'
+import { isAutoAssignablePartyName } from '@/constants/ottImages'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 import { cn } from '@/lib/utils'
 
@@ -126,15 +127,26 @@ export function PartyEditForm({ party, onCancel, onSuccess }: PartyEditFormProps
         <ImageSelector value={form.imagePath} onChange={handleImageSelect} />
       </div>
 
-      <Field label="파티명" required>
-        <input
-          type="text"
-          value={form.name}
-          onChange={updateField('name')}
-          maxLength={255}
-          className={INPUT_CLASS}
-        />
-      </Field>
+      <div className="space-y-1">
+        <Field label="파티명" required>
+          <input
+            type="text"
+            value={form.name}
+            onChange={updateField('name')}
+            maxLength={255}
+            className={INPUT_CLASS}
+          />
+        </Field>
+        {/* 이름이 이미지 라벨에서 벗어나면 승인 시 계정 자동 배정이 조용히 멈춘다.
+            저장을 막지는 않는다 — 자동배정을 안 쓰는 파티도 있을 수 있다.
+            Field는 전체를 <label>로 감싸므로, 이 경고는 바깥에 둬야 라벨 텍스트에 섞이지 않는다. */}
+        {form.name.trim() !== '' && !isAutoAssignablePartyName(form.name) && (
+          <p role="alert" className="text-caption-md text-warning">
+            ⚠ 이 이름으로는 <strong>계정 자동 배정이 되지 않습니다.</strong> 위 이미지를 다시 선택하면
+            이름이 원래대로 맞춰집니다. (자동 배정을 쓰지 않는 파티라면 그대로 두셔도 됩니다)
+          </p>
+        )}
+      </div>
 
       <Field label="파티장 이름" required>
         <input
