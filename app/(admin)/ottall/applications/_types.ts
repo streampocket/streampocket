@@ -1,4 +1,9 @@
-import type { PartyApplicationStatus, PartyType, PartyDurationMode } from '@/types/domain'
+import type {
+  PartyApplicationStatus,
+  PartyType,
+  PartyDurationMode,
+  PartyAccountCredentials,
+} from '@/types/domain'
 
 export type ApplicationTabStatus = PartyApplicationStatus | 'all'
 
@@ -38,12 +43,64 @@ export type AdminAlimtalkLog = {
   createdAt: string
 }
 
+/** 자동 배정이 막히는 이유 — 승인 모달이 토글 옆에 사유로 보여준다 */
+export type AutoAssignReason =
+  | 'not_found'
+  | 'not_confirmed'
+  | 'already_assigned'
+  /** 동시에 배정한 다른 관리자가 먼저 커밋 — 새로고침하면 배정된 상태로 보인다 */
+  | 'assigned_by_other'
+  | 'already_has_secret'
+  | 'unmapped_party'
+  | 'no_account'
+
+/** 승인 시 배정될 계정 후보 — 아이디·비밀번호·OTP 시크릿 평문 포함 (관리자 전용) */
+export type AssignedDramaAccount = {
+  id: string
+  email: string
+  password: string
+  otpSecret: string
+  platform: string | null
+  /** 'YYYY-MM-DD' */
+  dueAt: string | null
+  freeSlots: number
+}
+
+/**
+ * 승인 전 미리보기 — "지금 승인하면 어떤 계정이 배정되는지".
+ * 예약이 아니라 조회할 때마다 다시 계산되는 값이라, 승인 시점에 다른 계정이 될 수 있다.
+ */
+export type AutoAssignPreview = {
+  eligible: boolean
+  reason: AutoAssignReason | null
+  account: AssignedDramaAccount | null
+}
+
 export type AdminApplicationDetail = AdminApplicationListItem & {
   product: AdminApplicationListItem['product'] & {
     totalSlots: number
     filledSlots: number
+    /** 파티 시작(첫 승인) 시각. 아직 아무도 승인되지 않았으면 null */
+    startedAt: string | null
+    /**
+     * 파티 자체가 끝나는 시각 — 신청자 개인 만료(expiresAt)와 다른 값이다.
+     * 파티 관리 화면과 같은 이름·계산식(be에서 계산). 시작 전이면 null
+     */
+    partyExpiresAt: string | null
+    /** 파티 종료까지 남은 일수. 시작 전이면 파티 전체 이용일수 */
+    partyRemainingDays: number
   }
+  /** 신청 접수 알림톡(UJ_2053) 발송 이력 */
   alimtalkLogs: AdminAlimtalkLog[]
+  autoAssignPreview: AutoAssignPreview
+  /** 시크릿이 등록된 건에만 채워진다. 수동 등록 건은 시크릿으로 역추적한 결과 */
+  dramaAccount: PartyAccountCredentials | null
+  /**
+   * 대기 건에만 채워진다 — 지금 승인하면 이용이 언제 끝나는지.
+   * 승인 로직과 같은 계산식이라 실제 승인 시 저장될 값과 일치한다.
+   * 확정 건은 저장된 expiresAt이 답이라 null이다.
+   */
+  expiresAtIfApprovedNow: string | null
 }
 
 export type AdminApplicationListParams = {

@@ -4,9 +4,14 @@ import { useState } from 'react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { cn, formatDate } from '@/lib/utils'
+import { describeAutoAssignReason } from '@/constants/app'
 import { usePartyOtpInfo } from '../_hooks/usePartyOtpInfo'
 import { useSetPartyOtpSecret } from '../_hooks/useSetPartyOtpSecret'
 import { useResetPartyOtpCount } from '../_hooks/useResetPartyOtpCount'
+import { useAutoAssignPartyAccount } from '../_hooks/useAutoAssignPartyAccount'
+import { useSyncPartyOtpSecret } from '../_hooks/useSyncPartyOtpSecret'
+import { PartyAccountCredentials } from '@/components/PartyAccountCredentials'
+import type { PartyAutoAssignInfo } from '../_types'
 
 type PartyOtpSectionProps = {
   orderId: string
@@ -23,6 +28,8 @@ export function PartyOtpSection({ orderId }: PartyOtpSectionProps) {
   const { data: info, isLoading } = usePartyOtpInfo(orderId, true)
   const setSecretMutation = useSetPartyOtpSecret(orderId)
   const resetMutation = useResetPartyOtpCount(orderId)
+  const autoAssignMutation = useAutoAssignPartyAccount(orderId)
+  const syncSecretMutation = useSyncPartyOtpSecret(orderId)
   const [secretInput, setSecretInput] = useState('')
 
   if (isLoading || !info) {
@@ -55,10 +62,21 @@ export function PartyOtpSection({ orderId }: PartyOtpSectionProps) {
 
   return (
     <div className="space-y-4">
-      {/* 시크릿 등록 — 저장 후에는 원문을 다시 보여주지 않는다 */}
+      {/* 계정 자동 배정 — 조건에 맞는 계정을 골라 파티원 등록 + OTP 시크릿 복사까지 한 번에 */}
+      <AutoAssignBlock
+        info={info.autoAssign}
+        pending={autoAssignMutation.isPending}
+        onRun={() => autoAssignMutation.mutate()}
+        onSyncSecret={() => syncSecretMutation.mutate()}
+        syncing={syncSecretMutation.isPending}
+      />
+
+      {/* 시크릿 수동 등록 — 입력란은 쓰기 전용이고, 등록된 값은 위 계정 블록에서 확인한다 */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="text-caption-md font-semibold text-text-primary">OTP 시크릿키</span>
+          <span className="text-caption-md font-semibold text-text-primary">
+            {info.autoAssign.assigned ? 'OTP 시크릿키' : 'OTP 시크릿키 (수동 등록)'}
+          </span>
           {info.secretRegistered ? (
             <Badge variant="green">등록됨</Badge>
           ) : (
@@ -98,7 +116,8 @@ export function PartyOtpSection({ orderId }: PartyOtpSectionProps) {
           </Button>
         </div>
         <p className="text-caption-sm text-text-muted">
-          시크릿은 암호화되어 저장되며, 저장 후에는 원문이 표시되지 않습니다. 구매자에게는 코드만 전달됩니다.
+          시크릿은 암호화되어 저장됩니다. 등록된 값은 위 계정 정보에서 확인할 수 있고, 구매자에게는 코드만
+          전달됩니다.
         </p>
       </div>
 
@@ -143,6 +162,56 @@ export function PartyOtpSection({ orderId }: PartyOtpSectionProps) {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+    </div>
+  )
+}
+
+type AutoAssignBlockProps = {
+  info: PartyAutoAssignInfo
+  pending: boolean
+  onRun: () => void
+  onSyncSecret: () => void
+  syncing: boolean
+}
+
+/**
+ * 계정 자동 배정 블록 — 승인 시 자동 배정이 꺼져 있었거나 실패한 건을 여기서 보정한다.
+ * 이미 배정된 건에는 버튼을 숨긴다 (다시 눌러도 already_assigned로 막히므로).
+ */
+function AutoAssignBlock({ info, pending, onRun, onSyncSecret, syncing }: AutoAssignBlockProps) {
+  return (
+    <div className="space-y-2">
+      {/* 계정 아이디·비밀번호·OTP 시크릿 — 시크릿이 등록된 건에만 채워진다 */}
+      {info.credentials && (
+        <PartyAccountCredentials
+          credentials={info.credentials}
+          onSyncSecret={onSyncSecret}
+          syncing={syncing}
+        />
+      )}
+
+      <div className="space-y-2 rounded-lg border border-border bg-gray-50 p-3">
+        <div className="flex items-center gap-2">
+          <span className="text-caption-md font-semibold text-text-primary">계정 자동 배정</span>
+          {info.assigned ? <Badge variant="green">배정됨</Badge> : <Badge variant="gray">미배정</Badge>}
+        </div>
+
+        {!info.assigned && !info.eligible && (
+          <p className="text-caption-md text-danger">⚠ {describeAutoAssignReason(info.reason)}</p>
+        )}
+
+        {!info.assigned && (
+          <Button
+            size="sm"
+            variant="primary"
+            disabled={!info.eligible}
+            loading={pending}
+            onClick={onRun}
+          >
+            계정 자동배정
+          </Button>
         )}
       </div>
     </div>
