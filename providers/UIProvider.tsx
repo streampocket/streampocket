@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
-import { Toaster } from 'sonner'
 
 type UIContextValue = {
   sidebarOpen: boolean
@@ -21,9 +20,10 @@ export function UIProvider({ children }: UIProviderProps) {
   const toggleSidebar = () => setSidebarOpen((prev) => !prev)
 
   return (
+    // Toaster는 여기 두지 않는다 — app/layout.tsx가 UIProvider 안에서 한 번 더 렌더해
+    // 모든 토스트가 두 번 뜨고 있었다. 스타일을 지정한 layout 쪽 하나만 남긴다.
     <UIContext.Provider value={{ sidebarOpen, setSidebarOpen, toggleSidebar }}>
       {children}
-      <Toaster position="top-right" richColors />
     </UIContext.Provider>
   )
 }
