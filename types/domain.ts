@@ -313,6 +313,40 @@ export type ReviewPointTiers = {
 export type SystemSettings = {
   defaultDurationMinutes: number
   reviewPointTiers: ReviewPointTiers
+  /** 파티 승인 시 계정 자동 배정 — 승인 모달 토글의 기본값 */
+  partyAutoAssignEnabled: boolean
+}
+
+// ──────────────── 파티 배정 계정 자격증명 (관리자 전용) ────────────────
+
+/** 계정을 어떻게 찾았는지 — 화면 문구가 달라진다 */
+export type AccountCredentialSource =
+  /** 배정 링크로 찾음 (자동 배정 건) */
+  | 'assigned'
+  /** 시크릿으로 역추적해 찾음 (수동 등록 건) */
+  | 'matched_by_secret'
+  /** 시크릿은 있으나 일치하는 계정을 못 찾음 */
+  | 'secret_only'
+
+/**
+ * 배정된 드라마 계정의 아이디·비밀번호·OTP 시크릿.
+ * 신청 관리와 주문 관리가 함께 쓰므로 페이지 _types가 아니라 여기에 둔다.
+ * 관리자 전용 응답이며, 마스킹 없이 그대로 표시한다 (드라마 계정 관리와 같은 정책).
+ */
+export type PartyAccountCredentials = {
+  source: AccountCredentialSource
+  accountId: string | null
+  email: string | null
+  password: string | null
+  /** 신청에 등록된 시크릿 — 구매자가 실제로 발급받는 값 */
+  otpSecret: string
+  platform: string | null
+  /** 'YYYY-MM-DD' */
+  dueAt: string | null
+  /** 계정의 현재 시크릿과 달라 구매자가 틀린 코드를 받는 상태 */
+  secretMismatch: boolean
+  /** 같은 시크릿을 쓰는 계정이 여럿이라 확정할 수 없음 */
+  ambiguous: boolean
 }
 
 // ───────────────────────── 인증 (OTTALL) ─────────────────────────
