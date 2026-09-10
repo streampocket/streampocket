@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { USER_BRAND_NAME, USER_OG_IMAGE, USER_SITE_URL } from "@/constants/app";
 import { OTT_ENGLISH_NAME_LIST } from "@/constants/ottNames";
 import { OwnProductList } from "./_components/OwnProductList";
+import {
+  fetchOwnCategoriesForListServer,
+  fetchOwnProductsServer,
+} from "@/lib/ownProductServerApi";
 
 const PAGE_TITLE = "OTT·숏폼 드라마 파티 모집";
 const PAGE_DESCRIPTION =
@@ -45,10 +49,19 @@ export const metadata: Metadata = {
 };
 
 // 전체 파티
-export default function ProductsPage() {
+//
+// 목록을 서버에서 미리 받아 초기 HTML에 파티 링크를 심는다. 이전에는 클라이언트에서만
+// 받아와 크롤러가 받는 HTML에 링크가 하나도 없었고, JS 실행이 약한 네이버 크롤러(Yeti)는
+// 목록을 빈 화면으로 봤다. 필터 상호작용은 그대로 클라이언트가 담당한다.
+export default async function ProductsPage() {
+  const [products, categories] = await Promise.all([
+    fetchOwnProductsServer({ status: "recruiting" }),
+    fetchOwnCategoriesForListServer(),
+  ]);
+
   return (
     <section className="py-4">
-      <OwnProductList />
+      <OwnProductList initialProducts={products} initialCategories={categories} />
     </section>
   );
 }
