@@ -29,7 +29,10 @@ type ReviewsPageProps = {
 
 export async function generateMetadata({ searchParams }: ReviewsPageProps): Promise<Metadata> {
   const sp = await searchParams
-  const titleBase = `파티원 리뷰 | ${USER_BRAND_NAME}`
+  // 브랜드명은 layout의 title.template이 붙인다 — 여기서 또 넣으면 두 번 붙는다.
+  // openGraph·twitter는 template이 적용되지 않으므로 직접 넣는다.
+  const titleBase = '파티원 리뷰'
+  const ogTitle = `${titleBase} | ${USER_BRAND_NAME}`
   const description = sp.categoryId
     ? `${USER_BRAND_NAME} 파티원이 직접 남긴 OTT 이용 후기를 확인하세요.`
     : `${USER_BRAND_NAME}에서 OTT 파티에 참여한 회원들이 남긴 별점과 후기를 모아보세요.`
@@ -38,8 +41,8 @@ export async function generateMetadata({ searchParams }: ReviewsPageProps): Prom
     description,
     // 필터·페이지·utm 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
     alternates: { canonical: `${USER_SITE_URL}/reviews` },
-    openGraph: { title: titleBase, description, images: [USER_OG_IMAGE] },
-    twitter: { card: 'summary_large_image', title: titleBase, description, images: [USER_OG_IMAGE] },
+    openGraph: { title: ogTitle, description, images: [USER_OG_IMAGE] },
+    twitter: { card: 'summary_large_image', title: ogTitle, description, images: [USER_OG_IMAGE] },
   }
 }
 

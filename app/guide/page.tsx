@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   title: "스팀 등록 안내 가이드",
   description: "스팀 게임 코드 등록 전 필수 확인 안내입니다.",
   alternates: { canonical: `${USER_SITE_URL}/guide` },
+  // 스마트스토어 구매자가 알림톡 링크로 들어오는 안내 페이지다. 내용이 스팀 코드 등록이라
+  // OTT 도메인에서는 주제가 어긋나 색인에서 제외한다 — 같은 성격의 /track과 같은 처리다.
+  // 직접 링크 접근은 그대로 동작한다.
+  robots: { index: false, follow: false },
 };
 
 export default function GuidePage() {

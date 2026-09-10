@@ -18,9 +18,12 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
   const { id } = await params
   const review = await fetchReviewServer(id).catch(() => null)
   if (!review) {
-    return { title: `리뷰 | ${USER_BRAND_NAME}` }
+    return { title: '리뷰' }
   }
-  const title = `${review.product.name} 리뷰 | ${USER_BRAND_NAME}`
+  // 브랜드명은 layout의 title.template이 붙인다 — 여기서 또 넣으면 두 번 붙는다.
+  // openGraph·twitter는 template이 적용되지 않으므로 직접 넣는다.
+  const title = `${review.product.name} 리뷰`
+  const ogTitle = `${title} | ${USER_BRAND_NAME}`
   const description = review.content.replace(/\s+/g, ' ').slice(0, 120)
   return {
     title,
@@ -28,13 +31,13 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
     alternates: { canonical: `${USER_SITE_URL}/reviews/${review.id}` },
     // openGraph를 선언한 페이지는 대표 OG 이미지를 상속받지 못하므로 폴백을 직접 지정한다
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       images: [review.imageUrl ? { url: review.imageUrl } : USER_OG_IMAGE],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: ogTitle,
       description,
       images: [review.imageUrl ? { url: review.imageUrl } : USER_OG_IMAGE],
     },

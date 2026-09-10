@@ -3,7 +3,7 @@ import { USER_BRAND_NAME } from '@/constants/app'
 import { NewPostClient } from './_components/NewPostClient'
 
 export const metadata: Metadata = {
-  title: `글쓰기 | ${USER_BRAND_NAME} 커뮤니티`,
+  title: '커뮤니티 글쓰기',
   description: '자유 게시판에 새 글을 작성합니다.',
   robots: { index: false, follow: false },
 }
