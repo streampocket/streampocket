@@ -64,8 +64,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: pageTitle,
     description,
     keywords,
-    // 마감·만료 파티는 목록에서 빠져 사이트 안에서 못 찾는다 — 검색 색인에서도 제외
-    ...(product.status !== 'recruiting' ? { robots: { index: false } } : {}),
+    // 마감·만료 파티에도 noindex를 붙이지 않는다.
+    //
+    // 2026-08에 "사이트 안에서 못 찾는 페이지는 색인 제외"라는 판단으로 noindex를 넣었는데,
+    // 파티는 정원이 차면 관리자가 재생성하는 구조라(월 ~900개) 색인된 페이지가 계속 빠져나갔다.
+    // 네이버 서치어드바이저에 "meta robots으로 색인 제외"가 쌓여 검색 유입이 급감했다.
+    //
+    // 마감 파티로 들어온 방문자는 OwnProductDetail의 마감 안내 박스가 모집중 파티로 안내하므로
+    // 색인을 유지해도 빈손으로 돌아가지 않는다. 상세는 sitemap에도 계속 넣어 재크롤을 유도한다.
     // utm 등 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
     alternates: { canonical: `${USER_SITE_URL}/party/${product.id}` },
     openGraph: {

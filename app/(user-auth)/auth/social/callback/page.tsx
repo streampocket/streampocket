@@ -4,7 +4,7 @@ import { USER_BRAND_NAME } from '@/constants/app'
 import { SocialCallbackHandler } from './_components/SocialCallbackHandler'
 
 export const metadata: Metadata = {
-  title: `로그인 처리 중 | ${USER_BRAND_NAME}`,
+  title: '로그인 처리 중',
   // OAuth 콜백 중간 페이지 — 색인 제외
   robots: { index: false, follow: false },
 }

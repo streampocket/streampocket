@@ -6,7 +6,9 @@ import { SortDropdown } from './SortDropdown'
 import { useOwnProducts } from '../_hooks/useOwnProducts'
 import { useOwnCategories } from '../_hooks/useOwnCategories'
 import { cn } from '@/lib/utils'
-import type { OwnProduct } from '@/types/domain'
+import Link from 'next/link'
+import { OTT_CATALOG } from '@/constants/ottCatalog'
+import type { OwnCategory, OwnProduct } from '@/types/domain'
 import type { ProductSort } from '../_types'
 
 type DurationFilterValue = 'all' | '1-7' | '8-14' | '15-29' | '30+'
@@ -39,17 +41,26 @@ const chipClass = (active: boolean): string =>
     active ? 'bg-brand text-white' : 'bg-gray-100 text-text-secondary hover:bg-gray-200',
   )
 
-export function OwnProductList() {
+type OwnProductListProps = {
+  /** 서버에서 미리 받은 "필터 없는 모집중" 목록 — 크롤러가 받는 HTML에 링크를 심는다 */
+  initialProducts?: OwnProduct[]
+  initialCategories?: OwnCategory[]
+}
+
+export function OwnProductList({ initialProducts, initialCategories }: OwnProductListProps = {}) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
   const [sort, setSort] = useState<ProductSort | undefined>()
   const [durationFilter, setDurationFilter] = useState<DurationFilterValue>('all')
   // 유저 목록은 모집중만 노출한다 — 마감·만료 파티는 상세 직접 링크(구매 기록·관리자 ↗)로만 접근
-  const { data: products, isLoading: productsLoading } = useOwnProducts({
-    categoryId: selectedCategoryId,
-    status: 'recruiting',
-    sort,
-  })
-  const { data: categories } = useOwnCategories()
+  const { data: products, isLoading: productsLoading } = useOwnProducts(
+    {
+      categoryId: selectedCategoryId,
+      status: 'recruiting',
+      sort,
+    },
+    initialProducts,
+  )
+  const { data: categories } = useOwnCategories(initialCategories)
 
   // 기간 필터는 목록이 전체 로드라 클라이언트에서 적용 (서버 필터 결과에 조건만 추가)
   const durationRange = DURATION_FILTERS.find((f) => f.value === durationFilter)
@@ -80,6 +91,21 @@ export function OwnProductList() {
           저렴하게 이용하세요.
         </p>
       </div>
+
+      {/* OTT별 대표 페이지 링크 — 크롤러가 랜딩으로 들어가는 내부 경로이자,
+          사용자가 특정 OTT의 소개·후기를 모아 보는 입구다 */}
+      <nav aria-label="OTT별 보기" className="flex flex-wrap items-center gap-2">
+        <span className="text-body-md text-text-secondary">OTT별로 보기</span>
+        {OTT_CATALOG.map((ott) => (
+          <Link
+            key={ott.slug}
+            href={`/ott/${ott.slug}`}
+            className="rounded-full bg-gray-100 px-3 py-1 text-caption-md font-medium text-text-secondary transition-colors hover:bg-gray-200"
+          >
+            {ott.label}
+          </Link>
+        ))}
+      </nav>
 
       {/* 카테고리 필터 + 정렬 (상태 탭 없음 — 모집중만 노출) */}
       <div className="flex items-center justify-between gap-2">
