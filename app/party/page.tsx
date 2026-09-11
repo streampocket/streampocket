@@ -11,6 +11,14 @@ const PAGE_TITLE = "OTT·숏폼 드라마 파티 모집";
 const PAGE_DESCRIPTION =
   "드라마박스(Dramabox), 릴숏(Reelshort), 숏맥스(Shortmax) 등 숏폼 드라마 앱과 OTT를 파티로 저렴하게 이용하세요.";
 
+// JSON-LD에 담을 파티 수 상한 — 모집중이 수십 개까지 늘 수 있어 마크업이 과도해지지 않게 자른다
+const ITEM_LIST_LIMIT = 30;
+
+/** JSON-LD 삽입용 직렬화 — '<'를 이스케이프해 script 태그가 조기 종료되지 않게 한다 */
+function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 // 레이아웃 title.template('%s | OTTALL')이 접미사를 자동 부착하므로 접미사 없이 반환
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -59,8 +67,28 @@ export default async function ProductsPage() {
     fetchOwnCategoriesForListServer(),
   ]);
 
+  // 목록 페이지임을 명시한다 — 서버에서 이미 받은 products를 쓰므로 추가 조회가 없다
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: `${USER_SITE_URL}/party`,
+    numberOfItems: products.length,
+    itemListElement: products.slice(0, ITEM_LIST_LIMIT).map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: product.name,
+      url: `${USER_SITE_URL}/party/${product.id}`,
+    })),
+  };
+
   return (
     <section className="py-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <OwnProductList initialProducts={products} initialCategories={categories} />
     </section>
   );

@@ -22,15 +22,29 @@ import { fetchLatestVideos } from '@/app/(landing)/_lib/fetchYoutubeRss'
 import { fetchLandingReviews } from '@/app/(landing)/_lib/fetchLandingReviews'
 import type { OwnProduct, OwnReview } from '@/types/domain'
 
+// 검색결과에 보이는 앞부분(구글 ~155자)에 가치 제안이 들어오도록 순서를 잡았다.
+// 이전에는 OTT 이름 7종의 한글+영문 병기가 앞을 다 차지해 "파티로 나눠 저렴하게"가 잘려 나갔다.
+// 단어를 지우지는 않는다 — 영문명은 뒤에 그대로 남겨 검색어 커버리지를 유지한다.
 const LANDING_DESCRIPTION =
-  'OTTALL(오티티올)에서 드라마박스(Dramabox), 드라마웨이브(Dramawave), 비글루(Vigloo), 릴숏(Reelshort), 넷숏(Netshort), 숏맥스(Shortmax), 플릭릴스(FlickReels) 등 숏폼 드라마 앱과 OTT 멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.'
+  '숏폼 드라마·OTT 멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게 이용하세요. OTTALL(오티티올)이 파티원 매칭부터 계정 안내까지 맡습니다. 드라마박스(Dramabox), 드라마웨이브(Dramawave), 비글루(Vigloo), 릴숏(Reelshort), 넷숏(Netshort), 숏맥스(Shortmax), 플릭릴스(FlickReels) 등 7종 지원.'
 
 export const metadata: Metadata = {
   // 레이아웃 title.template('%s | OTTALL')의 접미사 중복을 피하기 위해 absolute 사용
   title: { absolute: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼` },
   description: LANDING_DESCRIPTION,
   // utm 등 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
-  alternates: { canonical: USER_SITE_URL },
+  //
+  // RSS 자동 발견 링크를 여기 함께 둔다 — 루트 layout.tsx에 넣으면 안 된다.
+  // Next.js metadata는 shallow merge라 페이지가 자기 alternates를 정의하면 부모의 것이
+  // 통째로 대체되는데, 이 페이지가 canonical을 정의하고 있어 루트의 types가 사라진다.
+  alternates: {
+    canonical: USER_SITE_URL,
+    types: {
+      'application/rss+xml': [
+        { url: `${USER_SITE_URL}/rss.xml`, title: `${USER_BRAND_NAME} 최신 글` },
+      ],
+    },
+  },
   keywords: ['ottall', '오티티올', 'OTT 공동구독', 'OTT 파티 매칭', '숏폼 드라마', '숏폼 드라마 앱', '드라마박스', '웨이브', '비글루', '드라마웨이브', '릴숏', '넷숏', '숏맥스', '플릭릴스', '쇼츠드라마', ...OTT_ENGLISH_NAME_LIST],
   robots: { index: true, follow: true },
   openGraph: {

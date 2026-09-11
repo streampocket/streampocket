@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import { LANDING_SECTION_IDS } from '@/app/(landing)/_data'
+import { OTT_CATALOG } from '@/constants/ottCatalog'
 
 export function HeroSection() {
   return (
@@ -38,6 +39,23 @@ export function HeroSection() {
               이용 방법 보기
             </Link>
           </div>
+
+          {/* OTT별 대표 페이지로 가는 내부 링크.
+              홈은 사이트에서 가장 권위가 높은 페이지인데 랜딩 7개로 가는 경로가 없었다.
+              PopularProductsSection이 아니라 여기 둔 이유: 그 컴포넌트는 모집중 파티가 0이면
+              null을 반환해 링크가 사라진다. 히어로는 항상 렌더되고 DOM 상단이라 크롤에도 유리하다. */}
+          <nav aria-label="OTT별 보기" className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-text-secondary">OTT별로 보기</span>
+            {OTT_CATALOG.map((ott) => (
+              <Link
+                key={ott.slug}
+                href={`/ott/${ott.slug}`}
+                className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-text-secondary transition-colors hover:bg-gray-200"
+              >
+                {ott.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
     </section>
