@@ -33,7 +33,18 @@ export const metadata: Metadata = {
   title: { absolute: `${USER_BRAND_NAME} | OTT 공동구독 파티 매칭 플랫폼` },
   description: LANDING_DESCRIPTION,
   // utm 등 쿼리 변형 주소를 대표 주소 하나로 통합 (중복 색인 방지)
-  alternates: { canonical: USER_SITE_URL },
+  //
+  // RSS 자동 발견 링크를 여기 함께 둔다 — 루트 layout.tsx에 넣으면 안 된다.
+  // Next.js metadata는 shallow merge라 페이지가 자기 alternates를 정의하면 부모의 것이
+  // 통째로 대체되는데, 이 페이지가 canonical을 정의하고 있어 루트의 types가 사라진다.
+  alternates: {
+    canonical: USER_SITE_URL,
+    types: {
+      'application/rss+xml': [
+        { url: `${USER_SITE_URL}/rss.xml`, title: `${USER_BRAND_NAME} 최신 글` },
+      ],
+    },
+  },
   keywords: ['ottall', '오티티올', 'OTT 공동구독', 'OTT 파티 매칭', '숏폼 드라마', '숏폼 드라마 앱', '드라마박스', '웨이브', '비글루', '드라마웨이브', '릴숏', '넷숏', '숏맥스', '플릭릴스', '쇼츠드라마', ...OTT_ENGLISH_NAME_LIST],
   robots: { index: true, follow: true },
   openGraph: {

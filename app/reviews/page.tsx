@@ -16,6 +16,11 @@ import { ReviewCard } from '@/components/own/ReviewCard'
 import { ReviewFilters } from './_components/ReviewFilters'
 import { ReviewPagination } from './_components/ReviewPagination'
 
+/** JSON-LD 삽입용 직렬화 — '<'를 이스케이프해 script 태그가 조기 종료되지 않게 한다 */
+function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c')
+}
+
 type SearchParams = {
   productId?: string
   categoryId?: string
@@ -78,8 +83,31 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
     return `/reviews${qs ? `?${qs}` : ''}`
   }
 
+  // 회원이 남긴 후기 모음이라는 걸 명시한다. canonical과 같은 대표 주소를 쓴다 —
+  // 필터·페이지 쿼리가 붙어도 색인 대표는 /reviews 하나다.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '파티원 리뷰',
+    description: `${USER_BRAND_NAME}에서 OTT 파티에 참여한 회원들이 남긴 별점과 후기`,
+    url: `${USER_SITE_URL}/reviews`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: list.total,
+      itemListElement: list.items.map((review, index) => ({
+        '@type': 'ListItem',
+        position: (page - 1) * REVIEW_PAGE_SIZE + index + 1,
+        url: `${USER_SITE_URL}/reviews/${review.id}`,
+      })),
+    },
+  }
+
   return (
     <section className="space-y-6 py-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-display text-text-primary">파티원 리뷰</h1>
