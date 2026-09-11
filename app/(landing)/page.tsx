@@ -22,8 +22,11 @@ import { fetchLatestVideos } from '@/app/(landing)/_lib/fetchYoutubeRss'
 import { fetchLandingReviews } from '@/app/(landing)/_lib/fetchLandingReviews'
 import type { OwnProduct, OwnReview } from '@/types/domain'
 
+// 검색결과에 보이는 앞부분(구글 ~155자)에 가치 제안이 들어오도록 순서를 잡았다.
+// 이전에는 OTT 이름 7종의 한글+영문 병기가 앞을 다 차지해 "파티로 나눠 저렴하게"가 잘려 나갔다.
+// 단어를 지우지는 않는다 — 영문명은 뒤에 그대로 남겨 검색어 커버리지를 유지한다.
 const LANDING_DESCRIPTION =
-  'OTTALL(오티티올)에서 드라마박스(Dramabox), 드라마웨이브(Dramawave), 비글루(Vigloo), 릴숏(Reelshort), 넷숏(Netshort), 숏맥스(Shortmax), 플릭릴스(FlickReels) 등 숏폼 드라마 앱과 OTT 멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게(싸게) 이용하세요.'
+  '숏폼 드라마·OTT 멤버십(구독권)을 파티(쉐어)로 나눠 저렴하게 이용하세요. OTTALL(오티티올)이 파티원 매칭부터 계정 안내까지 맡습니다. 드라마박스(Dramabox), 드라마웨이브(Dramawave), 비글루(Vigloo), 릴숏(Reelshort), 넷숏(Netshort), 숏맥스(Shortmax), 플릭릴스(FlickReels) 등 7종 지원.'
 
 export const metadata: Metadata = {
   // 레이아웃 title.template('%s | OTTALL')의 접미사 중복을 피하기 위해 absolute 사용

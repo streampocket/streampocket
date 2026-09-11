@@ -17,7 +17,14 @@ type LandingInfo = {
   en: string
   /** h1 아래 한 줄 */
   tagline: string
-  /** 본문 소개 (2~3문장) */
+  /**
+   * meta description 전용 요약.
+   *
+   * description을 그대로 쓰면 400자가 넘어 검색결과에서 뒤가 잘린다(구글 ~155자).
+   * 여기에 가격 문구가 덧붙으므로 100자 안쪽으로 유지한다.
+   */
+  summary: string
+  /** 본문 소개 (2~3문장) — 페이지에 실제로 렌더되는 콘텐츠 */
   description: string
 }
 
@@ -30,6 +37,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'dramabox',
     en: 'Dramabox',
     tagline: '드라마박스를 파티로 저렴하게',
+    summary: '드라마박스(Dramabox) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '드라마박스(Dramabox)는 짧은 회차로 빠르게 전개되는 숏폼 드라마 플랫폼입니다. 혼자 결제하면 부담스러운 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용할 수 있습니다. ' +
       SHARED_TAIL,
@@ -38,6 +46,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'dramawave',
     en: 'Dramawave',
     tagline: '드라마웨이브를 파티로 저렴하게',
+    summary: '드라마웨이브(Dramawave) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '드라마웨이브(Dramawave)는 숏폼 드라마를 몰아보기 좋은 플랫폼입니다. 구독료를 파티원끼리 나눠 부담을 줄이고, 원하는 기간만 골라 이용할 수 있습니다. ' +
       SHARED_TAIL,
@@ -46,6 +55,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'reelshort',
     en: 'Reelshort',
     tagline: '릴숏을 파티로 저렴하게',
+    summary: '릴숏(Reelshort) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '릴숏(Reelshort)은 세로형 숏폼 드라마로 잘 알려진 플랫폼입니다. 파티로 함께 이용하면 정가보다 낮은 금액으로 시청할 수 있습니다. ' +
       SHARED_TAIL,
@@ -54,6 +64,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'vigloo',
     en: 'Vigloo',
     tagline: '비글루를 파티로 저렴하게',
+    summary: '비글루(Vigloo) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '비글루(Vigloo)는 숏폼 드라마를 편하게 즐길 수 있는 플랫폼입니다. 구독료를 파티원끼리 나눠 부담을 줄이고, 남은 기간만큼 할인된 금액으로 중간 참여도 가능합니다. ' +
       SHARED_TAIL,
@@ -62,6 +73,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'netshort',
     en: 'Netshort',
     tagline: '넷숏을 파티로 저렴하게',
+    summary: '넷숏(Netshort) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '넷숏(Netshort)은 숏폼 드라마 전문 플랫폼입니다. 혼자 구독하기 아까운 금액을 파티로 나눠 부담 없이 이용할 수 있습니다. ' +
       SHARED_TAIL,
@@ -70,6 +82,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'shortmax',
     en: 'Shortmax',
     tagline: '숏맥스를 파티로 저렴하게',
+    summary: '숏맥스(Shortmax) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '숏맥스(Shortmax)는 짧은 호흡의 드라마를 모아 볼 수 있는 숏폼 플랫폼입니다. 파티로 구독료를 나눠 정가보다 저렴하게 시청할 수 있습니다. ' +
       SHARED_TAIL,
@@ -78,6 +91,7 @@ const LANDING_INFO: Record<string, LandingInfo> = {
     slug: 'flickreels',
     en: 'FlickReels',
     tagline: '플릭릴스를 파티로 저렴하게',
+    summary: '플릭릴스(FlickReels) 구독료를 파티원끼리 나눠 정가보다 저렴하게 이용하세요.',
     description:
       '플릭릴스(FlickReels)는 숏폼 드라마를 제공하는 플랫폼입니다. 파티원끼리 계정을 나눠 쓰면 구독료 부담을 크게 줄일 수 있습니다. ' +
       SHARED_TAIL,

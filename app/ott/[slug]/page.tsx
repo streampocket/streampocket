@@ -89,9 +89,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const pageTitle = from
     ? `${nameWithEn} 파티 월 ${formatPrice(from)}원부터`
     : `${nameWithEn} 파티 공동구매`
+  // meta description은 summary를 쓴다 — description을 그대로 쓰면 400자가 넘어
+  // 검색결과에서 뒤가 잘린다(구글 ~155자). 긴 소개는 페이지 본문에 그대로 렌더되므로
+  // 콘텐츠로는 손실이 없다. JSON-LD의 description은 길이 제약이 없어 원문을 유지한다.
   const description = from
-    ? `${ott.description} 지금 모집중인 파티는 월 ${formatPrice(from)}원부터 참여할 수 있습니다.`
-    : ott.description
+    ? `${ott.summary} 지금 모집중인 파티는 월 ${formatPrice(from)}원부터 참여할 수 있습니다.`
+    : ott.summary
 
   return {
     title: pageTitle,
