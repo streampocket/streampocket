@@ -1,14 +1,19 @@
 import { getTodayStringKST } from '@/lib/utils'
-import type {
-  DecoratedAccount,
-  DecoratedMember,
-  DramaAccount,
-  DramaMember,
-  MemoLine,
-} from '../_types'
+import {
+  formatHeadLine,
+  formatMemberLine,
+  formatWho,
+  memberExpiresAt,
+} from '@/lib/dramaMemo'
+import type { DecoratedAccount, DecoratedMember, DramaAccount, MemoLine } from '../_types'
 
 // 화면에 그릴 줄과 검색 대상을 여기 한 곳에서 만든다.
 // 카드·목록 펼침·검색이 모두 같은 값을 쓰므로 "보이는 것 = 검색되는 것"이 구조적으로 보장된다.
+//
+// 메모 **형식**을 만드는 함수(헤더 줄·괄호 줄·만료 시각)는 `@/lib/dramaMemo`로 옮겼다 —
+// 신청 관리·주문 관리가 같은 글자의 메모를 그려야 해서 단일 소스로 둔 것이다.
+// 기존 import 경로(`../_lib/dramaView`)를 쓰는 컴포넌트가 그대로 동작하도록 여기서 다시 내보낸다.
+export { formatHeadLine, formatMemberLine, formatWho, memberExpiresAt }
 
 /** 만료가 임박했다고 표시할 기준(일) */
 export const MEMBER_SOON_DAYS = 3
@@ -30,17 +35,6 @@ function daysBetween(fromYmd: string, toYmd: string): number {
 }
 
 /**
- * 파티원의 만료 시각(epoch ms).
- *
- * 메모의 `2026.08.05/01:30`에서 시각이 곧 만료 시각이다 — 날짜만 보면
- * 01:30에 끝난 자리가 그날 하루 종일 차 있는 것으로 잡혀 빈자리를 늦게 발견한다.
- * 두 값 모두 KST 벽시계라 오프셋을 +09:00으로 명시한다 (브라우저 로컬 존으로 해석되면 몇 시간씩 어긋난다).
- */
-export function memberExpiresAt(member: Pick<DramaMember, 'endDate' | 'startTime'>): number {
-  return Date.parse(`${member.endDate}T${member.startTime}:00+09:00`)
-}
-
-/**
  * 파티원 줄에 붙일 마감 표시.
  * 24시간 이내는 남은 시간으로 보여준다 — "지금 들어갈 수 있는 자리인가"가 D-0으로는 안 읽힌다.
  */
@@ -52,27 +46,15 @@ export function formatTimeLeft(member: DecoratedMember): string | null {
   return null
 }
 
-/** 메모 원문의 사이트+이름 표기 — "중고나라#7561308"처럼 공백 없이 붙는 경우가 있다 */
-export function formatWho(member: Pick<DramaMember, 'site' | 'name' | 'siteSpaced'>): string {
-  if (!member.site) return member.name
-  return `${member.site}${member.siteSpaced ? ' ' : ''}${member.name}`
-}
-
-/** 파티원 한 줄을 메모 원문 그대로 만든다 */
-export function formatMemberLine(member: DramaMember): string {
-  const date = member.endDate.replace(/-/g, '.')
-  return `(${formatWho(member)} - ${date}/${member.startTime} ${member.days}일)${member.suffix ?? ''}`
-}
-
-/** 헤더 한 줄 — 멤버십이 열려 있을 때만 존재한다 */
-export function formatHeadLine(account: DramaAccount): string | null {
-  if (!account.platform || !account.dueAt) return null
-  return `[${account.dueAt}]-${account.platform}${account.capacityLabel ? ` ${account.capacityLabel}` : ''}`
-}
-
 /** 공백 개수 차이로 못 찾는 일이 없게 검색어와 본문을 같은 방식으로 정규화한다 */
 export const normalize = (value: string): string => value.replace(/\s+/g, ' ').trim().toLowerCase()
 
+/**
+ * ⚠️ **줄 순서는 `@/lib/dramaMemo`의 `buildMemoLines`와 같아야 한다.**
+ * 신청 관리·주문 관리가 같은 계정을 열었을 때 같은 메모가 나와야 하는데,
+ * 그쪽은 줄에 `{ id, expired }`만 달고 이쪽은 `DecoratedMember` 전체를 달아야 해서
+ * (임박 배지·삭제 버튼) 조립을 따로 한다. **한쪽 순서를 바꾸면 다른 쪽도 바꿀 것.**
+ */
 function buildLines(account: DramaAccount, members: DecoratedMember[], free: number): MemoLine[] {
   const lines: MemoLine[] = []
   const head = formatHeadLine(account)

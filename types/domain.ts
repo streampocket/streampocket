@@ -329,6 +329,59 @@ export type AccountCredentialSource =
   | 'secret_only'
 
 /**
+ * 메모 괄호 줄 한 개 — be `DramaMemberView`와 같은 모양.
+ *
+ * 드라마 계정 관리 페이지의 `DramaMember`(`drama/_types.ts`)와 구조는 같지만 **별개 선언**이다.
+ * 그 페이지의 타입을 옮기지 않기 위해(범위 최소화) 이름을 달리해 두 곳을 구분한다.
+ */
+export type DramaMemoMember = {
+  id: string
+  /** 신청 사이트. 카카오톡 닉네임만 적힌 파티원은 null */
+  site: string | null
+  name: string
+  /** 사이트와 이름 사이 공백 유무 — "중고나라#7561308"처럼 붙여 쓴 원문 재현용 */
+  siteSpaced: boolean
+  /** 'YYYY-MM-DD' — 만료일 */
+  endDate: string
+  /** 'HH:mm' — 시작 시각이자 만료 시각 */
+  startTime: string
+  days: number
+  /** 닫는 괄호 뒤 원문 꼬리 ("-갤s26" 등) */
+  suffix: string | null
+}
+
+/**
+ * 메모 원문 재현에 필요한 계정 상태 — be `DramaAccountMemo`와 같은 모양.
+ * 만료된 파티원도 포함한다 (정리 전까지 메모에 남아 있으므로).
+ */
+export type DramaAccountMemo = {
+  capacity: number | null
+  /** 화면에 그대로 출력할 정원 표기 ("3인" / "프라이빗") */
+  capacityLabel: string | null
+  /** 파티원 형식이 아닌 괄호 줄 — 원문 보존 */
+  notes: string[]
+  members: DramaMemoMember[]
+}
+
+/** 메모 한 덩어리를 만드는 데 필요한 최소 정보 (`lib/dramaMemo.buildMemoLines` 입력) */
+export type DramaMemoSource = DramaAccountMemo & {
+  email: string
+  password: string
+  otpSecret: string
+  platform: string | null
+  /** 'YYYY-MM-DD' — 멤버십 마감일 */
+  dueAt: string | null
+}
+
+/** 메모에 그릴 한 줄. otp는 credential이지만 줄 단위로 구분이 필요해 따로 둔다 */
+export type MemoLine = {
+  text: string
+  kind: 'head' | 'credential' | 'otp' | 'member' | 'note' | 'free'
+  /** 파티원 줄일 때만 — 취소선·본인 줄 강조 판정에 쓴다 */
+  member?: { id: string; expired: boolean }
+}
+
+/**
  * 배정된 드라마 계정의 아이디·비밀번호·OTP 시크릿.
  * 신청 관리와 주문 관리가 함께 쓰므로 페이지 _types가 아니라 여기에 둔다.
  * 관리자 전용 응답이며, 마스킹 없이 그대로 표시한다 (드라마 계정 관리와 같은 정책).
@@ -336,6 +389,11 @@ export type AccountCredentialSource =
 export type PartyAccountCredentials = {
   source: AccountCredentialSource
   accountId: string | null
+  /**
+   * 이 신청이 차지한 파티원 행 — 메모에서 "어느 줄이 이 신청인지" 강조하는 데 쓴다.
+   * 수동 등록(시크릿 역추적) 건은 링크가 없어 null.
+   */
+  memberId: string | null
   email: string | null
   password: string | null
   /** 신청에 등록된 시크릿 — 구매자가 실제로 발급받는 값 */
@@ -347,6 +405,8 @@ export type PartyAccountCredentials = {
   secretMismatch: boolean
   /** 같은 시크릿을 쓰는 계정이 여럿이라 확정할 수 없음 */
   ambiguous: boolean
+  /** 메모 원문을 그리는 데 쓰는 계정 상태. 계정을 못 찾은 secret_only면 null */
+  memo: DramaAccountMemo | null
 }
 
 // ───────────────────────── 인증 (OTTALL) ─────────────────────────

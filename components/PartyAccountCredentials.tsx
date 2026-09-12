@@ -1,7 +1,12 @@
 'use client'
 
 import { Badge } from '@/components/ui/Badge'
-import type { PartyAccountCredentials as Credentials } from '@/types/domain'
+import { cn } from '@/lib/utils'
+import { buildMemoLines } from '@/lib/dramaMemo'
+import type {
+  MemoLine,
+  PartyAccountCredentials as Credentials,
+} from '@/types/domain'
 
 type PartyAccountCredentialsProps = {
   credentials: Credentials
@@ -25,7 +30,18 @@ export function PartyAccountCredentials({
   onSyncSecret,
   syncing = false,
 }: PartyAccountCredentialsProps) {
-  const { source, email, password, otpSecret, platform, dueAt, secretMismatch, ambiguous } = credentials
+  const {
+    source,
+    memberId,
+    email,
+    password,
+    otpSecret,
+    platform,
+    dueAt,
+    secretMismatch,
+    ambiguous,
+    memo,
+  } = credentials
 
   return (
     <div className="space-y-2 rounded-lg border border-border bg-gray-50 p-3">
@@ -46,26 +62,36 @@ export function PartyAccountCredentials({
         </p>
       )}
 
-      <dl className="space-y-1.5">
-        {source === 'secret_only' ? (
-          <p className="text-caption-md text-warning">
-            ⚠ 이 시크릿과 일치하는 드라마 계정을 찾지 못했습니다. 계정이 삭제됐거나 시크릿이 변경된 상태입니다.
-          </p>
-        ) : (
-          <>
-            <CredentialRow label="아이디" value={email} />
-            <CredentialRow label="비밀번호" value={password} />
-          </>
-        )}
-        <CredentialRow label="OTP 시크릿" value={otpSecret} />
-        {(platform || dueAt) && (
-          <CredentialRow
-            label="계정"
-            value={[platform, dueAt && `마감 ${dueAt}`].filter(Boolean).join(' · ')}
-            mono={false}
-          />
-        )}
-      </dl>
+      {memo && email !== null && password !== null ? (
+        <MemoBlock
+          lines={buildMemoLines({ email, password, otpSecret, platform, dueAt, ...memo })}
+          highlightMemberId={memberId}
+        />
+      ) : (
+        // memo가 없으면(= 계정을 못 찾은 secret_only) 메모를 만들 수 없어 기존 라벨 표시로 떨어진다.
+        // 배정 링크가 있어도 그 사이 계정이 지워졌다면 서버가 시크릿 역추적으로 넘겨
+        // secret_only로 내려주므로, 여기서 따로 다룰 경우가 더 있지는 않다.
+        <dl className="space-y-1.5">
+          {source === 'secret_only' ? (
+            <p className="text-caption-md text-warning">
+              ⚠ 이 시크릿과 일치하는 드라마 계정을 찾지 못했습니다. 계정이 삭제됐거나 시크릿이 변경된 상태입니다.
+            </p>
+          ) : (
+            <>
+              <CredentialRow label="아이디" value={email} />
+              <CredentialRow label="비밀번호" value={password} />
+            </>
+          )}
+          <CredentialRow label="OTP 시크릿" value={otpSecret} />
+          {(platform || dueAt) && (
+            <CredentialRow
+              label="계정"
+              value={[platform, dueAt && `마감 ${dueAt}`].filter(Boolean).join(' · ')}
+              mono={false}
+            />
+          )}
+        </dl>
+      )}
 
       {source === 'matched_by_secret' && (
         <p className="text-caption-sm text-text-muted">
@@ -97,6 +123,63 @@ export function PartyAccountCredentials({
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+/**
+ * 메모 원문을 드라마 계정 관리와 같은 모양으로 그린다 (읽기 전용).
+ *
+ * 그쪽 `MemoLines`에서 검색 하이라이트·파티원 삭제 버튼·OTP 「발급」 버튼·임박 배지를 뺐다.
+ * 발급 버튼을 두지 않는 것은 기존 결정이다 — 구매자가 사이트·채팅으로 발급받는 구조(3회 한도)라
+ * 관리자 화면에서는 시크릿 문자열만 보여준다.
+ *
+ * 폰트·행간은 드라마 카드와 같은 스펙을 쓴다 (같은 글자가 같은 모양으로 보여야 비교가 쉽다).
+ */
+function MemoBlock({
+  lines,
+  highlightMemberId,
+}: {
+  lines: MemoLine[]
+  highlightMemberId: string | null
+}) {
+  return (
+    <div className="max-h-56 overflow-auto rounded-lg border border-border bg-white px-3 py-2 font-mono text-[12.5px] leading-[22px] tabular-nums">
+      {lines.map((line, index) => {
+        // 줄 순서가 곧 정체성이라 index를 key로 쓴다 (같은 텍스트가 반복될 수 있음)
+        const isMine = line.member != null && line.member.id === highlightMemberId
+        return (
+          <div
+            key={`${line.kind}-${index}`}
+            className={cn(
+              '-mx-1.5 flex min-h-[22px] items-center gap-2 rounded px-1.5',
+              isMine && 'bg-brand/10',
+            )}
+          >
+            <span
+              className={cn(
+                'whitespace-pre',
+                line.kind === 'head' && 'font-bold',
+                (line.kind === 'free' || line.kind === 'note') && 'text-text-muted',
+                line.member?.expired && 'text-text-muted line-through',
+              )}
+            >
+              {line.text}
+            </span>
+            {line.member?.expired && (
+              <span className="text-caption-sm bg-badge-red-bg text-badge-red-text shrink-0 rounded px-1.5 font-semibold">
+                만료
+              </span>
+            )}
+            {/* 파티원이 여럿이고 이름이 비슷하면 어느 줄이 이 신청인지 구분되지 않는다 */}
+            {isMine && (
+              <span className="text-caption-sm text-brand shrink-0 font-sans font-semibold">
+                ← 이 신청
+              </span>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

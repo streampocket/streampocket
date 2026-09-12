@@ -3,6 +3,7 @@ import type {
   PartyType,
   PartyDurationMode,
   PartyAccountCredentials,
+  DramaAccountMemo,
 } from '@/types/domain'
 
 export type ApplicationTabStatus = PartyApplicationStatus | 'all'
@@ -63,7 +64,14 @@ export type AssignedDramaAccount = {
   platform: string | null
   /** 'YYYY-MM-DD' */
   dueAt: string | null
+  /**
+   * 서버가 미리보기 시점에 센 빈자리.
+   * 화면에 숫자로 그리지 않는다 — 메모의 `(빈자리)` 줄이 같은 정보를 보여주는데,
+   * 둘은 기준 시각이 달라(서버 응답 시점 vs 렌더 시점) 숫자가 엇갈릴 수 있다.
+   */
   freeSlots: number
+  /** 메모 원문을 그리는 데 쓰는 계정 상태 (파티원 목록 포함) */
+  memo: DramaAccountMemo | null
 }
 
 /**
