@@ -92,21 +92,6 @@ export function OwnProductList({ initialProducts, initialCategories }: OwnProduc
         </p>
       </div>
 
-      {/* OTT별 대표 페이지 링크 — 크롤러가 랜딩으로 들어가는 내부 경로이자,
-          사용자가 특정 OTT의 소개·후기를 모아 보는 입구다 */}
-      <nav aria-label="OTT별 보기" className="flex flex-wrap items-center gap-2">
-        <span className="text-body-md text-text-secondary">OTT별로 보기</span>
-        {OTT_CATALOG.map((ott) => (
-          <Link
-            key={ott.slug}
-            href={`/ott/${ott.slug}`}
-            className="rounded-full bg-gray-100 px-3 py-1 text-caption-md font-medium text-text-secondary transition-colors hover:bg-gray-200"
-          >
-            {ott.label}
-          </Link>
-        ))}
-      </nav>
-
       {/* 카테고리 필터 + 정렬 (상태 탭 없음 — 모집중만 노출) */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
@@ -168,6 +153,32 @@ export function OwnProductList({ initialProducts, initialCategories }: OwnProduc
           {isFilterChanged ? '조건에 맞는 파티가 없습니다.' : '등록된 파티가 없습니다.'}
         </div>
       )}
+
+      {/* OTT별 대표 페이지 링크 — 크롤러가 랜딩으로 들어가는 내부 경로이자,
+          사용자가 특정 OTT의 소개·후기를 모아 보는 입구다.
+          목록 위가 아니라 아래에 두는 이유: 위에 두면 바로 아래 카테고리 필터 칩과
+          모양·이름이 같아 "필터"로 오해된다 (카테고리는 파티명으로 자동 생성돼 OTT명과 겹친다).
+          단, 위 3분기(로딩·목록·빈 목록) 바깥에 둬야 모집중이 0이어도 링크가 남는다 —
+          이 링크는 검색 크롤러가 랜딩 7개로 들어가는 경로를 겸하기 때문이다.
+          pb-16: 페이지 최하단이라 카카오 문의 플로팅 버튼(fixed bottom-6 right-6, 56px)이
+          마지막 줄 pill을 덮는다. 그만큼 아래 여백을 줘 탭 영역이 가리지 않게 한다. */}
+      <nav aria-label="OTT별 보기" className="border-t border-border pb-16 pt-6">
+        <span className="text-body-md text-text-secondary">OTT별로 보기</span>
+        <p className="mt-1 text-caption-md text-text-muted">
+          OTT별 페이지에서 소개와 이용 후기까지 모아 볼 수 있습니다.
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {OTT_CATALOG.map((ott) => (
+            <Link
+              key={ott.slug}
+              href={`/ott/${ott.slug}`}
+              className="rounded-full bg-gray-100 px-3 py-1 text-caption-md font-medium text-text-secondary transition-colors hover:bg-gray-200"
+            >
+              {ott.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
     </div>
   )
 }
