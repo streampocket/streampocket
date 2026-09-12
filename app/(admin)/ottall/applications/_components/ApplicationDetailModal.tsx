@@ -289,6 +289,8 @@ function toPreviewCredentials(account: AssignedDramaAccount): PartyAccountCreden
   return {
     source: 'assigned',
     accountId: account.id,
+    // 아직 배정 전이라 이 신청의 파티원 행이 없다 — 강조할 줄도 없다
+    memberId: null,
     email: account.email,
     password: account.password,
     otpSecret: account.otpSecret,
@@ -296,6 +298,7 @@ function toPreviewCredentials(account: AssignedDramaAccount): PartyAccountCreden
     dueAt: account.dueAt,
     secretMismatch: false,
     ambiguous: false,
+    memo: account.memo,
   }
 }
 
@@ -329,8 +332,10 @@ function AutoAssignToggle({ detail, checked, disabled, onChange }: AutoAssignTog
 
       {eligible && account ? (
         <div className="mt-2 pl-6">
+          {/* 빈자리 개수는 따로 적지 않는다 — 메모의 `(빈자리)` 줄이 같은 정보를 보여주는데,
+              서버가 응답 시점에 센 freeSlots와 화면이 렌더 시점에 센 줄 수가 엇갈릴 수 있다
+              (파티원 만료는 01:30처럼 시각 단위라 그 사이에 넘어갈 수 있다) */}
           <PartyAccountCredentials credentials={toPreviewCredentials(account)} tentative />
-          <p className="text-caption-sm mt-1 text-text-muted">빈자리 {account.freeSlots}개</p>
         </div>
       ) : (
         <p className="text-caption-md mt-1.5 pl-6 text-danger">
