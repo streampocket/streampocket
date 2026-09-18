@@ -111,6 +111,8 @@ export const QUERY_KEYS = {
     all: () => ['adminApplications'] as const,
     list: (params?: Record<string, unknown>) => ['adminApplications', 'list', params] as const,
     detail: (id: string) => ['adminApplications', id] as const,
+    /** 승인 시 배정할 계정 후보 — 모달에서 "다른 계정 선택"을 열 때만 조회한다 */
+    assignCandidates: (id: string) => ['adminApplications', id, 'assignCandidates'] as const,
   },
   adminUsers: {
     all: () => ['adminUsers'] as const,

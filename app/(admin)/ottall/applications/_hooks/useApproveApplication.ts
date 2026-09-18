@@ -45,8 +45,25 @@ export function useApproveApplication() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ applicationId, autoAssign }: { applicationId: string; autoAssign: boolean }) =>
-      api.post<ApproveResponse>(`/own/admin/applications/${applicationId}/approve`, { autoAssign }),
+    mutationFn: ({
+      applicationId,
+      autoAssign,
+      dramaAccountId,
+    }: {
+      applicationId: string
+      autoAssign: boolean
+      /**
+       * 관리자가 후보 목록에서 **추천과 다른 계정을 고른 경우에만** 넘긴다.
+       * 없으면 요청 본문에 키를 담지 않아 서버가 기존과 같은 자동 선택을 한다 —
+       * 추천 계정을 굳이 지정해 보내면, 모달을 열어둔 사이 그 계정의 자리가 차면
+       * 지금은 조용히 다른 계정으로 배정되던 건이 실패로 바뀐다.
+       */
+      dramaAccountId?: string
+    }) =>
+      api.post<ApproveResponse>(`/own/admin/applications/${applicationId}/approve`, {
+        autoAssign,
+        ...(dramaAccountId ? { dramaAccountId } : {}),
+      }),
     onSuccess: (response) => {
       notifyApproveResult(response)
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminApplications.all() })

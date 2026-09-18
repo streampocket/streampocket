@@ -75,6 +75,16 @@ export type AssignedDramaAccount = {
 }
 
 /**
+ * 관리자가 고를 수 있는 배정 후보.
+ *
+ * 서버가 자동 배정과 **같은 조건·같은 정렬**(마감일 → 이메일)로 내려주므로 첫 번째가 곧
+ * 자동 선택이 고를 계정이고, 그 항목만 `recommended`다.
+ */
+export type AssignCandidate = AssignedDramaAccount & {
+  recommended: boolean
+}
+
+/**
  * 승인 전 미리보기 — "지금 승인하면 어떤 계정이 배정되는지".
  * 예약이 아니라 조회할 때마다 다시 계산되는 값이라, 승인 시점에 다른 계정이 될 수 있다.
  */
