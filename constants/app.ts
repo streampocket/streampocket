@@ -128,6 +128,9 @@ export const AUTO_ASSIGN_REASON_LABEL: Record<string, string> = {
   already_has_secret: "이미 OTP 시크릿이 등록되어 있어 자동 배정할 수 없습니다.",
   unmapped_party: "이 파티는 드라마 계정 플랫폼 매핑이 없습니다.",
   no_account: "조건에 맞는 계정이 없습니다 (플랫폼·파티 타입·빈자리·마감일 확인 필요).",
+  // 관리자가 고른 계정만 안 되는 경우 — no_account("계정이 아예 없음")와 구분해야 다음 행동이 갈린다
+  chosen_unavailable:
+    "선택한 계정에 배정할 수 없습니다 (그 사이 자리가 채워졌을 수 있습니다). 다른 계정을 골라 다시 시도해 주세요.",
 };
 
 /** 사유 코드를 문구로. 매핑에 없으면(트랜잭션 오류 메시지 등) 원문을 그대로 보여준다 */

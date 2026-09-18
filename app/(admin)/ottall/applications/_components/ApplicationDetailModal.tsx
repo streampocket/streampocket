@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -11,10 +12,16 @@ import { useDuplicateParty } from '../_hooks/useDuplicateParty'
 import { useExpandPartySlots } from '../_hooks/useExpandPartySlots'
 import { usePartyAutoAssignSetting } from '../_hooks/usePartyAutoAssignSetting'
 import { useRejectApplication } from '../_hooks/useRejectApplication'
+import { useAssignCandidates } from '../_hooks/useAssignCandidates'
 import { PartyAccountCredentials } from '@/components/PartyAccountCredentials'
 import { CopyTextButton } from '@/components/CopyTextButton'
 import type { PartyAccountCredentials as PartyAccountCredentialsType } from '@/types/domain'
-import type { AdminAlimtalkLog, AdminApplicationDetail, AssignedDramaAccount } from '../_types'
+import type {
+  AdminAlimtalkLog,
+  AdminApplicationDetail,
+  AssignCandidate,
+  AssignedDramaAccount,
+} from '../_types'
 import {
   PARTY_TYPE_META,
   PARTY_DURATION_MODE_META,
@@ -77,12 +84,29 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
   const canAutoAssign = detail?.autoAssignPreview.eligible ?? false
   const autoAssign = canAutoAssign && autoAssignSetting.enabled
 
+  // 관리자가 후보 목록에서 고른 계정. 추천(=자동 선택)을 그대로 두면 null이라 요청에 담기지 않고
+  // 기존과 같은 자동 선택이 돈다 — 추천을 굳이 지정해 보내면 그 사이 자리가 찼을 때
+  // 조용히 다른 계정으로 배정되던 건이 실패로 바뀐다.
+  const [chosenAccountId, setChosenAccountId] = useState<string | null>(null)
+
+  // 이 모달은 page.tsx에서 **항상 마운트**된 채 applicationId만 바뀐다(닫으면 null).
+  // 그래서 신청이 바뀔 때 선택을 직접 버려야 한다 — 안 버리면 A에서 고른 계정이 남아
+  // B를 승인할 때 관리자가 고르지도 않은 계정에 배정된다.
+  useEffect(() => {
+    setChosenAccountId(null)
+  }, [applicationId])
+
   const handleApprove = () => {
     if (!applicationId) return
     const notice = autoAssign ? '\n승인과 동시에 계정을 배정합니다.' : ''
     if (!confirm(`이 신청을 승인하시겠습니까? 승인 시점부터 이용 기간이 시작됩니다.${notice}`)) return
     approveMutation.mutate(
-      { applicationId, autoAssign },
+      {
+        applicationId,
+        autoAssign,
+        // 배정을 안 하는 승인에는 계정 선택이 의미 없다
+        dramaAccountId: autoAssign ? (chosenAccountId ?? undefined) : undefined,
+      },
       {
         onSuccess: (res) => {
           onClose()
@@ -245,6 +269,7 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
             <div className="space-y-3 border-t border-border pt-4">
               <AutoAssignToggle
                 detail={detail}
+                applicationId={applicationId ?? ''}
                 checked={autoAssign}
                 disabled={
                   !canAutoAssign ||
@@ -253,6 +278,8 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
                   rejectMutation.isPending
                 }
                 onChange={autoAssignSetting.save}
+                chosenAccountId={chosenAccountId}
+                onChooseAccount={setChosenAccountId}
               />
               <div className="flex justify-end gap-2">
                 <Button
@@ -304,17 +331,48 @@ function toPreviewCredentials(account: AssignedDramaAccount): PartyAccountCreden
 
 type AutoAssignToggleProps = {
   detail: AdminApplicationDetail
+  applicationId: string
   checked: boolean
   disabled: boolean
   onChange: (next: boolean) => void
+  /** 관리자가 고른 계정. null이면 추천(자동 선택) 그대로 */
+  chosenAccountId: string | null
+  onChooseAccount: (accountId: string | null) => void
 }
 
 /**
  * 승인 시 계정 자동 배정 토글.
  * 배정 가능할 때는 어떤 계정이 나갈지 미리 보여주고, 불가할 때는 사유를 보여주며 꺼진 채로 잠긴다.
+ * 여기서 "다른 계정 선택"을 열면 조건에 맞는 후보를 받아 골라 배정할 수 있다.
  */
-function AutoAssignToggle({ detail, checked, disabled, onChange }: AutoAssignToggleProps) {
+function AutoAssignToggle({
+  detail,
+  applicationId,
+  checked,
+  disabled,
+  onChange,
+  chosenAccountId,
+  onChooseAccount,
+}: AutoAssignToggleProps) {
   const { eligible, reason, account } = detail.autoAssignPreview
+  const [pickerOpen, setPickerOpen] = useState(false)
+  // 목록을 열 때만 조회한다 — 응답에 후보 전건의 비밀번호·시크릿 평문이 실린다
+  const candidatesQuery = useAssignCandidates(applicationId, pickerOpen && eligible && checked)
+  // useMemo가 없으면 매 렌더 새 배열이라 아래 useEffect 의존성이 계속 바뀐다
+  const candidates = useMemo(() => candidatesQuery.data ?? [], [candidatesQuery.data])
+
+  // 목록을 다시 받은 사이(staleTime 0 — 포커스 복귀 등) 고른 계정이 조건을 잃어 사라졌다면
+  // 선택을 버린다. 안 버리면 화면은 추천 계정 메모를 보여주는데 승인은 사라진 계정을 지정해
+  // chosen_unavailable로 실패한다 — 보이는 것과 보내는 것이 달라지는 상태다.
+  useEffect(() => {
+    if (chosenAccountId && candidates.length > 0 && !candidates.some((c) => c.id === chosenAccountId)) {
+      onChooseAccount(null)
+    }
+  }, [chosenAccountId, candidates, onChooseAccount])
+
+  // 고른 계정의 메모를 위 블록에 보여준다. 아직 목록을 안 열었거나 추천 그대로면 미리보기 계정이다.
+  const shownAccount: AssignedDramaAccount | null =
+    (chosenAccountId ? candidates.find((c) => c.id === chosenAccountId) : null) ?? account
 
   return (
     <div className="rounded-lg border border-border bg-gray-50 p-3">
@@ -330,18 +388,100 @@ function AutoAssignToggle({ detail, checked, disabled, onChange }: AutoAssignTog
         {!eligible && <Badge variant="gray">자동 배정 불가</Badge>}
       </label>
 
-      {eligible && account ? (
-        <div className="mt-2 pl-6">
+      {eligible && shownAccount ? (
+        <div className="mt-2 space-y-2 pl-6">
           {/* 빈자리 개수는 따로 적지 않는다 — 메모의 `(빈자리)` 줄이 같은 정보를 보여주는데,
               서버가 응답 시점에 센 freeSlots와 화면이 렌더 시점에 센 줄 수가 엇갈릴 수 있다
               (파티원 만료는 01:30처럼 시각 단위라 그 사이에 넘어갈 수 있다) */}
-          <PartyAccountCredentials credentials={toPreviewCredentials(account)} tentative />
+          <PartyAccountCredentials credentials={toPreviewCredentials(shownAccount)} tentative />
+
+          {!pickerOpen ? (
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              disabled={disabled || !checked}
+              className="text-caption-md rounded-lg border border-border bg-white px-2.5 py-1 font-medium text-text-primary transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              다른 계정 선택
+            </button>
+          ) : (
+            <AssignCandidatePicker
+              candidates={candidates}
+              isLoading={candidatesQuery.isLoading}
+              error={candidatesQuery.error}
+              chosenAccountId={chosenAccountId}
+              onChoose={onChooseAccount}
+            />
+          )}
         </div>
       ) : (
         <p className="text-caption-md mt-1.5 pl-6 text-danger">
           ⚠ {describeAutoAssignReason(reason)}
         </p>
       )}
+    </div>
+  )
+}
+
+/**
+ * 배정 후보 선택 — 조건에 맞는 계정을 나열하고 하나를 고른다.
+ *
+ * 추천(첫 항목)을 고르면 `null`로 되돌려 요청에 계정을 담지 않게 한다. 추천을 굳이 지정해
+ * 보내면, 모달을 열어둔 사이 그 계정의 자리가 차면 지금은 조용히 다른 계정으로 배정되던 건이
+ * 실패로 바뀐다 — 아무것도 고르지 않은 관리자의 기대는 "알아서 배정"이다.
+ */
+function AssignCandidatePicker({
+  candidates,
+  isLoading,
+  error,
+  chosenAccountId,
+  onChoose,
+}: {
+  candidates: AssignCandidate[]
+  isLoading: boolean
+  error: Error | null
+  chosenAccountId: string | null
+  onChoose: (accountId: string | null) => void
+}) {
+  if (isLoading) {
+    return <p className="text-caption-md text-text-muted">후보를 불러오는 중...</p>
+  }
+  if (error) {
+    return <p className="text-caption-md text-danger">⚠ {error.message}</p>
+  }
+  if (candidates.length === 0) {
+    return <p className="text-caption-md text-text-muted">고를 수 있는 계정이 없습니다.</p>
+  }
+
+  return (
+    <div className="space-y-1 rounded-lg border border-border bg-white p-2">
+      <p className="text-caption-sm text-text-muted">
+        마감일이 빠른 순입니다. 고른 계정의 파티원이 위에 표시됩니다.
+      </p>
+      {candidates.map((candidate) => {
+        const selected = candidate.recommended
+          ? chosenAccountId === null || chosenAccountId === candidate.id
+          : chosenAccountId === candidate.id
+        return (
+          <label
+            key={candidate.id}
+            className="text-caption-md flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 hover:bg-gray-50"
+          >
+            <input
+              type="radio"
+              name="assign-candidate"
+              className="h-3.5 w-3.5 accent-brand"
+              checked={selected}
+              onChange={() => onChoose(candidate.recommended ? null : candidate.id)}
+            />
+            <span className="font-mono text-text-primary">{candidate.email}</span>
+            <span className="text-text-muted">
+              마감 {candidate.dueAt ?? '—'} · 빈자리 {candidate.freeSlots}
+            </span>
+            {candidate.recommended && <Badge variant="gray">추천</Badge>}
+          </label>
+        )
+      })}
     </div>
   )
 }
