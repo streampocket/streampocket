@@ -465,20 +465,26 @@ function AssignCandidatePicker({
         return (
           <label
             key={candidate.id}
-            className="text-caption-md flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 hover:bg-gray-50"
+            className="text-caption-md flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 hover:bg-gray-50"
           >
             <input
               type="radio"
               name="assign-candidate"
-              className="h-3.5 w-3.5 accent-brand"
+              className="mt-px h-3.5 w-3.5 shrink-0 accent-brand"
               checked={selected}
               onChange={() => onChoose(candidate.recommended ? null : candidate.id)}
             />
-            <span className="font-mono text-text-primary">{candidate.email}</span>
-            <span className="text-text-muted">
-              마감 {candidate.dueAt ?? '—'} · 빈자리 {candidate.freeSlots}
+            {/* 모바일(390px)에서는 이 안쪽 폭이 ~250px뿐이라 이메일·마감·빈자리가 한 줄에 못 들어간다.
+                flex-wrap으로 넘치는 만큼만 아래 줄로 내리고(데스크톱은 그대로 한 줄),
+                min-w-0 + break-all로 아주 긴 이메일도 컨테이너를 밀지 못하게 한다 —
+                모달 본문이 overflow-y-auto라 가로도 auto로 승격돼, 안 막으면 모달이 옆으로 밀린다. */}
+            <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-0.5">
+              <span className="break-all font-mono text-text-primary">{candidate.email}</span>
+              <span className="whitespace-nowrap text-text-muted">
+                마감 {candidate.dueAt ?? '—'} · 빈자리 {candidate.freeSlots}
+              </span>
+              {candidate.recommended && <Badge variant="gray">추천</Badge>}
             </span>
-            {candidate.recommended && <Badge variant="gray">추천</Badge>}
           </label>
         )
       })}
