@@ -52,3 +52,23 @@ export function formatMonthDay(date: string | Date): string {
 export function getTodayStringKST(): string {
   return formatDateOnly(new Date())
 }
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+/** from부터 to까지의 일수 (올림 — "오늘까지"가 0일로 보이지 않게, 음수는 0) */
+export function getDaysBetween(from: string | Date, to: string | Date): number {
+  const ms = new Date(to).getTime() - new Date(from).getTime()
+  return Math.max(0, Math.ceil(ms / MS_PER_DAY))
+}
+
+/**
+ * 신청자가 실제로 받는 이용 일수 표시.
+ *
+ * 기간 차감형은 늦게 승인될수록 파티 종료일에 잘려 durationDays보다 짧아진다 — 줄었으면 원래
+ * 파티 기간을 병기한다. 차감형 종료가 "첫 승인 시각"에 고정돼 생기는 시간 단위 오차로
+ * 올림 결과가 durationDays를 넘지 않게 상한을 둔다.
+ */
+export function formatUsageDays(actualDays: number, durationDays: number): string {
+  const days = Math.min(actualDays, durationDays)
+  return days < durationDays ? `${days}일 (파티 ${durationDays}일)` : `${durationDays}일`
+}

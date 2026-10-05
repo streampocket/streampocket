@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { useMyApplications } from '../_hooks/useMyApplications'
 import { OtpIssuePanel } from './OtpIssuePanel'
 import { formatPoint, formatWon, payableAmount } from '@/lib/points'
+import { formatUsageDays, getDaysBetween } from '@/lib/utils'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { MyApplication } from '../_types'
 
@@ -62,6 +63,12 @@ function ApplicationCard({ application }: ApplicationCardProps) {
     application.status === 'confirmed' &&
     application.expiresAt !== null &&
     new Date(application.expiresAt).getTime() > Date.now()
+  // 기간 차감형은 늦게 승인되면 파티 종료일에 잘려 설정 기간보다 짧다 — 아래 "이용 기간" 날짜와 같은 기간을
+  // 일수로 보여준다. 대기·취소 건은 아직 받은 기간이 없어 파티 설정 기간 그대로.
+  const usageDays =
+    application.startedAt && application.expiresAt
+      ? getDaysBetween(application.startedAt, application.expiresAt)
+      : application.product.durationDays
 
   return (
     <Card>
@@ -74,7 +81,7 @@ function ApplicationCard({ application }: ApplicationCardProps) {
                 {application.product.name}
               </p>
               <p className="text-caption-md text-text-muted">
-                {application.product.category.name} · {application.product.durationDays}일
+                {`${application.product.category.name} · ${formatUsageDays(usageDays, application.product.durationDays)}`}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
