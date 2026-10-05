@@ -31,7 +31,7 @@ import {
   PARTY_MESSAGE_TEMPLATES,
   buildAccountCredentialText,
 } from '@/constants/partyTemplates'
-import { formatDateOnly, formatMonthDay } from '@/lib/utils'
+import { formatDateOnly, formatMonthDay, formatUsageDays, getDaysBetween } from '@/lib/utils'
 import { formatPoint, payableAmount } from '@/lib/points'
 
 type ApplicationDetailModalProps = {
@@ -61,10 +61,23 @@ function formatPrice(amount: number): string {
   return amount.toLocaleString('ko-KR')
 }
 
-/** 지금부터 그 시각까지 남은 일수 (올림 — "오늘까지"를 0일로 보이지 않게) */
-function daysUntil(dateStr: string): number {
-  const ms = new Date(dateStr).getTime() - Date.now()
-  return Math.max(0, Math.ceil(ms / (24 * 60 * 60 * 1000)))
+/**
+ * 이 신청자가 실제로 받는(받을) 이용 일수.
+ *
+ * 저장된 expiresAt이 곧 실제 이용 종료일이라 날짜 차이만 쓰고 차감형 공식을 다시 계산하지 않는다
+ * (유지형은 승인+기간이라 자연히 전체 기간이 나온다).
+ * - 확정·만료: 시작~만료
+ * - 대기: 지금 승인하면 받는 일수 — "승인 시 만료" 행과 같은 값
+ * - 그 외(거절 등 날짜 없음): 파티 설정 기간
+ */
+function resolveUsageDays(detail: AdminApplicationDetail): number {
+  if (detail.startedAt && detail.expiresAt) {
+    return getDaysBetween(detail.startedAt, detail.expiresAt)
+  }
+  if (detail.status === 'pending' && detail.expiresAtIfApprovedNow) {
+    return getDaysBetween(new Date(), detail.expiresAtIfApprovedNow)
+  }
+  return detail.product.durationDays
 }
 
 export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDetailModalProps) {
@@ -170,7 +183,10 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
               </Badge>
             </div>
             <InfoRow label="카테고리" value={detail.product.category.name} />
-            <InfoRow label="이용 기간" value={`${detail.product.durationDays}일`} />
+            <InfoRow
+              label="이용 기간"
+              value={formatUsageDays(resolveUsageDays(detail), detail.product.durationDays)}
+            />
             <PartyPeriodRow detail={detail} />
             <div className="flex items-center gap-3">
               <span className="text-body-md w-20 shrink-0 text-text-muted">모집 현황</span>
@@ -242,7 +258,7 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
             {detail.status === 'pending' && detail.expiresAtIfApprovedNow && (
               <InfoRow
                 label="승인 시 만료"
-                value={`${formatDateTime(detail.expiresAtIfApprovedNow)} (${daysUntil(detail.expiresAtIfApprovedNow)}일)`}
+                value={`${formatDateTime(detail.expiresAtIfApprovedNow)} (${getDaysBetween(new Date(), detail.expiresAtIfApprovedNow)}일)`}
               />
             )}
           </section>
