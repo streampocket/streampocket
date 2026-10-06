@@ -1,19 +1,17 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { use, useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { Card, CardBody } from '@/components/ui/Card'
 import { USER_LOGIN_PATH } from '@/constants/app'
 import { getUserInfo, isUserAuthenticated } from '@/lib/userAuth'
 import { ReviewForm } from '../../_components/ReviewForm'
 import { useOwnReview } from '../../_hooks/useOwnReview'
 
-type EditPageProps = {
-  params: Promise<{ id: string }>
-}
-
-export default function EditReviewPage({ params }: EditPageProps) {
-  const { id } = use(params)
+export default function EditReviewPage() {
+  // 클라이언트 페이지라 params를 props로 받지 않고 훅으로 읽는다 — Next 14에선 params가 Promise가
+  // 아닌 일반 객체로 와서 use(params)가 "unsupported type" 에러로 페이지 전체가 깨졌다 (14·15 모두 동작)
+  const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const [authChecked, setAuthChecked] = useState(false)
   const reviewQuery = useOwnReview(authChecked ? id : undefined)
