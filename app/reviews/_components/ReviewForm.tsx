@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { REVIEW_CONTENT_MAX_LENGTH } from '@/constants/app'
+import { REVIEW_CONTENT_MAX_LENGTH, REVIEW_CONTENT_MIN_LENGTH } from '@/constants/app'
 import { useCreateReview, useUpdateReview } from '../_hooks/useOwnReview'
 import { useReviewableApplications } from '@/hooks/useReviewableApplications'
 import { ReviewImageUploader } from './ReviewImageUploader'
@@ -49,10 +49,15 @@ export function ReviewForm(props: ReviewFormProps) {
     eligibleQuery.data?.find((app) => app.id === applicationId)?.rewardPoint ?? null
 
   const trimmedContent = content.trim()
+  // 공백(띄어쓰기·줄바꿈)을 빼고 코드포인트 단위로 센다 — be(countReviewContentChars)와 같은 식.
+  // `.length`는 이모지를 2자로 세서 짧은 이모지 리뷰가 통과하므로 Array.from으로 펼쳐서 센다
+  // (fe tsconfig target에선 문자열 spread가 막혀 Array.from 사용 — 결과는 be의 [...s]와 동일).
+  const contentCharCount = Array.from(content.replace(/\s/g, '')).length
+  const isContentTooShort = contentCharCount < REVIEW_CONTENT_MIN_LENGTH
   const isSubmitting = createMutation.isPending || updateMutation.isPending
   const canSubmit =
     !isSubmitting &&
-    trimmedContent.length > 0 &&
+    !isContentTooShort &&
     trimmedContent.length <= REVIEW_CONTENT_MAX_LENGTH &&
     rating >= 1 &&
     rating <= 5 &&
@@ -144,11 +149,17 @@ export function ReviewForm(props: ReviewFormProps) {
           onChange={(e) => setContent(e.target.value)}
           maxLength={REVIEW_CONTENT_MAX_LENGTH}
           rows={8}
-          placeholder="이용해보신 경험을 자유롭게 적어주세요."
+          placeholder={`이용해보신 경험을 자유롭게 적어주세요. (공백 제외 ${REVIEW_CONTENT_MIN_LENGTH}자 이상)`}
           className="w-full rounded-lg border border-border bg-white px-3 py-2.5 text-body-md leading-6 focus:border-brand focus:outline-none focus:ring-3 focus:ring-brand/15"
         />
-        <div className="mt-1 text-right text-caption-sm text-text-muted">
-          {content.length} / {REVIEW_CONTENT_MAX_LENGTH}
+        <div className="mt-1 flex items-start justify-between gap-2 text-caption-sm text-text-muted">
+          {/* 등록 버튼이 왜 안 눌리는지 보이게 — 입력을 시작한 뒤 기준 미달일 때만 안내 */}
+          <span className="text-danger">
+            {content.length > 0 && isContentTooShort
+              ? `공백 제외 ${REVIEW_CONTENT_MIN_LENGTH}자 이상 입력해 주세요 (현재 ${contentCharCount}자)`
+              : ''}
+          </span>
+          <span className="shrink-0">{`${content.length} / ${REVIEW_CONTENT_MAX_LENGTH}`}</span>
         </div>
       </div>
 

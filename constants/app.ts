@@ -151,6 +151,8 @@ export const API_BASE_URL =
 export const REVIEW_PAGE_SIZE = 12;
 export const REVIEW_ADMIN_PAGE_SIZE = 20;
 export const REVIEW_CONTENT_MAX_LENGTH = 2000;
+// 리뷰 본문 최소 글자 수 — 공백(띄어쓰기·줄바꿈) 제외. be(utils/reviewContent.ts)와 같은 값이어야 한다
+export const REVIEW_CONTENT_MIN_LENGTH = 5;
 export const REVIEW_RATING_MAX = 5;
 export const REVIEW_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const REVIEW_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
