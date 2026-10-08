@@ -9,9 +9,16 @@ type PartyMemberOutcome =
   | { released: true; userName: string | null; filledSlotsAfter: number; totalSlots: number; partyReopened: boolean }
   | { released: false; reason: 'not_found' | 'not_confirmed' | 'not_linked' | 'failed' }
 
+// 재구매 주문 반품 결과 — 파티원은 그대로 두고 그 재구매로 늘어난 기간만 되돌린다
+type RenewalRevertOutcome =
+  | { reverted: true; userName: string | null; expiresAtAfter: string | null; refundedPoint: number }
+  | { reverted: false; reason: 'not_found' | 'not_confirmed' | 'failed' }
+
 type ManualReturnResponse = {
   message: string
   partyMember: PartyMemberOutcome | null
+  /** 재구매 주문일 때만 채워진다 (이때 partyMember는 null) */
+  renewal: RenewalRevertOutcome | null
 }
 
 export function useManualReturn() {
@@ -21,8 +28,14 @@ export function useManualReturn() {
     mutationFn: (id: string) => api.post<ManualReturnResponse>(`/steam/admin/orders/${id}/return`),
     onSuccess: (response) => {
       const member = response.partyMember
+      const renewal = response.renewal
 
-      if (member?.released) {
+      if (renewal?.reverted) {
+        const name = renewal.userName ?? '파티원'
+        toast.success(`반품 처리 완료 — ${name} 님의 재구매 기간만 되돌렸습니다. 기존 이용은 유지됩니다.`)
+      } else if (renewal && !renewal.reverted) {
+        toast.warning('반품은 완료됐지만 재구매 기간 되돌리기에 실패했습니다. 원 신청 만료일을 확인해 주세요.')
+      } else if (member?.released) {
         const name = member.userName ?? '파티원'
         const reopened = member.partyReopened ? ' 파티는 다시 모집중으로 전환되었습니다.' : ''
         toast.success(

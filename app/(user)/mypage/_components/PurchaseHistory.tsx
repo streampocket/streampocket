@@ -4,6 +4,7 @@ import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { useMyApplications } from '../_hooks/useMyApplications'
 import { OtpIssuePanel } from './OtpIssuePanel'
+import { RenewalPanel } from './RenewalPanel'
 import { formatPoint, formatWon, payableAmount } from '@/lib/points'
 import { formatUsageDays, getDaysBetween } from '@/lib/utils'
 import type { BadgeVariant } from '@/components/ui/Badge'
@@ -81,7 +82,12 @@ function ApplicationCard({ application }: ApplicationCardProps) {
                 {application.product.name}
               </p>
               <p className="text-caption-md text-text-muted">
-                {`${application.product.category.name} · ${formatUsageDays(usageDays, application.product.durationDays)}`}
+                {`${application.product.category.name} · ${
+                  // 재구매로 연장됐으면 기간이 파티 기간을 넘는다 — 그때는 실제 일수를 그대로 보여준다
+                  usageDays > application.product.durationDays + 1
+                    ? `${usageDays}일 (재구매 포함)`
+                    : formatUsageDays(usageDays, application.product.durationDays)
+                }`}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
@@ -137,6 +143,9 @@ function ApplicationCard({ application }: ApplicationCardProps) {
               otpIssueCount={application.otpIssueCount}
             />
           )}
+
+          {/* 재구매(기간 연장) — 이용 중인 기간 유지형만 */}
+          <RenewalPanel application={application} />
 
           {/* 하단: 신청일 */}
           <div className="flex items-center justify-between">

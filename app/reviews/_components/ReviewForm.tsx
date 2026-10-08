@@ -44,9 +44,10 @@ export function ReviewForm(props: ReviewFormProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(isEdit ? props.initial.imageUrl : null)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  // 선택값은 신청 id 또는 재구매 id(둘 다 UUID라 겹치지 않는다) — 보낼 때 kind로 구분한다
+  const selectedTarget = eligibleQuery.data?.find((app) => app.id === applicationId) ?? null
   // 지급액은 파티의 실결제액 구간에 따라 달라진다 — 고른 파티 기준으로 안내한다
-  const selectedReward =
-    eligibleQuery.data?.find((app) => app.id === applicationId)?.rewardPoint ?? null
+  const selectedReward = selectedTarget?.rewardPoint ?? null
 
   const trimmedContent = content.trim()
   // 공백(띄어쓰기·줄바꿈)을 빼고 코드포인트 단위로 센다 — be(countReviewContentChars)와 같은 식.
@@ -77,8 +78,10 @@ export function ReviewForm(props: ReviewFormProps) {
         router.push(`/reviews/${updated.data.id}`)
         router.refresh()
       } else {
+        const target =
+          selectedTarget?.kind === 'renewal' ? { renewalId: applicationId } : { applicationId }
         const created = await createMutation.mutateAsync({
-          applicationId,
+          ...target,
           content: trimmedContent,
           rating,
           imageUrl,
@@ -114,7 +117,8 @@ export function ReviewForm(props: ReviewFormProps) {
             <option value="">— 파티를 선택해주세요 —</option>
             {eligibleQuery.data?.map((app) => (
               <option key={app.id} value={app.id}>
-                {app.product.name} (리뷰 작성 시 {formatPoint(app.rewardPoint)} 적립)
+                {app.product.name}
+                {app.kind === 'renewal' ? ' (재구매)' : ''} (리뷰 작성 시 {formatPoint(app.rewardPoint)} 적립)
               </option>
             ))}
           </select>

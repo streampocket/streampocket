@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import type { PartyApplicationStatus } from '@/types/domain'
-import type { AdminApplicationListItem } from '../_types'
+import type { AdminApplicationListItem, ApplicationKind } from '../_types'
 import { PARTY_TYPE_META, PARTY_DURATION_MODE_META } from '@/constants/app'
 import { formatPoint, payableAmount } from '@/lib/points'
 
@@ -15,7 +15,8 @@ type ApplicationTableProps = {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
-  onViewDetail: (id: string) => void
+  /** 재구매 항목이면 kind가 renewal — 페이지가 그에 맞는 상세 모달을 연다 */
+  onViewDetail: (id: string, kind: ApplicationKind) => void
 }
 
 const STATUS_BADGE: Record<PartyApplicationStatus, { variant: BadgeVariant; label: string }> = {
@@ -93,6 +94,7 @@ export function ApplicationTable({
                     </td>
                     <td className="text-body-md px-4 py-3 text-text-secondary">
                       <span className="inline-flex items-center gap-1.5">
+                        {app.kind === 'renewal' && <Badge variant="blue">재구매</Badge>}
                         <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
                         <Badge variant={durationBadge.variant}>{durationBadge.label}</Badge>
                         {app.product.name}
@@ -116,7 +118,7 @@ export function ApplicationTable({
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => onViewDetail(app.id)}
+                        onClick={() => onViewDetail(app.id, app.kind)}
                       >
                         상세
                       </Button>
@@ -138,7 +140,7 @@ export function ApplicationTable({
               <button
                 key={app.id}
                 type="button"
-                onClick={() => onViewDetail(app.id)}
+                onClick={() => onViewDetail(app.id, app.kind)}
                 className="w-full rounded-lg border border-border bg-card-bg p-4 text-left transition-colors hover:bg-gray-50"
               >
                 <div className="mb-2 flex items-center justify-between">
@@ -146,6 +148,7 @@ export function ApplicationTable({
                   <Badge variant={badge.variant}>{badge.label}</Badge>
                 </div>
                 <p className="text-caption-md flex flex-wrap items-center gap-1.5 text-text-secondary">
+                  {app.kind === 'renewal' && <Badge variant="blue">재구매</Badge>}
                   <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
                   <Badge variant={durationBadge.variant}>{durationBadge.label}</Badge>
                   {app.product.name}

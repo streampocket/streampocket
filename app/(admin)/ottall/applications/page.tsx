@@ -5,14 +5,16 @@ import { PAGE_SIZE } from '@/constants/app'
 import { ApplicationFilterBar } from './_components/ApplicationFilterBar'
 import { ApplicationTable } from './_components/ApplicationTable'
 import { ApplicationDetailModal } from './_components/ApplicationDetailModal'
+import { RenewalDetailModal } from './_components/RenewalDetailModal'
 import { useAdminApplications } from './_hooks/useAdminApplications'
-import type { ApplicationTabStatus } from './_types'
+import type { ApplicationKind, ApplicationTabStatus } from './_types'
 
 export default function ApplicationsPage() {
   const [activeTab, setActiveTab] = useState<ApplicationTabStatus>('pending')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [detailId, setDetailId] = useState<string | null>(null)
+  // 목록에 일반 신청과 재구매가 섞여 있어, 어느 상세 모달을 열지 kind로 구분한다
+  const [detail, setDetail] = useState<{ id: string; kind: ApplicationKind } | null>(null)
 
   const queryStatus = activeTab === 'all' ? undefined : activeTab
   const { data, isLoading } = useAdminApplications({
@@ -52,11 +54,18 @@ export default function ApplicationsPage() {
           page={data?.page ?? 1}
           totalPages={data?.totalPages ?? 1}
           onPageChange={setPage}
-          onViewDetail={setDetailId}
+          onViewDetail={(id, kind) => setDetail({ id, kind })}
         />
       )}
 
-      <ApplicationDetailModal applicationId={detailId} onClose={() => setDetailId(null)} />
+      <ApplicationDetailModal
+        applicationId={detail?.kind === 'application' ? detail.id : null}
+        onClose={() => setDetail(null)}
+      />
+      <RenewalDetailModal
+        renewalId={detail?.kind === 'renewal' ? detail.id : null}
+        onClose={() => setDetail(null)}
+      />
     </div>
   )
 }

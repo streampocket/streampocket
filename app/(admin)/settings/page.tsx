@@ -3,6 +3,7 @@ import { SystemInfo } from './_components/SystemInfo'
 import { RevenueSettings } from './_components/RevenueSettings'
 import { SystemSettings } from './_components/SystemSettings'
 import { ReviewPointSettings } from './_components/ReviewPointSettings'
+import { RenewalDiscountSettings } from './_components/RenewalDiscountSettings'
 
 export const metadata: Metadata = {
   title: '설정',
@@ -13,6 +14,7 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <SystemSettings />
       <ReviewPointSettings />
+      <RenewalDiscountSettings />
       <RevenueSettings />
       <SystemInfo />
     </div>
