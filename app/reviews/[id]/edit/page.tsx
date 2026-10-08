@@ -55,16 +55,20 @@ export default function EditReviewPage() {
     <section className="mx-auto max-w-2xl space-y-4 py-4">
       <header>
         <h1 className="text-display text-text-primary">리뷰 수정</h1>
-        <p className="mt-1 text-body-md text-text-secondary">{review.product.name}</p>
+        <p className="mt-1 text-body-md text-text-secondary">
+          {review.product.name}
+          {review.renewalId ? ' (재구매)' : ''}
+        </p>
       </header>
       <Card>
         <CardBody>
+          {/* 수정 모드에선 대상이 바뀌지 않는다(표시만) — 재구매 리뷰는 applicationId가 없어 renewalId를 쓴다 */}
           <ReviewForm
             mode="edit"
             reviewId={review.id}
-            lockedApplicationId={review.applicationId}
+            lockedApplicationId={review.applicationId ?? review.renewalId ?? ''}
             initial={{
-              applicationId: review.applicationId,
+              applicationId: review.applicationId ?? review.renewalId ?? '',
               productName: review.product.name,
               content: review.content,
               rating: review.rating,

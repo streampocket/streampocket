@@ -8,8 +8,15 @@ import type {
 
 export type ApplicationTabStatus = PartyApplicationStatus | 'all'
 
+/** 신청관리 목록은 일반 신청과 재구매(기간 연장)가 섞여 나온다 */
+export type ApplicationKind = 'application' | 'renewal'
+
 export type AdminApplicationListItem = {
+  /** kind가 renewal이면 재구매 id, application이면 신청 id */
   id: string
+  kind: ApplicationKind
+  /** 재구매 할인액 (일반 신청은 0) */
+  discount: number
   status: PartyApplicationStatus
   price: number
   fee: number
@@ -119,6 +126,42 @@ export type AdminApplicationDetail = AdminApplicationListItem & {
    * 확정 건은 저장된 expiresAt이 답이라 null이다.
    */
   expiresAtIfApprovedNow: string | null
+}
+
+/** 재구매(기간 연장) 상세 — GET /own/admin/renewals/:id */
+export type AdminRenewalDetail = {
+  kind: 'renewal'
+  id: string
+  /** 원 신청 id */
+  applicationId: string
+  status: PartyApplicationStatus
+  price: number
+  discount: number
+  fee: number
+  totalAmount: number
+  usedPoint: number
+  createdAt: string
+  decidedAt: string | null
+  /** 재구매 주문 반품으로 취소된 시각 (거절과 구분) */
+  returnedAt: string | null
+  /** 대기 건은 "지금 승인하면"의 미리보기, 확정 건은 실제 연장 구간 */
+  extendedFrom: string | null
+  extendedTo: string | null
+  user: AdminApplicationListItem['user']
+  product: AdminApplicationListItem['product']
+  /** 원 신청의 현재 상태·기간 */
+  application: {
+    status: PartyApplicationStatus
+    startedAt: string | null
+    expiresAt: string | null
+  }
+  alimtalkLogs: AdminAlimtalkLog[]
+  warnings: {
+    /** 배정 계정 멤버십 마감일이 연장 후 만료보다 빠름 — 계정 멤버십 연장 필요 (승인은 가능) */
+    accountDueBeforeExpiry: { accountEmail: string | null; accountDueAt: string } | null
+    /** 파티원 메모 연결이 없어 만료일만 늘고 메모는 갱신되지 않음 */
+    memberMissing: boolean
+  }
 }
 
 export type AdminApplicationListParams = {

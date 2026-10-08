@@ -310,11 +310,23 @@ export type ReviewPointTiers = {
   tier3Point: number
 }
 
+/**
+ * 파티 재구매 할인 이벤트 (정액). 켜져 있고 오늘(KST)이 기간 안이면 재구매 정가에서 amount원을 뺀다.
+ * 날짜는 'YYYY-MM-DD', 비우면 null(그쪽 경계 없음). 할인액은 재구매 요청 시점에 확정된다
+ */
+export type RenewalDiscount = {
+  enabled: boolean
+  amount: number
+  startDate: string | null
+  endDate: string | null
+}
+
 export type SystemSettings = {
   defaultDurationMinutes: number
   reviewPointTiers: ReviewPointTiers
   /** 파티 승인 시 계정 자동 배정 — 승인 모달 토글의 기본값 */
   partyAutoAssignEnabled: boolean
+  renewalDiscount: RenewalDiscount
 }
 
 // ──────────────── 파티 배정 계정 자격증명 (관리자 전용) ────────────────
@@ -504,7 +516,9 @@ export type AdminPartyDetail = OwnProduct & {
 /** OTT 리뷰 (공개 응답) */
 export type OwnReview = {
   id: string
-  applicationId: string
+  /** 원 신청 리뷰면 신청 id, 재구매 리뷰면 null (대신 renewalId) */
+  applicationId: string | null
+  renewalId: string | null
   productId: string
   userId: string
   content: string
@@ -525,9 +539,11 @@ export type OwnAdminReview = Omit<OwnReview, 'user'> & {
   user: { id: string; name: string; email: string }
 }
 
-/** 리뷰 작성 가능 파티 신청 */
+/** 리뷰 작성 가능 파티 신청 — 재구매(기간 연장)도 새로 산 것이라 따로 리뷰·적립 대상이다 */
 export type ReviewableApplication = {
+  /** kind가 renewal이면 재구매 id, application이면 신청 id */
   id: string
+  kind: 'application' | 'renewal'
   startedAt: string | null
   expiresAt: string | null
   totalAmount: number

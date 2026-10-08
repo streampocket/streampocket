@@ -21,8 +21,8 @@ export function useOwnReview(reviewId: string | undefined) {
   })
 }
 
-type CreatePayload = {
-  applicationId: string
+// 리뷰 대상은 원 신청 또는 재구매 중 정확히 하나
+type CreatePayload = ({ applicationId: string } | { renewalId: string }) & {
   content: string
   rating: number
   imageUrl: string | null

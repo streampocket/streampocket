@@ -185,7 +185,12 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
             <InfoRow label="카테고리" value={detail.product.category.name} />
             <InfoRow
               label="이용 기간"
-              value={formatUsageDays(resolveUsageDays(detail), detail.product.durationDays)}
+              value={
+                // 재구매로 연장됐으면 파티 기간을 넘는다 — 그때는 실제 일수를 그대로 보여준다
+                resolveUsageDays(detail) > detail.product.durationDays + 1
+                  ? `${resolveUsageDays(detail)}일 (재구매 포함)`
+                  : formatUsageDays(resolveUsageDays(detail), detail.product.durationDays)
+              }
             />
             <PartyPeriodRow detail={detail} />
             <div className="flex items-center gap-3">
@@ -587,7 +592,7 @@ function PartyPeriodRow({ detail }: { detail: AdminApplicationDetail }) {
   )
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center gap-3">
       <span className="text-body-md w-20 shrink-0 text-text-muted">{label}</span>
@@ -605,7 +610,7 @@ const ALIMTALK_STATUS_BADGE: Record<
   queued: { variant: 'yellow', label: '대기' },
 }
 
-function AlimtalkLogList({ logs }: { logs: AdminAlimtalkLog[] }) {
+export function AlimtalkLogList({ logs }: { logs: AdminAlimtalkLog[] }) {
   if (logs.length === 0) {
     return <p className="text-body-md text-text-muted">발송 이력이 없습니다.</p>
   }

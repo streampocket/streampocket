@@ -68,6 +68,9 @@ export const QUERY_KEYS = {
   partyApplications: {
     check: (productId: string) => ['partyApplications', 'check', productId] as const,
     my: () => ['partyApplications', 'my'] as const,
+    /** 재구매(기간 연장) 견적 — 확인 창을 열 때만 조회 (할인 이벤트 상태가 그때그때 달라진다) */
+    renewalQuote: (applicationId: string) =>
+      ['partyApplications', applicationId, 'renewalQuote'] as const,
   },
   partyOtp: {
     detail: (orderId: string) => ['partyOtp', orderId] as const,
@@ -113,6 +116,8 @@ export const QUERY_KEYS = {
     detail: (id: string) => ['adminApplications', id] as const,
     /** 승인 시 배정할 계정 후보 — 모달에서 "다른 계정 선택"을 열 때만 조회한다 */
     assignCandidates: (id: string) => ['adminApplications', id, 'assignCandidates'] as const,
+    /** 재구매(기간 연장) 상세 — 목록이 신청관리에 섞여 나와 같은 루트 키(all) 아래에 둔다 */
+    renewalDetail: (id: string) => ['adminApplications', 'renewal', id] as const,
   },
   adminUsers: {
     all: () => ['adminUsers'] as const,
