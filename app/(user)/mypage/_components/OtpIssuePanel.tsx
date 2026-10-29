@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { PARTY_OTP_MAX_ISSUES } from '@/constants/app'
 import { useIssuePartyOtp } from '../_hooks/useIssuePartyOtp'
+import { useRequestOtpReset } from '../_hooks/useRequestOtpReset'
 import type { OtpIssueResult } from '../_types'
 
 const RING_RADIUS = 26
@@ -15,12 +16,64 @@ type OtpIssuePanelProps = {
   applicationId: string
   otpRegistered: boolean
   otpIssueCount: number
+  /** 횟수 소진 후 재발급을 이미 요청했는지 (관리자가 초기화하면 false로 돌아감) */
+  otpResetRequested: boolean
+}
+
+type OtpResetRequestProps = {
+  applicationId: string
+  requested: boolean
+}
+
+// 발급 횟수 소진 시 — 재발급 요청 버튼(관리자 디스코드 알림). 요청 후에는 처리 전까지 "요청 완료"만 보여준다
+function OtpResetRequest({ applicationId, requested }: OtpResetRequestProps) {
+  const requestMutation = useRequestOtpReset(applicationId)
+
+  const handleRequest = async () => {
+    try {
+      await requestMutation.mutateAsync()
+      toast.success('재발급을 요청했어요. 관리자 확인 후 다시 발급할 수 있어요.')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '재발급 요청에 실패했습니다.'
+      toast.error(message)
+    }
+  }
+
+  if (requested) {
+    return (
+      <div className="rounded-lg border border-border bg-gray-50 px-3 py-2">
+        <p className="text-caption-md font-medium text-text-primary">재발급 요청 완료</p>
+        <p className="text-caption-md text-text-muted">관리자 확인 후 다시 발급할 수 있어요.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <Button
+        variant="secondary"
+        className="w-full"
+        onClick={handleRequest}
+        disabled={requestMutation.isPending}
+      >
+        {requestMutation.isPending ? '요청 중...' : 'OTP 재발급 요청'}
+      </Button>
+      <p className="text-caption-md text-text-muted">
+        발급 횟수를 모두 사용했습니다. 요청하면 관리자 확인 후 다시 발급할 수 있어요.
+      </p>
+    </div>
+  )
 }
 
 // 확정 + 이용 기간 중인 신청 카드에서만 렌더 (조건은 부모에서 판정)
 // 발급·재발급 모두 3회 한도에서 1회씩 차감. 코드는 발급당 1개(교체 없음), 카운트다운은 항상 30초부터.
 // 발급된 코드는 10분(viewExpiresAt)까지 표시 유지
-export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: OtpIssuePanelProps) {
+export function OtpIssuePanel({
+  applicationId,
+  otpRegistered,
+  otpIssueCount,
+  otpResetRequested,
+}: OtpIssuePanelProps) {
   const issueMutation = useIssuePartyOtp(applicationId)
   const [result, setResult] = useState<OtpIssueResult | null>(null)
   // 코드 유효시간 만료 시각(ms) — expiresIn(초)을 수신 시점 기준 절대 시각으로 환산해 카운트다운
@@ -77,13 +130,7 @@ export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: O
   if (!result) {
     const remainingIssues = PARTY_OTP_MAX_ISSUES - otpIssueCount
     if (remainingIssues <= 0) {
-      return (
-        <div className="rounded-lg border border-border bg-gray-50 px-3 py-2">
-          <p className="text-caption-md text-text-muted">
-            OTP 발급 횟수를 모두 사용했습니다. 관리자에게 문의 주세요.
-          </p>
-        </div>
-      )
+      return <OtpResetRequest applicationId={applicationId} requested={otpResetRequested} />
     }
     return (
       <div className="space-y-1.5">
@@ -170,9 +217,7 @@ export function OtpIssuePanel({ applicationId, otpRegistered, otpIssueCount }: O
             코드 유효시간이 지났습니다. 재발급 시 횟수가 1회 차감됩니다. ({result.remaining}회 남음)
           </p>
         ) : (
-          <p className="text-caption-md text-danger">
-            발급 횟수를 모두 사용했습니다. 관리자에게 문의 주세요.
-          </p>
+          <OtpResetRequest applicationId={applicationId} requested={otpResetRequested} />
         )
       ) : (
         <p className="text-caption-md text-text-muted">

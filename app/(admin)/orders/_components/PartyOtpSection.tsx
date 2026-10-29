@@ -121,9 +121,9 @@ export function PartyOtpSection({ orderId }: PartyOtpSectionProps) {
         </p>
       </div>
 
-      {/* 발급 횟수 + 초기화 */}
+      {/* 발급 횟수 + 초기화 (구매자 재발급 요청이 있으면 함께 표시 — 초기화하면 요청도 처리됨) */}
       <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-caption-md text-text-muted">발급 횟수</span>
           <span
             className={cn(
@@ -133,6 +133,9 @@ export function PartyOtpSection({ orderId }: PartyOtpSectionProps) {
           >
             {info.issueCount}/{info.maxIssues}
           </span>
+          {info.resetRequestedAt && (
+            <Badge variant="yellow">구매자 재발급 요청 {formatDate(info.resetRequestedAt)}</Badge>
+          )}
         </div>
         <Button
           size="sm"
