@@ -31,6 +31,8 @@ export type MyApplication = {
   product: MyApplicationProduct
   otpRegistered: boolean
   otpIssueCount: number
+  /** 횟수 소진 후 재발급을 요청한 시각 — 관리자가 횟수를 초기화하면 null로 돌아간다 */
+  otpResetRequestedAt: string | null
   /** 재구매(기간 연장) 버튼 노출 여부 — 서버가 판정 (이용 중 + 기간 유지형 + 파티 미삭제) */
   renewable: boolean
   /** 승인 대기 중인 재구매 (신청당 최대 1건) */

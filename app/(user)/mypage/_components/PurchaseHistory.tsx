@@ -141,6 +141,7 @@ function ApplicationCard({ application }: ApplicationCardProps) {
               applicationId={application.id}
               otpRegistered={application.otpRegistered}
               otpIssueCount={application.otpIssueCount}
+              otpResetRequested={application.otpResetRequestedAt !== null}
             />
           )}
 

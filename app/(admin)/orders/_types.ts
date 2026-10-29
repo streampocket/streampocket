@@ -30,6 +30,8 @@ export type PartyOtpInfo =
       secretUpdatedAt: string | null
       issueCount: number
       maxIssues: number
+      /** 구매자가 횟수 소진 후 마이페이지에서 재발급을 요청한 시각 — 횟수 초기화 시 null */
+      resetRequestedAt: string | null
       logs: PartyOtpIssueLogItem[]
       autoAssign: PartyAutoAssignInfo
     }
