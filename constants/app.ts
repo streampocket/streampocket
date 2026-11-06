@@ -63,6 +63,8 @@ export const USER_LOGIN_PATH = "/signin";
 export const USER_SIGNUP_PATH = "/signup";
 export const USER_MYPAGE_PATH = "/mypage";
 export const TRACK_PATH = "/track";
+// 스마트스토어 구매자용 스팀 코드 등록 안내 (알림톡 링크로 진입)
+export const GUIDE_PATH = "/guide";
 // 카카오톡 상담 — 채널 홈이 아닌 1:1 채팅으로 바로 연결 (모든 문의 버튼 공통)
 export const KAKAO_CHAT_URL = "http://pf.kakao.com/_MkxalX/chat";
 // 파티 OTP — 구매자당 최대 발급(차감) 횟수 (be/src/constants/party.ts와 동일 값 유지)

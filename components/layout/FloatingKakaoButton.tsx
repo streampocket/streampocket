@@ -1,21 +1,25 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { ADMIN_PATH_PREFIXES, KAKAO_CHAT_URL, TRACK_PATH } from '@/constants/app'
+import { ADMIN_PATH_PREFIXES, GUIDE_PATH, KAKAO_CHAT_URL, TRACK_PATH } from '@/constants/app'
 import { KakaoTalkIcon } from '@/components/icons/KakaoTalkIcon'
 
-function isAdminPath(pathname: string | null): boolean {
+// 스마트스토어 구매자용 페이지 — OTTALL 상담 채널과 무관해 버튼을 숨긴다
+const HIDDEN_PATHS = [TRACK_PATH, GUIDE_PATH]
+
+function matchesPath(pathname: string, prefix: string): boolean {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`)
+}
+
+function isHiddenPath(pathname: string | null): boolean {
   if (!pathname) return false
-  return ADMIN_PATH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  )
+  return [...ADMIN_PATH_PREFIXES, ...HIDDEN_PATHS].some((prefix) => matchesPath(pathname, prefix))
 }
 
 export function FloatingKakaoButton() {
   const pathname = usePathname()
 
-  if (isAdminPath(pathname)) return null
-  if (pathname === TRACK_PATH || pathname?.startsWith(`${TRACK_PATH}/`)) return null
+  if (isHiddenPath(pathname)) return null
 
   return (
     <a
