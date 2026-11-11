@@ -3,14 +3,17 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { hasAccess, type PageAccess } from '@/constants/adminPermissions'
 import { NAV_SECTIONS } from '@/constants/navigation'
+import { useAdminMe } from '@/hooks/useAdminMe'
+import { filterNavSections } from '@/lib/adminAccess'
 import { cn } from '@/lib/utils'
 
-const PRIMARY_TABS = [
-  { label: '대시보드', href: '/dashboard', icon: '▦' },
-  { label: '주문', href: '/orders', icon: '📋' },
-  { label: '리뷰게임', href: '/review-codes', icon: '🎮' },
-  { label: '매출', href: '/revenue', icon: '💰' },
+const PRIMARY_TABS: { label: string; href: string; icon: string; access: PageAccess }[] = [
+  { label: '대시보드', href: '/dashboard', icon: '▦', access: 'dashboard' },
+  { label: '주문', href: '/orders', icon: '📋', access: 'orders' },
+  { label: '리뷰게임', href: '/review-codes', icon: '🎮', access: 'reviewCodes' },
+  { label: '매출', href: '/revenue', icon: '💰', access: 'revenue' },
 ]
 
 const ALL_NAV_HREFS = NAV_SECTIONS.flatMap((s) => s.items.map((i) => i.href))
@@ -18,20 +21,24 @@ const ALL_NAV_HREFS = NAV_SECTIONS.flatMap((s) => s.items.map((i) => i.href))
 export function MobileTabBar() {
   const pathname = usePathname()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  // 권한 있는 메뉴만 노출 (AuthGuard가 받아 둔 캐시 사용)
+  const { data: me } = useAdminMe()
+  const primaryTabs = me ? PRIMARY_TABS.filter((tab) => hasAccess(me, tab.access)) : []
+  const navSections = me ? filterNavSections(me) : []
 
   // 경로 변경 시 바텀시트 자동 닫기
   useEffect(() => {
     setIsSheetOpen(false)
   }, [pathname])
 
-  const isPrimaryActive = PRIMARY_TABS.some((tab) => pathname.startsWith(tab.href))
+  const isPrimaryActive = primaryTabs.some((tab) => pathname.startsWith(tab.href))
   const isMoreActive =
     !isPrimaryActive && ALL_NAV_HREFS.some((href) => pathname.startsWith(href))
 
   return (
     <>
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-15 items-center border-t border-border bg-card-bg md:hidden">
-        {PRIMARY_TABS.map((item) => {
+        {primaryTabs.map((item) => {
           const isActive = pathname.startsWith(item.href)
           return (
             <Link
@@ -80,7 +87,7 @@ export function MobileTabBar() {
 
             {/* 높이 제한은 시트 컨테이너(max-h)가 담당 — 내용이 넘칠 때만 내부 스크롤 */}
             <nav className="flex-1 overflow-y-auto px-4 pb-4">
-              {NAV_SECTIONS.map((section) => (
+              {navSections.map((section) => (
                 <div key={section.title} className="mb-3">
                   <p className="text-caption-sm mb-2 px-2 font-medium text-text-muted">
                     {section.title}

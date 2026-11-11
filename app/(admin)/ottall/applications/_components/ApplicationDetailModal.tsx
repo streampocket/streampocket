@@ -299,6 +299,7 @@ export function ApplicationDetailModal({ applicationId, onClose }: ApplicationDe
                   rejectMutation.isPending
                 }
                 onChange={autoAssignSetting.save}
+                locked={!autoAssignSetting.canEdit}
                 chosenAccountId={chosenAccountId}
                 onChooseAccount={setChosenAccountId}
               />
@@ -356,6 +357,8 @@ type AutoAssignToggleProps = {
   checked: boolean
   disabled: boolean
   onChange: (next: boolean) => void
+  /** 직원 계정 — 토글(전역 설정) 변경만 막고 계정 선택·승인은 그대로 */
+  locked: boolean
   /** 관리자가 고른 계정. null이면 추천(자동 선택) 그대로 */
   chosenAccountId: string | null
   onChooseAccount: (accountId: string | null) => void
@@ -372,6 +375,7 @@ function AutoAssignToggle({
   checked,
   disabled,
   onChange,
+  locked,
   chosenAccountId,
   onChooseAccount,
 }: AutoAssignToggleProps) {
@@ -402,12 +406,17 @@ function AutoAssignToggle({
           type="checkbox"
           className="h-4 w-4 accent-brand disabled:cursor-not-allowed"
           checked={checked}
-          disabled={disabled}
+          disabled={disabled || locked}
           onChange={(e) => onChange(e.target.checked)}
         />
         <span className="text-body-md font-medium text-text-primary">승인 시 계정 자동 배정</span>
         {!eligible && <Badge variant="gray">자동 배정 불가</Badge>}
       </label>
+      {locked && (
+        <p className="text-caption-sm mt-1 pl-6 text-text-muted">
+          자동 배정 켜기·끄기는 사장 계정만 바꿀 수 있습니다.
+        </p>
+      )}
 
       {eligible && shownAccount ? (
         <div className="mt-2 space-y-2 pl-6">

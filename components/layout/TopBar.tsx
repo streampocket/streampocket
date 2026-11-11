@@ -10,6 +10,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/codes': '계정 관리',
   '/alimtalk': '알림톡',
   '/settings': '설정',
+  '/staff': '직원 관리',
   '/ottall/parties': '파티 관리',
   '/ottall/reviews': '리뷰 관리',
   '/gcoin/products': '배그상품 관리',

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { setAuthSession, isAuthenticated } from '@/lib/auth'
@@ -26,6 +27,7 @@ function resolveNextPath(next: string | null): string {
 export function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const queryClient = useQueryClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -47,6 +49,8 @@ export function LoginForm() {
         password,
       })
 
+      // 이전 계정의 권한·데이터 캐시를 버린다 (권한은 이동 후 AuthGuard가 새로 조회)
+      queryClient.clear()
       setAuthSession({
         token: result.data.token,
         admin: result.data.admin,
@@ -55,8 +59,9 @@ export function LoginForm() {
       const next = resolveNextPath(searchParams.get('next'))
       router.push(next)
       router.refresh()
-    } catch {
-      toast.error('이메일 또는 비밀번호가 올바르지 않습니다.')
+    } catch (error) {
+      // 서버 문구 그대로 — 비밀번호 오류와 비활성 계정 안내를 구분해 보여준다
+      toast.error(error instanceof Error ? error.message : '이메일 또는 비밀번호가 올바르지 않습니다.')
     } finally {
       setIsLoading(false)
     }
