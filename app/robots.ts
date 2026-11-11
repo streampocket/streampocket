@@ -14,6 +14,7 @@ const DISALLOW_PATHS = [
   '/review-codes',
   '/ottall',
   '/gcoin',
+  '/staff',
   '/community-admin',
   '/mypage',
   '/community/new',

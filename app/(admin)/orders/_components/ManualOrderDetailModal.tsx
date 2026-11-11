@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import type { BadgeVariant } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
+import { useAdminMe } from '@/hooks/useAdminMe'
 import { cn, formatDate } from '@/lib/utils'
 import type { FulfillmentStatus, OrderSource } from '@/types/domain'
 import { useOrderDetail } from '../_hooks/useOrderDetail'
@@ -60,6 +61,9 @@ export function ManualOrderDetailModal({
   const { mutate: purchaseDecide, isPending: isPurchaseDeciding } = usePurchaseDecideOrder()
   const { mutate: manualReturn, isPending: isReturning } = useManualReturn()
   const { mutate: deleteOrder, isPending: isDeleting } = useDeleteManualOrder()
+  // 주문 삭제는 사장 전용 (서버도 403)
+  const { data: me } = useAdminMe()
+  const canDelete = me?.role === 'owner'
   const { mutate: updateNetProfit, isPending: isSavingNetProfit } = useUpdateManualOrderNetProfit()
 
   // 파티 주문은 입력/저장·친구링크 자동 탭 대신 [상태, OTP 발급] 구성
@@ -135,23 +139,25 @@ export function ManualOrderDetailModal({
       title={SOURCE_TITLES[source] ?? '수동 주문 상세'}
       footer={
         <>
-          <Button
-            variant="danger"
-            className="mr-auto"
-            loading={isDeleting}
-            onClick={() => {
-              if (
-                order &&
-                window.confirm('이 수동 주문을 삭제하시겠습니까?\n복구할 수 없습니다.')
-              ) {
-                deleteOrder(order.id, {
-                  onSuccess: () => onClose(),
-                })
-              }
-            }}
-          >
-            주문 삭제
-          </Button>
+          {canDelete && (
+            <Button
+              variant="danger"
+              className="mr-auto"
+              loading={isDeleting}
+              onClick={() => {
+                if (
+                  order &&
+                  window.confirm('이 수동 주문을 삭제하시겠습니까?\n복구할 수 없습니다.')
+                ) {
+                  deleteOrder(order.id, {
+                    onSuccess: () => onClose(),
+                  })
+                }
+              }}
+            >
+              주문 삭제
+            </Button>
+          )}
           <Button variant="secondary" onClick={onClose}>
             닫기
           </Button>

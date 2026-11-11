@@ -36,6 +36,16 @@ export const QUERY_KEYS = {
   },
   settings: {
     system: () => ['settings', 'system'] as const,
+    // 신청 승인 자동 배정 여부 (직원도 읽기 가능한 단일 값)
+    partyAutoAssign: () => ['settings', 'partyAutoAssign'] as const,
+  },
+  // 로그인한 관리자의 역할·페이지 권한
+  adminMe: {
+    detail: () => ['adminMe'] as const,
+  },
+  // 직원(알바) 계정 목록 — 사장 전용
+  staff: {
+    all: () => ['staff'] as const,
   },
   alimtalk: {
     settings: (store?: string) => ['alimtalk', 'settings', store] as const,

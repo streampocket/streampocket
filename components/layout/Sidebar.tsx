@@ -2,18 +2,26 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { clearAuthSession, getAuthAdmin } from '@/lib/auth'
-import { NAV_SECTIONS } from '@/constants/navigation'
+import { useAdminMe } from '@/hooks/useAdminMe'
+import { filterNavSections } from '@/lib/adminAccess'
 import { cn } from '@/lib/utils'
 
 export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const admin = getAuthAdmin()
+  const queryClient = useQueryClient()
+  // AuthGuard가 먼저 받아 둔 캐시를 그대로 쓴다 — 권한 있는 메뉴만 노출
+  const { data: me } = useAdminMe()
+  const navSections = me ? filterNavSections(me) : []
 
   const handleLogout = () => {
     clearAuthSession()
+    // 다음에 다른 계정으로 로그인할 때 이전 계정의 권한·데이터 캐시가 남지 않게
+    queryClient.clear()
     toast.success('로그아웃되었습니다.')
     router.replace('/login')
     router.refresh()
@@ -31,7 +39,7 @@ export function Sidebar() {
 
       {/* 네비게이션 */}
       <nav className="flex-1 overflow-y-auto px-3 py-2">
-        {NAV_SECTIONS.map((section) => (
+        {navSections.map((section) => (
           <div key={section.title} className="mb-4">
             <p className="text-caption-sm mb-1.5 px-3 text-gray-500">{section.title}</p>
             {section.items.map((item) => {
@@ -63,7 +71,9 @@ export function Sidebar() {
             {admin?.email.slice(0, 1).toUpperCase() ?? 'A'}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-caption-md truncate text-white">관리자</p>
+            <p className="text-caption-md truncate text-white">
+              {me?.role === 'staff' ? '직원' : '관리자'}
+            </p>
             <p className="text-caption-sm truncate text-gray-500">
               {admin?.email ?? 'admin@streampocket.com'}
             </p>
