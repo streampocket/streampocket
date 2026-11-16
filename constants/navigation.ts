@@ -39,6 +39,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: '신청 관리', href: '/ottall/applications', icon: '📝', access: 'applications' },
       { label: '리뷰 관리', href: '/ottall/reviews', icon: '⭐', access: 'reviews' },
       { label: 'OTP 발급', href: '/ottall/otp', icon: '🔐', access: 'otp' },
+      { label: '안내 양식', href: '/ottall/message-templates', icon: '📄', access: 'messageTemplates' },
       { label: '게시글 관리', href: '/community-admin', icon: '💬', access: 'community' },
     ],
   },

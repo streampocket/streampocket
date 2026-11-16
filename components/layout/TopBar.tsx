@@ -13,6 +13,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/staff': '직원 관리',
   '/ottall/parties': '파티 관리',
   '/ottall/reviews': '리뷰 관리',
+  '/ottall/message-templates': '안내 양식',
   '/gcoin/products': '배그상품 관리',
   '/gcoin/orders': '배그주문 관리',
   '/gcoin/visits': '방문자 통계',
