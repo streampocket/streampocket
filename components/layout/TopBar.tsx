@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { hasAccess } from '@/constants/adminPermissions'
+import { useAdminMe } from '@/hooks/useAdminMe'
+import { OtpResetRequestBell } from './OtpResetRequestBell'
 
 const PAGE_TITLES: Record<string, string> = {
   '/dashboard': '대시보드',
@@ -38,6 +41,9 @@ function formatTime(date: Date): string {
 export function TopBar({ title }: TopBarProps) {
   const pathname = usePathname()
   const [currentTime, setCurrentTime] = useState('')
+  const { data: me } = useAdminMe()
+  // 초기화가 주문 권한 API라 종도 주문 권한이 있을 때만 — "보이는데 누르면 403"을 막는다
+  const showOtpBell = me ? hasAccess(me, 'orders') : false
 
   const pageTitle =
     title ??
@@ -54,8 +60,11 @@ export function TopBar({ title }: TopBarProps) {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card-bg px-6">
-      <h1 className="text-heading-md text-text-primary">{pageTitle}</h1>
-      <span className="text-caption-md text-text-muted">{currentTime}</span>
+      <h1 className="text-heading-md min-w-0 truncate text-text-primary">{pageTitle}</h1>
+      <div className="flex shrink-0 items-center gap-3">
+        {showOtpBell && <OtpResetRequestBell />}
+        <span className="text-caption-md text-text-muted">{currentTime}</span>
+      </div>
     </header>
   )
 }

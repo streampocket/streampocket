@@ -85,6 +85,10 @@ export const QUERY_KEYS = {
   partyOtp: {
     detail: (orderId: string) => ['partyOtp', orderId] as const,
   },
+  otpResetRequests: {
+    all: () => ['otpResetRequests'] as const,
+    list: () => ['otpResetRequests', 'list'] as const,
+  },
   adminParties: {
     all: () => ['adminParties'] as const,
     list: (params?: Record<string, unknown>) => ['adminParties', 'list', params] as const,
