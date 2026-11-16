@@ -12,6 +12,8 @@ export function useResetPartyOtpCount(orderId: string) {
     onSuccess: () => {
       toast.success('발급 횟수가 초기화되었습니다.')
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partyOtp.detail(orderId) })
+      // 상단 종(미처리 재발급 요청)에서도 바로 사라지게
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.otpResetRequests.all() })
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : '초기화에 실패했습니다.')
