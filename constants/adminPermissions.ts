@@ -18,6 +18,7 @@ export const ADMIN_PERMISSIONS = [
   { key: 'gcoinOrders', label: '배그주문 관리' },
   { key: 'visits', label: '방문자 통계' },
   { key: 'alimtalk', label: '알림톡' },
+  { key: 'messageTemplates', label: '안내 양식' },
 ] as const // 단언 사유: 객체 리터럴 값을 좁은 리터럴 타입으로 고정하기 위한 const assertion
 
 export type AdminPermission = (typeof ADMIN_PERMISSIONS)[number]['key']

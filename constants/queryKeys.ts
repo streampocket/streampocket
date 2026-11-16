@@ -120,6 +120,10 @@ export const QUERY_KEYS = {
     all: () => ['ownRuleTemplates'] as const,
     list: () => ['ownRuleTemplates', 'list'] as const,
   },
+  ownMessageTemplates: {
+    all: () => ['ownMessageTemplates'] as const,
+    list: () => ['ownMessageTemplates', 'list'] as const,
+  },
   adminApplications: {
     all: () => ['adminApplications'] as const,
     list: (params?: Record<string, unknown>) => ['adminApplications', 'list', params] as const,
